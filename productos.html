@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Catálogo Blackpink Store — iPhone, Mac, iPad y más. Filtrá por categoría, condición y precio." />
+  <title>Catálogo · Blackpink Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <div class="site-head-sticky" id="siteHead">
+  <header class="site-header" id="inicio">
+    <div class="header-inner">
+      <a class="logo" href="index.html" aria-label="Inicio">
+        <span class="logo-mark">◆</span>
+        <span class="logo-text">Blackpink <span class="logo-accent">Store</span></span>
+      </a>
+
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="Abrir menú">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+
+      <div class="header-right">
+        <form class="header-search" role="search" action="productos.html" method="get">
+          <label class="visually-hidden" for="headerSearch">Buscar productos</label>
+          <input type="search" id="headerSearch" name="q" placeholder="Buscar…" autocomplete="off" />
+          <button type="submit" class="header-search-submit" aria-label="Buscar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+          </button>
+        </form>
+        <div class="header-icons">
+          <a class="header-cart" href="carrito.html" aria-label="Carrito de compras">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M6 6L5 3H2"/></svg>
+          </a>
+          <a class="header-wa" href="https://api.whatsapp.com/send/?phone=56943524545&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.881 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-cat-bar-wrap">
+      <nav class="site-nav" id="siteNav" aria-label="Principal">
+        <ul class="nav-list nav-list--cat-bar">
+          <li class="has-megamenu">
+            <button type="button" class="nav-link nav-cat cat-nav-item">
+              <svg class="cat-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M10 19h4"/></svg>
+              <span>iPhone</span>
+            </button>
+            <div class="megamenu-panel" data-mega="iphone" hidden>
+              <div class="container megamenu-inner megamenu-inner--iphone">
+                <div class="megamenu-main">
+                  <p class="megamenu-kicker">Catálogo iPhone</p>
+                  <p class="megamenu-tagline">Venta de iPhone, Mac, iPad y servicio técnico Apple en Chile</p>
+                  <div class="megamenu-links megamenu-links--iphone">
+                    <div class="megamenu-col">
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2012%20mini">iPhone 12 mini</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2012">iPhone 12</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2012%20Pro">iPhone 12 Pro</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2012%20Pro%20Max">iPhone 12 Pro Max</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2013%20mini">iPhone 13 mini</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2013">iPhone 13</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2013%20Pro">iPhone 13 Pro</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2013%20Pro%20Max">iPhone 13 Pro Max</a>
+                    </div>
+                    <div class="megamenu-col">
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2014">iPhone 14</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2014%20Plus">iPhone 14 Plus</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2014%20Pro">iPhone 14 Pro</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2014%20Pro%20Max">iPhone 14 Pro Max</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2015">iPhone 15</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2015%20Plus">iPhone 15 Plus</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2015%20Pro">iPhone 15 Pro</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2015%20Pro%20Max">iPhone 15 Pro Max</a>
+                    </div>
+                    <div class="megamenu-col">
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2016e">iPhone 16e</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2016">iPhone 16</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2016%20Plus">iPhone 16 Plus</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2016%20Pro">iPhone 16 Pro</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2016%20Pro%20Max">iPhone 16 Pro Max</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2017">iPhone 17</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2017%20Pro">iPhone 17 Pro</a>
+                      <a href="productos.html?cat=iphone&amp;q=iPhone%2017%20Pro%20Max">iPhone 17 Pro Max</a>
+                    </div>
+                  </div>
+                  <a class="megamenu-all" href="productos.html?cat=iphone">Ver todos los iPhone →</a>
+                </div>
+                <a class="megamenu-promo megamenu-promo--iphone" href="productos.html?cat=iphone">
+                  <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=560&h=700&fit=crop&q=80" alt="" width="280" height="350" loading="lazy" />
+                  <span class="megamenu-promo-cap">iPhone — stock actualizado</span>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li class="has-megamenu">
+            <button type="button" class="nav-link nav-cat cat-nav-item">
+              <svg class="cat-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 21h8"/></svg>
+              <span>Mac</span>
+            </button>
+            <div class="megamenu-panel" data-mega="mac" hidden>
+              <div class="container megamenu-inner megamenu-inner--simple">
+                <div class="megamenu-main">
+                  <p class="megamenu-title">Mac</p>
+                  <div class="megamenu-links megamenu-links--flow">
+                    <a href="productos.html">MacBook Air</a>
+                    <a href="productos.html">MacBook Pro</a>
+                    <a href="productos.html">Mac mini</a>
+                    <a href="productos.html">Mac Pro</a>
+                    <a href="productos.html">iMac</a>
+                  </div>
+                </div>
+                <a class="megamenu-promo" href="productos.html">
+                  <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=560&h=700&fit=crop&q=80" alt="" width="280" height="350" loading="lazy" />
+                  <span class="megamenu-promo-cap">MacBook · disponible</span>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li class="has-megamenu">
+            <button type="button" class="nav-link nav-cat cat-nav-item">
+              <svg class="cat-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M10 18h4"/></svg>
+              <span>iPad</span>
+            </button>
+            <div class="megamenu-panel" hidden>
+              <div class="container megamenu-inner megamenu-inner--simple">
+                <div class="megamenu-main">
+                  <p class="megamenu-title">iPad</p>
+                  <div class="megamenu-links megamenu-links--flow">
+                    <a href="productos.html">Ver todos los iPad</a>
+                    <a href="productos.html">iPad Pro</a>
+                    <a href="productos.html">iPad Air</a>
+                    <a href="productos.html">iPad estándar</a>
+                    <a href="productos.html">iPad mini</a>
+                  </div>
+                </div>
+                <a class="megamenu-promo" href="productos.html">
+                  <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=560&h=700&fit=crop&q=80" alt="" width="280" height="350" loading="lazy" />
+                  <span class="megamenu-promo-cap">iPad · ver catálogo</span>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li class="has-megamenu">
+            <button type="button" class="nav-link nav-cat cat-nav-item">
+              <svg class="cat-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="7"/><path d="M12 5V3M12 21v-2"/><path d="M8.5 5.5l-1-1.5M16.5 5.5l1-1.5M8.5 18.5l-1 1.5M16.5 18.5l1 1.5"/></svg>
+              <span>Apple Watch</span>
+            </button>
+            <div class="megamenu-panel" hidden>
+              <div class="container megamenu-inner megamenu-inner--simple">
+                <div class="megamenu-main">
+                  <p class="megamenu-title">Apple Watch</p>
+                  <div class="megamenu-links megamenu-links--flow">
+                    <a href="productos.html">Ver todos</a>
+                    <a href="productos.html">Series recientes</a>
+                    <a href="productos.html">SE y Ultra</a>
+                    <a href="productos.html">Correas y accesorios</a>
+                  </div>
+                </div>
+                <a class="megamenu-promo" href="productos.html">
+                  <img src="https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=560&h=700&fit=crop&q=80" alt="" width="280" height="350" loading="lazy" />
+                  <span class="megamenu-promo-cap">Apple Watch</span>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li class="has-megamenu">
+            <button type="button" class="nav-link nav-cat cat-nav-item">
+              <svg class="cat-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 12h4M8 10v4M14 13h.01M18 11v2"/><path d="M2 10a2 2 0 012-2h16a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/></svg>
+              <span>Videojuegos</span>
+            </button>
+            <div class="megamenu-panel" hidden>
+              <div class="container megamenu-inner megamenu-inner--simple">
+                <div class="megamenu-main">
+                  <p class="megamenu-title">Videojuegos</p>
+                  <div class="megamenu-links megamenu-links--flow">
+                    <a href="productos.html">Nintendo</a>
+                    <a href="productos.html">PlayStation</a>
+                    <a href="productos.html">Xbox</a>
+                    <a href="productos.html">Portátiles gaming</a>
+                  </div>
+                </div>
+                <a class="megamenu-promo" href="productos.html">
+                  <img src="https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=560&h=700&fit=crop&q=80" alt="" width="280" height="350" loading="lazy" />
+                  <span class="megamenu-promo-cap">Todo en un solo lugar</span>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li class="has-megamenu">
+            <button type="button" class="nav-link nav-cat cat-nav-item">
+              <svg class="cat-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3v5zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3v5z"/></svg>
+              <span>AirPods</span>
+            </button>
+            <div class="megamenu-panel" hidden>
+              <div class="container megamenu-inner megamenu-inner--simple">
+                <div class="megamenu-main">
+                  <p class="megamenu-title">AirPods</p>
+                  <div class="megamenu-links megamenu-links--flow">
+                    <a href="productos.html">Ver todos</a>
+                    <a href="productos.html">AirPods Refurbished</a>
+                    <a href="productos.html">AirPods Pro</a>
+                    <a href="productos.html">AirPods Max</a>
+                  </div>
+                </div>
+                <a class="megamenu-promo" href="productos.html">
+                  <img src="https://images.unsplash.com/photo-1606220945770-b2b6ce2aef0e?w=560&h=700&fit=crop&q=80" alt="" width="280" height="350" loading="lazy" />
+                  <span class="megamenu-promo-cap">AirPods</span>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li class="has-megamenu">
+            <button type="button" class="nav-link nav-cat cat-nav-item">
+              <svg class="cat-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>
+              <span>Accesorios</span>
+            </button>
+            <div class="megamenu-panel" hidden>
+              <div class="container megamenu-inner">
+                <div class="megamenu-main">
+                  <p class="megamenu-title">Accesorios y más</p>
+                  <div class="megamenu-links megamenu-links--cols megamenu-links--dense">
+                    <a href="productos.html">Audífonos</a>
+                    <a href="productos.html">Cargadores</a>
+                    <a href="productos.html">Micas</a>
+                    <a href="productos.html">Videojuegos</a>
+                    <a href="productos.html">Lentes</a>
+                    <a href="productos.html">Parlantes</a>
+                    <a href="productos.html">Teclados, mouse y lápices</a>
+                    <a href="productos.html">Drones</a>
+                    <a href="productos.html">GoPro</a>
+                    <a href="productos.html">Monitores</a>
+                    <a href="productos.html">Hogar inteligente</a>
+                    <a href="productos.html">Windows / PC</a>
+                  </div>
+                </div>
+                <a class="megamenu-promo" href="productos.html">
+                  <img src="https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=560&h=700&fit=crop&q=80" alt="" width="280" height="350" loading="lazy" />
+                  <span class="megamenu-promo-cap">Accesorios</span>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li><a class="nav-link cat-nav-item cat-nav-item--text" href="productos.html?cat=otros">Cámaras</a></li>
+          <li><a class="nav-link cat-nav-item cat-nav-item--text" href="productos.html">Outlet</a></li>
+
+          <li class="has-megamenu">
+            <button type="button" class="nav-link nav-cat cat-nav-item cat-nav-item--text">
+              <span>Servicio técnico</span>
+            </button>
+            <div class="megamenu-panel" hidden>
+              <div class="container megamenu-inner megamenu-inner--simple">
+                <div class="megamenu-main">
+                  <p class="megamenu-title">Servicio técnico</p>
+                  <div class="megamenu-links megamenu-links--flow">
+                    <a href="index.html#contacto">Apple Watch</a>
+                    <a href="index.html#contacto">iPad</a>
+                    <a href="index.html#contacto">iPhone</a>
+                    <a href="index.html#contacto">MacBook</a>
+                    <a href="index.html#contacto">Videojuegos</a>
+                  </div>
+                </div>
+                <a class="megamenu-promo" href="index.html#contacto">
+                  <img src="https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=560&h=700&fit=crop&q=80" alt="" width="280" height="350" loading="lazy" />
+                  <span class="megamenu-promo-cap">Reparaciones</span>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li><a class="nav-link nav-highlight cat-nav-item cat-nav-item--text" href="vende.html">Vende tu equipo</a></li>
+        </ul>
+        <div class="nav-actions nav-actions--drawer">
+          <a class="btn btn-primary" href="carrito.html">Carrito</a>
+          <a class="btn btn-outline" href="productos.html">Catálogo</a>
+          <a class="btn btn-outline" href="https://api.whatsapp.com/send/?phone=56943524545&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+  </div>
+
+  <main id="contenido" class="catalog-page">
+    <div class="container catalog-page-inner">
+      <div class="catalog-heading">
+        <h1 class="catalog-title">Catálogo</h1>
+        <p class="catalog-sub" id="catalogSubtitle">Todos los productos · tecnología premium seleccionada</p>
+      </div>
+
+      <button type="button" class="filters-toggle" id="filtersToggle" aria-expanded="false" aria-controls="filtersSidebar">
+        Filtros
+      </button>
+
+      <div class="catalog-layout">
+      <aside class="filters-sidebar" id="filtersSidebar" aria-label="Filtros de catálogo">
+        <div class="filters-head">
+          <h2 class="filters-title" id="filters-heading">Filtros</h2>
+          <button type="button" class="btn-text" id="filterReset">Limpiar</button>
+        </div>
+
+        <fieldset class="filter-group">
+          <legend>Categorías</legend>
+          <label class="filter-option"><input type="checkbox" name="cat" value="iphone" /> iPhone</label>
+          <label class="filter-option"><input type="checkbox" name="cat" value="mac" /> Mac</label>
+          <label class="filter-option"><input type="checkbox" name="cat" value="ipad" /> iPad</label>
+          <label class="filter-option"><input type="checkbox" name="cat" value="watch" /> Apple Watch</label>
+          <label class="filter-option"><input type="checkbox" name="cat" value="airpods" /> AirPods</label>
+          <label class="filter-option"><input type="checkbox" name="cat" value="otros" /> Otros</label>
+        </fieldset>
+
+        <fieldset class="filter-group">
+          <legend>Filtros · condición</legend>
+          <label class="filter-option"><input type="checkbox" name="cond" value="nuevo" /> Nuevo / sellado</label>
+          <label class="filter-option"><input type="checkbox" name="cond" value="seminuevo" /> Seminuevo</label>
+          <label class="filter-option"><input type="checkbox" name="cond" value="openbox" /> Open box</label>
+        </fieldset>
+
+        <fieldset class="filter-group">
+          <legend>Precio (CLP)</legend>
+          <div class="filter-prices">
+            <input type="number" id="priceMin" placeholder="Mín" min="0" step="1000" />
+            <input type="number" id="priceMax" placeholder="Máx" min="0" step="1000" />
+          </div>
+        </fieldset>
+      </aside>
+
+      <div class="catalog-main">
+        <div class="catalog-controls" role="region" aria-label="Búsqueda y orden">
+          <form class="catalog-search-form" id="catalogSearchForm" action="productos.html" method="get">
+            <label class="visually-hidden" for="catalogSearchInput">Buscar en catálogo</label>
+            <input type="search" class="catalog-search-input" id="catalogSearchInput" name="q" placeholder="Busca por nombre o marca…" autocomplete="off" />
+            <button type="submit" class="catalog-search-btn">Buscar</button>
+          </form>
+          <div class="catalog-sort-wrap">
+            <label class="sort-label">
+              Orden
+              <select class="sort-select" id="sortSelect" aria-label="Ordenar productos">
+                <option value="relevance">Relevancia</option>
+                <option value="price-asc">Precio menor a mayor</option>
+                <option value="price-desc">Precio mayor a menor</option>
+                <option value="name">Nombre A–Z</option>
+              </select>
+            </label>
+            <div class="catalog-estado-quick" id="catalogEstadoQuick" role="group" aria-label="Filtrar por condición">
+              <button type="button" class="catalog-estado-btn" data-estado="seminuevo" aria-pressed="false">
+                Seminuevos
+              </button>
+              <button type="button" class="catalog-estado-btn" data-estado="sellado" aria-pressed="false">
+                Sellados
+              </button>
+              <button type="button" class="catalog-estado-btn" data-estado="openbox" aria-pressed="false">
+                Open box
+              </button>
+            </div>
+          </div>
+          <p class="catalog-count" id="catalogCount" aria-live="polite"></p>
+        </div>
+        <div class="catalog-grid" id="catalogGrid"></div>
+      </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="footer-shipping-bar">
+    <div class="container">
+      <span>Despachamos a todo Chile · Envío a domicilio: $15.000</span>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-social" aria-label="Redes sociales">
+      <div class="footer-social-links">
+        <a class="footer-social-link" href="https://api.whatsapp.com/send/?phone=56943524545&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Black Pink Phone">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.881 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+        <a class="footer-social-link" href="https://www.instagram.com/blackpink.phone/" target="_blank" rel="noopener noreferrer" aria-label="Instagram Black Pink Phone">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2m0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5a4.25 4.25 0 0 0 4.25 4.25h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5M17 6.25a.75.75 0 1 1 0 1.5a.75.75 0 0 1 0-1.5M12 7a5 5 0 1 1 0 10a5 5 0 0 1 0-10m0 1.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="logo-mark">◆</span>
+        <span class="logo-text">Blackpink Store</span>
+        <p class="footer-tag">Blackpink Store — iPhone · Mac · iPad · Servicio técnico</p>
+        <div class="footer-pay">
+          <span class="footer-pay-label">Medios de pago</span>
+          <div class="footer-pay-badges" aria-label="Medios de pago: Webpay y Getnet">
+            <img class="pay-logo pay-logo--webpay" src="https://static.openfintech.io/payment_methods/webpayplus/logo.svg" alt="Webpay" loading="lazy" />
+            <img class="pay-logo pay-logo--getnet" src="https://companieslogo.com/img/orig/GET_BIG.D-03a63f36.png?t=1720244492" alt="Getnet" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <nav class="footer-nav" aria-label="Pie de página">
+        <div>
+          <h3>Tienda</h3>
+          <ul>
+            <li><a href="productos.html">Productos</a></li>
+            <li><a href="index.html#contacto">Envíos y devoluciones</a></li>
+            <li><a href="contacto.html">Garantías</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Contáctanos</h3>
+          <ul>
+            <li><a href="contacto.html">Contacto</a></li>
+            <li><a href="tel:+56943524545">+569 43524545</a></li>
+            <li><a href="mailto:blackpink.phones@gmail.com">blackpink.phones@gmail.com</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Ubicación</h3>
+          <ul>
+            <li>
+              <a
+                class="footer-location-link"
+                href="https://www.google.com/maps/search/?api=1&amp;query=Providencia%202286%2C%20oficina%20504%2C%20piso%205%2C%20Santiago%2C%20Chile"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Abrir dirección en Google Maps"
+                >Providencia 2286, oficina 504, piso 5<br />Santiago, Chile</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div class="footer-map-col" aria-label="Ubicación en mapa">
+        <h3>Mapa</h3>
+        <iframe
+          class="footer-map"
+          title="Ubicación oficina Blackpink Store"
+          src="https://maps.google.com/maps?q=Providencia%202286%2C%20oficina%20504%2C%20piso%205%2C%20Santiago&t=&z=16&ie=UTF8&iwloc=&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p class="footer-copy">© <span id="year"></span> Blackpink Store.</p>
+    </div>
+    <div class="container footer-admin-bar" aria-label="Panel administrativo">
+      <a class="btn btn-outline btn-sm footer-admin-btn" href="admin-login.html">Panel de administración</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="cart.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="productos-page.js" defer></script>
+</body>
+</html>
+
+
+
+
+
+
+

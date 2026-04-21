@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Panel de administración Blackpink Store: dashboard, inventario, documentos, leads, clientes y ventas." />
+  <title>Panel de Administración · Blackpink Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body class="admin-body">
+  <a class="skip-link" href="#adminContent">Saltar al contenido</a>
+
+  <main class="admin-app" id="adminApp">
+    <aside class="admin-sidebar" aria-label="Navegación del panel">
+      <div class="admin-brand">
+        <img class="admin-brand-image admin-brand-image--large" id="adminSidebarLogo" alt="Logo Blackpink Store" hidden />
+      </div>
+
+      <nav class="admin-nav">
+        <button class="admin-nav-link is-active" type="button" data-admin-section="dashboard"><span class="admin-nav-ico" aria-hidden="true">⌂</span><span>Panel de control</span></button>
+        <button class="admin-nav-link" type="button" data-admin-section="inventario"><span class="admin-nav-ico" aria-hidden="true">▦</span><span>Inventario</span></button>
+        <button class="admin-nav-link" type="button" data-admin-section="documentos"><span class="admin-nav-ico" aria-hidden="true">≣</span><span>Documentos</span></button>
+        <button class="admin-nav-link" type="button" data-admin-section="leads"><span class="admin-nav-ico" aria-hidden="true">◔</span><span>Leads</span></button>
+        <button class="admin-nav-link" type="button" data-admin-section="clientes"><span class="admin-nav-ico" aria-hidden="true">◉</span><span>Clientes</span></button>
+        <button class="admin-nav-link" type="button" data-admin-section="ventas"><span class="admin-nav-ico" aria-hidden="true">↗</span><span>Gestión de ventas</span></button>
+        <button class="admin-nav-link" type="button" data-admin-section="tradein"><span class="admin-nav-ico" aria-hidden="true">⇄</span><span>Vende tu equipo</span></button>
+        <button class="admin-nav-link" type="button" data-admin-section="imagenes"><span class="admin-nav-ico" aria-hidden="true">▣</span><span>Imagenes Web</span></button>
+        <button class="admin-nav-link" type="button" data-admin-section="asistente"><span class="admin-nav-ico" aria-hidden="true">✦</span><span>Asistente IA</span></button>
+        <button class="admin-nav-link" type="button" data-admin-section="configuracion"><span class="admin-nav-ico" aria-hidden="true">⚙</span><span>Configuración</span></button>
+      </nav>
+
+      <div class="admin-sidebar-foot">
+        <a class="btn btn-outline" href="index.html">Ver tienda pública</a>
+      </div>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <div class="admin-topbar-copy">
+          <h1 class="admin-page-title">Panel de Administración</h1>
+          <p class="admin-topbar-sub">Controla inventario, documentos, leads y precios de recepción desde un solo lugar.</p>
+        </div>
+        <div class="admin-top-actions">
+          <form class="admin-search" role="search" id="adminGlobalSearchForm">
+            <label class="visually-hidden" for="adminSearch">Buscar</label>
+            <input id="adminSearch" type="search" placeholder="Módulo, producto (inventario), pedido…" autocomplete="off" />
+          </form>
+          <button type="button" class="btn btn-outline btn-sm" id="adminExportBtn" title="Exportar CSV">Exportar</button>
+          <button type="button" class="btn btn-primary btn-sm" id="adminNewSaleBtn">+ Nueva venta</button>
+          <div class="admin-userbox">
+            <span class="admin-user-name" id="adminUserName">-</span>
+            <span class="admin-role-badge" id="adminUserRole">-</span>
+            <button type="button" class="btn btn-outline btn-sm" id="adminLogoutBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="admin-content" id="adminContent">
+        <div class="admin-role-banner" id="adminRoleBanner" hidden>
+          <strong>Modo vendedor</strong>
+          <p class="admin-role-banner-text">Puedes consultar inventario, pedidos, leads, clientes y documentos. No puedes crear ni editar productos, gestionar trade-in, subir imágenes web ni cambiar la configuración del panel.</p>
+        </div>
+        <section class="admin-section is-active" id="admin-dashboard">
+          <div id="adminStockAlertBanner" class="admin-stock-alert-banner" hidden></div>
+          <div class="admin-info-banner" id="adminSetupBanner">
+            <strong>Tu tienda va en un 28%</strong>
+            <span>Genera tu primera cotización o nota de venta para activar toda la operación comercial.</span>
+          </div>
+
+          <div class="admin-kpi-grid admin-kpi-grid--5cols">
+            <article class="admin-kpi-card">
+              <p class="admin-kpi-label">Ventas Totales</p>
+              <p class="admin-kpi-value" id="kpiSales">$0</p>
+            </article>
+            <article class="admin-kpi-card">
+              <p class="admin-kpi-label">Gastos Totales</p>
+              <p class="admin-kpi-value" id="kpiCosts">$0</p>
+            </article>
+            <article class="admin-kpi-card">
+              <p class="admin-kpi-label">Margen Bruto</p>
+              <p class="admin-kpi-value" id="kpiMargin">$0</p>
+            </article>
+            <article class="admin-kpi-card admin-kpi-card--accent">
+              <p class="admin-kpi-label">Valor de Inventario</p>
+              <p class="admin-kpi-value" id="kpiInventory">$0</p>
+            </article>
+            <article class="admin-kpi-card">
+              <p class="admin-kpi-label">Stock bajo (umbral)</p>
+              <p class="admin-kpi-value" id="kpiLowStock">0</p>
+            </article>
+          </div>
+
+          <div class="admin-grid-2">
+            <article class="admin-panel">
+              <div class="admin-panel-head">
+                <h2>Alertas</h2>
+                <button type="button" class="btn btn-linkish" id="adminAlertsGoInventory">Ir a inventario</button>
+              </div>
+              <ul class="admin-alert-list" id="adminSmartAlerts">
+                <li><span class="admin-muted">Cargando alertas…</span></li>
+              </ul>
+            </article>
+            <article class="admin-panel">
+              <div class="admin-panel-head">
+                <h2>Actividad reciente</h2>
+                <span class="admin-panel-hint">Pedidos y cambios en inventario</span>
+              </div>
+              <ul class="admin-activity-list" id="adminActivityFeed">
+                <li><span class="admin-muted">Cargando actividad…</span></li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="admin-section" id="admin-inventario">
+          <div class="admin-panel">
+            <div class="admin-panel-head">
+              <div>
+                <h2>Inventario</h2>
+                <p class="admin-panel-subtitle">Gestiona tu inventario de productos</p>
+              </div>
+              <div class="admin-toolbar">
+                <input type="search" id="inventorySearch" placeholder="Buscar por modelo, IMEI o categoría..." />
+                <select id="inventoryCategoryFilter">
+                  <option value="all">Categoría: Todas</option>
+                  <option value="iphone">iPhone</option>
+                  <option value="mac">Mac</option>
+                  <option value="ipad">iPad</option>
+                  <option value="watch">Apple Watch</option>
+                  <option value="airpods">AirPods</option>
+                  <option value="otros">Otros</option>
+                </select>
+                <select id="inventoryStatusFilter">
+                  <option value="all">Estado: Todos</option>
+                  <option value="draft">Listo para foto</option>
+                  <option value="published">Publicado</option>
+                </select>
+                <button type="button" class="btn btn-primary btn-sm" id="inventoryAddBtn" data-admin-edit>+ Agregar producto</button>
+              </div>
+            </div>
+            <div class="admin-inline-tabs">
+              <button class="admin-inline-tab is-active" type="button">Lista de productos</button>
+              <button class="admin-inline-tab" type="button">Flujo de trabajo</button>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table" id="inventoryTable">
+                <thead>
+                  <tr>
+                    <th>Producto</th>
+                    <th>IMEI</th>
+                    <th>Categoría</th>
+                    <th>Precio Publicado</th>
+                    <th>Estado</th>
+                    <th>Stock</th>
+                    <th>Última actualización</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="inventoryTableBody"></tbody>
+              </table>
+            </div>
+
+            <article class="admin-panel admin-panel--nested" style="margin-top: 1.5rem">
+              <div class="admin-panel-head">
+                <h3 style="margin: 0; font-size: 1rem">Historial de auditoría (precio / stock / publicación)</h3>
+                <p class="admin-panel-subtitle" style="margin: 0.25rem 0 0">Registrado en Supabase tras guardar cambios. Requiere migración <code>supabase-migration-panel-enhancements.sql</code>.</p>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table admin-table--compact">
+                  <thead>
+                    <tr>
+                      <th>Fecha</th>
+                      <th>Usuario</th>
+                      <th>Acción</th>
+                      <th>Resumen</th>
+                      <th>Detalle</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminInventoryAuditBody">
+                    <tr><td colspan="5"><span class="admin-muted">Cargando…</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <div class="inv-modal" id="inventoryModal" hidden>
+              <div class="inv-modal-backdrop" data-close-inv-modal></div>
+              <div class="inv-modal-card">
+                <div class="inv-modal-head">
+                  <h3 id="inventoryModalTitle">Agregar inventario</h3>
+                  <button type="button" class="btn btn-outline btn-sm" id="inventoryCancelBtn">Cerrar</button>
+                </div>
+                <form id="inventoryAddForm" class="inv-modal-grid">
+                  <div class="inv-form-col">
+                    <input type="hidden" id="invEditId" />
+                    <label>Producto<input type="text" id="invName" required data-admin-edit /></label>
+                    <label>IMEI (opcional, 15 dígitos)<input type="text" id="invImei" inputmode="numeric" placeholder="Dejar vacío si no aplica" data-admin-edit /></label>
+                    <label>Categoría
+                      <select id="invCategory" required data-admin-edit>
+                        <option value="">Categoría</option>
+                        <option value="iphone">iPhone</option>
+                        <option value="mac">Mac</option>
+                        <option value="ipad">iPad</option>
+                        <option value="watch">Apple Watch</option>
+                        <option value="airpods">AirPods</option>
+                        <option value="otros">Otros</option>
+                      </select>
+                    </label>
+                    <label>Condición
+                      <select id="invCondition" required data-admin-edit>
+                        <option value="seminuevo">Seminuevo</option>
+                        <option value="nuevo">Nuevo / sellado</option>
+                        <option value="openbox">Open box</option>
+                      </select>
+                    </label>
+                    <label>Stock total (suma automática)
+                      <input type="number" id="invStock" min="0" readonly tabindex="-1" aria-readonly="true" data-admin-edit />
+                    </label>
+                    <p class="admin-form-help">Indica el stock en cada fila de almacenamiento (GB) más abajo; este total se calcula solo y es el que ve la tienda como inventario general.</p>
+                    <label>Stock compartido con (UUID interno, opcional)
+                      <input type="text" id="invStockSource" placeholder="Vacío = stock propio; pegá el UUID del listado dueño" autocomplete="off" data-admin-edit />
+                    </label>
+                    <p class="admin-form-help">Para Open Box u otro listado con el mismo inventario que un producto ya cargado: pegá aquí el <strong>UUID</strong> del producto canónico (columna <code>id</code> en Supabase o el que figura al exportar CSV). Al guardar, la tienda replica su stock y los stocks por capacidad; solo cambian precios y textos de esta publicación. Requiere migración <code>supabase-migration-stock-source-product.sql</code>.</p>
+                    <label>Descripción corta<textarea id="invDescription" rows="2" data-admin-edit></textarea></label>
+                    <label>Descripción larga<textarea id="invLongDescription" rows="4" data-admin-edit></textarea></label>
+                    <label class="admin-inline-check"><input type="checkbox" id="invPublished" data-admin-edit /> Publicar en tienda</label>
+                  </div>
+
+                  <div class="inv-form-col">
+                    <div class="inv-variant-head">
+                      <strong>Precios por almacenamiento</strong>
+                      <button type="button" class="btn btn-outline btn-sm" id="invAddVariantBtn">+ Capacidad</button>
+                    </div>
+                    <div id="invVariantList"></div>
+                    <p class="admin-form-help">Capacidades: 64, 128, 256, 512 GB o 1 TB. Cada fila es un precio/stock distinto.</p>
+
+                    <div class="inv-variant-head">
+                      <strong>Fotos del producto (ordenables)</strong>
+                    </div>
+                    <div class="inv-gallery-color-wrap" id="invGalleryColorWrap">
+                      <div class="inv-gallery-color-main">
+                        <label id="invColorsFieldLabel">Colores del equipo (coma)
+                          <input type="text" id="invColors" placeholder="Negro, Celeste, Verde, Amarillo, Rosado" data-admin-edit />
+                        </label>
+                        <p id="invColorsHelpMac" class="admin-form-help">Define aquí los colores disponibles. En iPhone podés usar la paleta al lado y asignar cada foto a un color.</p>
+                        <p id="invColorsHelpIphone" class="admin-form-help" hidden>En iPhone: elegí los colores del modelo con la paleta. En cada foto, tocá el botón del color que muestra esa imagen.</p>
+                        <label>Subir fotos para
+                          <select id="invColorImageTarget" data-admin-edit>
+                            <option value="">Fotos generales (sin color)</option>
+                          </select>
+                        </label>
+                        <label>Subir archivos<input type="file" id="invImageFiles" accept="image/*" multiple data-admin-edit /></label>
+                        <div id="invColorImagesList"></div>
+                        <div id="invImagesList"></div>
+                      </div>
+                      <aside class="inv-iphone-color-aside" id="invIphoneColorAside" hidden aria-label="Paleta de colores iPhone">
+                        <strong class="inv-aside-title">Colores iPhone</strong>
+                        <p class="admin-form-help admin-form-help--tight">Marcá los que tiene este equipo. Luego indicá en cada foto qué color muestra.</p>
+                        <div id="invIphoneColorPalette" class="inv-iphone-palette"></div>
+                      </aside>
+                    </div>
+                  </div>
+
+                  <div class="inv-preview-col">
+                    <strong>Vista previa publicación</strong>
+                    <div id="invPreviewCard" class="inv-preview-card"></div>
+                  </div>
+
+                  <div class="inv-modal-actions">
+                    <button type="submit" class="btn btn-primary" data-admin-edit>Guardar producto</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="inv-preview-modal" id="inventoryPreviewModal" hidden>
+              <div class="inv-modal-backdrop" data-close-preview-modal></div>
+              <div class="inv-preview-card-shell">
+                <div class="inv-preview-head">
+                  <h3 id="inventoryPreviewTitle">Vista previa</h3>
+                  <button type="button" class="btn btn-outline btn-sm" id="inventoryPreviewCloseBtn">Cerrar</button>
+                </div>
+                <div class="inv-preview-tabs">
+                  <button type="button" class="inv-preview-tab is-active" data-preview-tab="resumen">Resumen</button>
+                  <button type="button" class="inv-preview-tab" data-preview-tab="timeline">Línea de tiempo</button>
+                </div>
+                <div id="inventoryPreviewPaneResumen" class="inv-preview-pane is-active"></div>
+                <div id="inventoryPreviewPaneTimeline" class="inv-preview-pane"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-section" id="admin-documentos">
+          <article class="admin-panel">
+            <div class="admin-panel-head">
+              <h2>Documentos</h2>
+              <button type="button" class="btn btn-primary btn-sm" id="docsCreateBtn" data-admin-edit>+ Crear Nuevo</button>
+            </div>
+            <div class="admin-inline-tabs">
+              <button class="admin-inline-tab is-active" type="button" data-doc-tab="vehiculos">Documentos de Productos</button>
+              <button class="admin-inline-tab" type="button" data-doc-tab="plantillas">Plantillas de Documentos</button>
+              <button class="admin-inline-tab" type="button" data-doc-tab="adicionales">Documentos Adicionales</button>
+            </div>
+
+            <div class="admin-doc-tab is-active" id="doc-vehiculos">
+              <ul class="admin-doc-list">
+                <li>
+                  <div>
+                    <strong>Consignación</strong>
+                    <p>iPhone 15 Pro Max · BPK-IP15PM-256</p>
+                  </div>
+                  <span>23 mar 2026</span>
+                </li>
+                <li>
+                  <div>
+                    <strong>Nota de venta</strong>
+                    <p>MacBook Air M3 · BPK-MBA-M3</p>
+                  </div>
+                  <span>23 mar 2026</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="admin-doc-tab" id="doc-plantillas">
+              <div class="admin-template-preview">
+                <p class="admin-template-title">NOTA DE VENTA · N°12345</p>
+                <p>Vista previa de plantilla corporativa para Blackpink Store.</p>
+              </div>
+              <div class="admin-upload-box">
+                <strong>Hojas Extras (PDF/Word)</strong>
+                <p>Sube documentos que se agregan como anexos al final de la nota de venta.</p>
+                <button type="button" class="btn btn-outline btn-sm">Subir archivos</button>
+              </div>
+            </div>
+
+            <div class="admin-doc-tab" id="doc-adicionales">
+              <div class="admin-empty">
+                <p>No hay documentos adicionales con los filtros aplicados.</p>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="admin-section" id="admin-leads">
+          <article class="admin-panel">
+            <div class="admin-panel-head">
+              <h2>Leads</h2>
+              <button type="button" class="btn btn-primary btn-sm" id="leadsAddBtn" data-admin-edit>+ Agregar lead</button>
+            </div>
+            <div class="admin-kanban">
+              <div class="admin-kanban-col">
+                <h3>Pendiente <span>2</span></h3>
+                <article class="admin-lead-card">
+                  <strong>Marcelo Rivera</strong>
+                  <p>Consulta por iPhone 15 Pro Max</p>
+                </article>
+                <article class="admin-lead-card">
+                  <strong>Andrea López</strong>
+                  <p>Quiere vender iPhone 13 para upgrade</p>
+                </article>
+              </div>
+              <div class="admin-kanban-col">
+                <h3>Asignado <span>1</span></h3>
+                <article class="admin-lead-card">
+                  <strong>Pedro Castillo</strong>
+                  <p>Asesor: Camila P.</p>
+                </article>
+              </div>
+              <div class="admin-kanban-col">
+                <h3>Completado <span>3</span></h3>
+              </div>
+              <div class="admin-kanban-col">
+                <h3>Cancelado <span>0</span></h3>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="admin-section" id="admin-clientes">
+          <article class="admin-panel">
+            <div class="admin-panel-head">
+              <h2>Clientes</h2>
+              <div class="admin-toolbar">
+                <input type="search" placeholder="Buscar cliente por nombre, email o RUT" />
+                <button type="button" class="btn btn-primary btn-sm" id="clientsCreateBtn" data-admin-edit>Crear Cliente</button>
+                <button type="button" class="btn btn-outline btn-sm" id="clientsBulkBtn" data-admin-edit>Carga Masiva</button>
+              </div>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>RUT</th>
+                    <th>Dirección</th>
+                    <th>Cumpleaños</th>
+                    <th>Fecha de registro</th>
+                    <th>Compras</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Marcelo Rivera</td>
+                    <td>-</td>
+                    <td>+56933999725</td>
+                    <td>21059893</td>
+                    <td>-</td>
+                    <td>23 mar</td>
+                    <td>23-03-2026</td>
+                    <td>1</td>
+                  </tr>
+                  <tr>
+                    <td>Cliente Ejemplo</td>
+                    <td>cliente@ejemplo.com</td>
+                    <td>+56912345678</td>
+                    <td>12.345.678-9</td>
+                    <td>Santiago</td>
+                    <td>14 oct</td>
+                    <td>25-03-2026</td>
+                    <td>4</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section class="admin-section" id="admin-ventas">
+          <div class="admin-kpi-grid admin-kpi-grid--ventas">
+            <article class="admin-kpi-card">
+              <p class="admin-kpi-label">Pendiente de pago</p>
+              <p class="admin-kpi-value" id="kpiOrdersPending">0</p>
+            </article>
+            <article class="admin-kpi-card">
+              <p class="admin-kpi-label">Pagados</p>
+              <p class="admin-kpi-value" id="kpiOrdersPaid">0</p>
+            </article>
+            <article class="admin-kpi-card">
+              <p class="admin-kpi-label">Enviados</p>
+              <p class="admin-kpi-value" id="kpiOrdersShipped">0</p>
+            </article>
+            <article class="admin-kpi-card">
+              <p class="admin-kpi-label">Fallidos / cancelados</p>
+              <p class="admin-kpi-value" id="kpiOrdersOther">0</p>
+            </article>
+          </div>
+          <article class="admin-panel">
+            <div class="admin-panel-head">
+              <div>
+                <h2>Pedidos</h2>
+                <p class="admin-panel-subtitle">Estados: pendiente → pagado → enviado (la pasarela marcará “pagado” cuando la integres).</p>
+              </div>
+            </div>
+            <div class="admin-toolbar admin-toolbar--wrap">
+              <input type="search" id="ordersSearch" placeholder="Buscar por email o ID de pedido…" />
+              <select id="ordersStatusFilter" aria-label="Filtrar por estado">
+                <option value="all">Todos los estados</option>
+                <option value="pending">Pendiente</option>
+                <option value="paid">Pagado</option>
+                <option value="shipped">Enviado</option>
+                <option value="failed">Fallido</option>
+                <option value="cancelled">Cancelado</option>
+              </select>
+              <label class="admin-toolbar-datelab">Desde <input type="date" id="ordersDateFrom" /></label>
+              <label class="admin-toolbar-datelab">Hasta <input type="date" id="ordersDateTo" /></label>
+              <button type="button" class="btn btn-outline btn-sm" id="ordersRefreshBtn">Actualizar</button>
+            </div>
+            <p class="admin-form-help" id="ordersLoadError" hidden></p>
+            <div class="admin-table-wrap">
+              <table class="admin-table" id="ordersTable">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                  <tr><td colspan="6" class="admin-empty-cell">Cargando pedidos…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section class="admin-section" id="admin-tradein">
+          <article class="admin-panel">
+            <div class="admin-panel-head">
+              <div>
+                <h2>Vende tu equipo · Precios de recepcion</h2>
+                <p class="admin-panel-subtitle">Configura reglas de tasacion, precios base y simulacion en tiempo real.</p>
+              </div>
+              <div class="admin-toolbar">
+                <input type="search" id="tradeInSearch" placeholder="Buscar modelo..." />
+                <select id="tradeInCategoryFilter">
+                  <option value="all">Todas las categorías</option>
+                </select>
+                <button type="button" class="btn btn-outline btn-sm" id="tradeInAddCategoryBtn" data-admin-edit>+ Categoria</button>
+                <button type="button" class="btn btn-outline btn-sm" id="tradeInAddModelBtn" data-admin-edit>+ Modelo</button>
+                <button type="button" class="btn btn-outline btn-sm" id="tradeInResetBtn" data-admin-edit>Restablecer</button>
+                <button type="button" class="btn btn-primary btn-sm" id="tradeInSaveBtn" data-admin-edit>Guardar cambios</button>
+              </div>
+            </div>
+
+            <div class="admin-tradein-head-cards">
+              <article class="admin-tradein-head-card">
+                <p>Estado modulo</p>
+                <strong>Activo</strong>
+              </article>
+              <article class="admin-tradein-head-card">
+                <p>Ultima configuracion</p>
+                <strong>Panel actual</strong>
+              </article>
+              <article class="admin-tradein-head-card">
+                <p>Modo calculo</p>
+                <strong>Automatico</strong>
+              </article>
+            </div>
+
+            <div class="admin-tradein-cats" id="tradeInCategoryTags"></div>
+
+            <div class="admin-tradein-metrics">
+              <label>
+                Incremento por nivel de capacidad (CLP)
+                <input type="number" id="tradeInIncrement" min="0" step="1000" value="12000" data-admin-edit />
+              </label>
+              <label>
+                Ajuste fijo de tasación (CLP)
+                <input type="number" id="tradeInDeduction" min="0" step="1000" value="8000" data-admin-edit />
+              </label>
+              <label>
+                Piso mínimo (% del base)
+                <input type="number" id="tradeInFloor" min="0.1" max="1" step="0.01" value="0.35" data-admin-edit />
+              </label>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Categoría</th>
+                    <th>Modelo</th>
+                    <th>ID</th>
+                    <th>Precio base recepción</th>
+                    <th>Capacidades</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tradeInPricingTableBody"></tbody>
+              </table>
+            </div>
+
+            <div class="admin-tradein-preview">
+              <h3>Vista previa de tasación</h3>
+              <div class="admin-toolbar">
+                <select id="tradeInPreviewModel"></select>
+                <select id="tradeInPreviewCapacity"></select>
+                <button type="button" class="btn btn-outline btn-sm" id="tradeInPreviewCalcBtn">Calcular</button>
+              </div>
+              <p class="admin-tradein-preview-result" id="tradeInPreviewResult">Selecciona un modelo para ver estimación.</p>
+            </div>
+
+            <div class="inv-modal" id="tradeInModelModal" hidden>
+              <div class="inv-modal-backdrop" data-close-tradein-model-modal></div>
+              <div class="inv-modal-card" style="max-width: 720px;">
+                <div class="inv-modal-head">
+                  <h3 id="tradeInModelModalTitle">Agregar modelo</h3>
+                  <button type="button" class="btn btn-outline btn-sm" id="tradeInModelCancelBtn">Cerrar</button>
+                </div>
+                <form id="tradeInModelForm" class="admin-form-grid">
+                  <input type="hidden" id="tradeInModelEditOriginalId" />
+                  <label>Categoría
+                    <select id="tradeInModelCategory" required data-admin-edit></select>
+                  </label>
+                  <label>Nombre modelo
+                    <input type="text" id="tradeInModelName" required data-admin-edit />
+                  </label>
+                  <label>ID modelo
+                    <input type="text" id="tradeInModelId" required data-admin-edit />
+                  </label>
+                  <label>Año
+                    <input type="number" id="tradeInModelYear" min="2007" step="1" data-admin-edit />
+                  </label>
+                  <label>Precio base
+                    <input type="number" id="tradeInModelBase" min="0" step="1000" required data-admin-edit />
+                  </label>
+                  <label>Capacidades (coma)
+                    <input type="text" id="tradeInModelCaps" placeholder="128,256,512" data-admin-edit />
+                  </label>
+                  <label>Imagen del modelo
+                    <input type="file" id="tradeInModelImgFile" accept="image/*" data-admin-edit />
+                  </label>
+                  <label class="admin-inline-check">
+                    <input type="checkbox" id="tradeInModelRemoveImg" data-admin-edit />
+                    Eliminar imagen actual
+                  </label>
+                  <div class="tradein-upload-preview-wrap">
+                    <p class="admin-form-help">Vista previa imagen modelo</p>
+                    <div id="tradeInModelImgPreview" class="tradein-upload-preview"></div>
+                  </div>
+                  <div class="admin-form-actions" style="grid-column: 1 / -1;">
+                    <button type="submit" class="btn btn-primary" data-admin-edit>Guardar modelo</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="inv-modal" id="tradeInCategoryModal" hidden>
+              <div class="inv-modal-backdrop" data-close-tradein-category-modal></div>
+              <div class="inv-modal-card" style="max-width: 620px;">
+                <div class="inv-modal-head">
+                  <h3>Nueva categoría</h3>
+                  <button type="button" class="btn btn-outline btn-sm" id="tradeInCategoryCancelBtn">Cerrar</button>
+                </div>
+                <form id="tradeInCategoryForm" class="admin-form-grid">
+                  <input type="hidden" id="tradeInCategoryEditOriginalId" />
+                  <label>ID categoría
+                    <input type="text" id="tradeInCategoryId" required data-admin-edit />
+                  </label>
+                  <label>Nombre categoría
+                    <input type="text" id="tradeInCategoryName" required data-admin-edit />
+                  </label>
+                  <label>Imagen categoría
+                    <input type="file" id="tradeInCategoryImgFile" accept="image/*" data-admin-edit />
+                  </label>
+                  <label class="admin-inline-check">
+                    <input type="checkbox" id="tradeInCategoryRemoveImg" data-admin-edit />
+                    Eliminar imagen actual
+                  </label>
+                  <div class="tradein-upload-preview-wrap">
+                    <p class="admin-form-help">Vista previa imagen categoría</p>
+                    <div id="tradeInCategoryImgPreview" class="tradein-upload-preview"></div>
+                  </div>
+                  <div class="admin-form-actions" style="grid-column: 1 / -1;">
+                    <button type="submit" class="btn btn-primary" data-admin-edit>Guardar categoría</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="inv-preview-modal" id="tradeInPreviewModal" hidden>
+              <div class="inv-modal-backdrop" data-close-tradein-preview-modal></div>
+              <div class="inv-preview-card-shell">
+                <div class="inv-preview-head">
+                  <h3>Vista previa Vende tu equipo</h3>
+                  <button type="button" class="btn btn-outline btn-sm" id="tradeInPreviewCloseBtn">Cerrar</button>
+                </div>
+                <div id="tradeInPreviewPane"></div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="admin-section" id="admin-imagenes">
+          <article class="admin-panel">
+            <div class="admin-panel-head">
+              <div>
+                <h2>Gestion de Imagenes Web</h2>
+                <p class="admin-panel-subtitle">Administra logos, banners e iconos del sitio.</p>
+              </div>
+              <div class="admin-toolbar">
+                <button type="button" class="btn btn-outline btn-sm" id="assetRefreshBtn">Actualizar</button>
+                <button type="button" class="btn btn-primary btn-sm" id="assetAddBtn" data-admin-edit>+ Subir imagenes</button>
+              </div>
+            </div>
+            <div class="asset-filter-tabs">
+              <button type="button" class="asset-filter-tab is-active" data-asset-filter="all">Galeria</button>
+              <button type="button" class="asset-filter-tab" data-asset-filter="logo">Logos</button>
+              <button type="button" class="asset-filter-tab" data-asset-filter="banner">Banners</button>
+              <button type="button" class="asset-filter-tab" data-asset-filter="icon">Iconos</button>
+            </div>
+
+            <div id="assetsGallery" class="asset-gallery-grid"></div>
+            <p id="assetsEmpty" class="admin-form-help" hidden>No hay imagenes para este filtro.</p>
+
+            <div class="asset-upload-modal" id="assetUploadModal" hidden>
+              <div class="inv-modal-backdrop" data-close-asset-modal></div>
+              <div class="asset-upload-card">
+                <div class="inv-modal-head">
+                  <h3>Subir imagenes</h3>
+                  <button type="button" class="btn btn-outline btn-sm" id="assetCancelBtn">Cerrar</button>
+                </div>
+                <form id="assetUploadForm" class="asset-upload-form">
+                  <div class="asset-upload-top">
+                    <label>Tipo
+                      <select id="assetType" required data-admin-edit>
+                        <option value="">Tipo</option>
+                        <option value="logo">Logo</option>
+                        <option value="banner">Banner</option>
+                        <option value="icon">Icono</option>
+                      </select>
+                    </label>
+                    <label>Titulo base
+                      <input type="text" id="assetTitle" placeholder="Ej: Banner Home" required data-admin-edit />
+                    </label>
+                    <label>Clave icono
+                      <input type="text" id="assetKey" placeholder="Solo para tipo icono" data-admin-edit />
+                    </label>
+                    <label class="admin-inline-check">
+                      <input type="checkbox" id="assetActive" checked data-admin-edit />
+                      Activo
+                    </label>
+                  </div>
+                  <label class="asset-dropzone">
+                    <input type="file" id="assetFiles" accept="image/*" multiple data-admin-edit />
+                    <strong>Seleccionar imagenes</strong>
+                    <span>Puedes subir una o varias y cambiar el orden antes de guardar.</span>
+                  </label>
+                  <div id="assetQueueList" class="asset-queue-list"></div>
+                  <p class="admin-form-help">
+                    Claves de icono soportadas: <strong>header_cart</strong>, <strong>header_whatsapp</strong>,
+                    <strong>footer_whatsapp</strong>, <strong>footer_instagram</strong>, <strong>cat_iphone</strong>,
+                    <strong>cat_mac</strong>, <strong>cat_ipad</strong>, <strong>cat_watch</strong>,
+                    <strong>cat_videojuegos</strong>, <strong>cat_airpods</strong>, <strong>cat_accesorios</strong>.
+                  </p>
+                  <div class="inv-modal-actions">
+                    <button type="submit" class="btn btn-primary" data-admin-edit>Guardar imagenes</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="asset-adjust-modal" id="assetAdjustModal" hidden>
+              <div class="inv-modal-backdrop" data-close-asset-adjust></div>
+              <div class="asset-adjust-card">
+                <div class="inv-modal-head">
+                  <h3>Vista previa y ajuste</h3>
+                  <button type="button" class="btn btn-outline btn-sm" id="assetAdjustCloseBtn">Cerrar</button>
+                </div>
+                <p id="assetAdjustTitle" class="admin-form-help">Ajusta el zoom para ver como se mostrara en la web.</p>
+                <div id="assetAdjustStage" class="asset-adjust-stage"></div>
+                <div class="asset-adjust-controls">
+                  <label>Zoom
+                    <input type="range" id="assetScaleRange" min="70" max="160" step="1" value="100" />
+                  </label>
+                  <span id="assetScaleValue">100%</span>
+                </div>
+                <div class="inv-modal-actions">
+                  <button type="button" class="btn btn-primary" id="assetAdjustSaveBtn" data-admin-edit>Guardar ajuste</button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="admin-section" id="admin-asistente">
+          <div class="admin-ai-shell">
+            <header class="admin-ai-hero">
+              <div class="admin-ai-brand-row">
+                <span class="admin-ai-name">BP Assist</span>
+                <span class="admin-ai-badge">Beta</span>
+              </div>
+              <p class="admin-ai-tagline">Asistente de inventario y ventas</p>
+              <div class="admin-ai-orb" aria-hidden="true"></div>
+              <h2 class="admin-ai-title">¿En qué puedo ayudarte?</h2>
+              <p class="admin-ai-sub">
+                Preguntá por stock, un IMEI concreto, pedidos o pedí un resumen. Las respuestas se arman con consultas de solo lectura a tu Supabase.
+              </p>
+            </header>
+
+            <div class="admin-ai-suggestions" id="adminAiSuggestions" role="group" aria-label="Preguntas sugeridas">
+              <button type="button" class="admin-ai-card" data-ai-q="Dame un resumen de inventario: cuántos productos y unidades en stock.">
+                <span class="admin-ai-card-icon" aria-hidden="true">📦</span>
+                <span class="admin-ai-card-title">Resumen de stock</span>
+                <span class="admin-ai-card-hint">Totales y valor aproximado</span>
+              </button>
+              <button type="button" class="admin-ai-card" data-ai-q="¿Cuáles fueron las ventas de este mes?">
+                <span class="admin-ai-card-icon" aria-hidden="true">📈</span>
+                <span class="admin-ai-card-title">Ventas del mes</span>
+                <span class="admin-ai-card-hint">Pedidos registrados en el mes</span>
+              </button>
+              <button type="button" class="admin-ai-card" data-ai-q="Muéstrame los últimos pedidos con estado y monto.">
+                <span class="admin-ai-card-icon" aria-hidden="true">🧾</span>
+                <span class="admin-ai-card-title">Últimos pedidos</span>
+                <span class="admin-ai-card-hint">Lista reciente</span>
+              </button>
+              <button type="button" class="admin-ai-card" data-ai-q="¿Qué productos tienen poco stock según mi umbral?">
+                <span class="admin-ai-card-icon" aria-hidden="true">⚠️</span>
+                <span class="admin-ai-card-title">Stock bajo</span>
+                <span class="admin-ai-card-hint">Según configuración</span>
+              </button>
+              <button type="button" class="admin-ai-card" data-ai-q="¿Cuánto stock hay del modelo X por capacidad en GB (variantes)?">
+                <span class="admin-ai-card-icon" aria-hidden="true">💾</span>
+                <span class="admin-ai-card-title">Stock por GB</span>
+                <span class="admin-ai-card-hint">Variantes en specs</span>
+              </button>
+              <button type="button" class="admin-ai-card" data-ai-q="Resume pedidos entre el primero y el último día de este mes calendario.">
+                <span class="admin-ai-card-icon" aria-hidden="true">📅</span>
+                <span class="admin-ai-card-title">Pedidos por fechas</span>
+                <span class="admin-ai-card-hint">Con herramienta del asistente</span>
+              </button>
+            </div>
+
+            <div class="admin-ai-chat" id="adminAiChat" aria-live="polite"></div>
+
+            <label class="admin-ai-toggle">
+              <input type="checkbox" id="adminAiUseOpenAI" checked />
+              <span>Usar IA avanzada (OpenAI en Edge Function)</span>
+            </label>
+            <p class="admin-ai-toggle-hint">Si está desactivado, solo se usan reglas locales. Si OpenAI no está configurado en el servidor, se responde con reglas automáticamente.</p>
+            <p class="admin-ai-usage-hint" id="adminAiUsageHint" hidden></p>
+
+            <form class="admin-ai-input-row" id="adminAiForm">
+              <span class="admin-ai-input-icon" aria-hidden="true">✦</span>
+              <label class="visually-hidden" for="adminAiInput">Pregunta al asistente</label>
+              <input
+                type="text"
+                id="adminAiInput"
+                placeholder="Ej: ¿Cuánto stock queda del iPhone 14? · ¿Se vendió el IMEI 353456789012345?"
+                autocomplete="off"
+              />
+              <button type="submit" class="btn btn-primary admin-ai-send">
+                <span>Enviar</span>
+              </button>
+            </form>
+
+            <p class="admin-ai-disclaimer">
+              Con IA avanzada, <strong>OpenAI</strong> elige qué consultas hacer (solo lectura) vía la Edge Function <code>assistant-query</code>. Sin API key en Supabase, el panel usa solo reglas.
+            </p>
+          </div>
+        </section>
+
+        <section class="admin-section" id="admin-configuracion">
+          <article class="admin-panel">
+            <div class="admin-panel-head">
+              <h2>Configuración General</h2>
+            </div>
+            <div class="admin-form-grid">
+              <label>Nombre comercial
+                <input type="text" value="Black Pinckl Store" data-admin-edit />
+              </label>
+              <label>Email ventas
+                <input type="email" value="ventas@blackpinckl.cl" data-admin-edit />
+              </label>
+              <label>Teléfono
+                <input type="tel" value="+56 9 0000 0000" data-admin-edit />
+              </label>
+              <label>Dirección
+                <input type="text" value="Providencia 2286, oficina 504, piso 5, Santiago" data-admin-edit />
+              </label>
+              <label>Umbral de stock bajo (unidades)
+                <input type="number" id="adminLowStockThreshold" min="0" max="9999" step="1" value="3" data-admin-edit />
+              </label>
+              <p class="admin-form-help admin-form-help--full">Se usa en el panel de control para marcar productos publicados con poco stock. Se guarda en este navegador.</p>
+              <label class="admin-inline-check admin-form-help--full">
+                <input type="checkbox" id="adminAlertEmailEnabled" data-admin-edit />
+                Enviar alertas por email (Resend + Edge Function <code>notify-admin-alert</code>)
+              </label>
+              <label class="admin-inline-check admin-form-help--full">
+                <input type="checkbox" id="adminAlertLowStock" data-admin-edit />
+                Alertar stock bajo / publicados en cero (máx. 1 email por día mientras persista)
+              </label>
+              <label class="admin-inline-check admin-form-help--full">
+                <input type="checkbox" id="adminAlertNewPaid" data-admin-edit />
+                Alertar nuevos pedidos pagados (desde la primera visita con esta opción activa no se notifican históricos viejos)
+              </label>
+              <p class="admin-form-help admin-form-help--full">WhatsApp no está integrado en el servidor: podés usar el enlace wa.me en el cuerpo del mail o un proveedor aparte. Configurá en Supabase los secrets <code>RESEND_API_KEY</code>, <code>NOTIFY_FROM_EMAIL</code>, <code>NOTIFY_TO_EMAIL</code>.</p>
+            </div>
+            <div class="admin-form-actions">
+              <button type="button" class="btn btn-outline">Cancelar</button>
+              <button type="button" class="btn btn-outline" id="adminNotifyTestBtn" data-admin-edit>Probar email de alerta</button>
+              <button type="button" class="btn btn-primary" id="adminSavePanelSettingsBtn" data-admin-edit>Guardar preferencias del panel</button>
+            </div>
+          </article>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div class="inv-modal" id="adminExportModal" hidden>
+    <div class="inv-modal-backdrop" data-close-modal="adminExportModal"></div>
+    <div class="inv-modal-card admin-modal-narrow">
+      <div class="inv-modal-head">
+        <h3>Exportar CSV</h3>
+        <button type="button" class="btn btn-outline btn-sm" data-close-modal="adminExportModal">Cerrar</button>
+      </div>
+      <p class="admin-form-help">Archivos compatibles con Excel (UTF-8). Los pedidos requieren la migración SQL de permisos en Supabase.</p>
+      <div class="admin-modal-actions-col">
+        <button type="button" class="btn btn-primary btn-sm" id="exportInventoryCsvBtn">Descargar inventario</button>
+        <button type="button" class="btn btn-outline btn-sm" id="exportOrdersCsvBtn">Descargar pedidos</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="inv-modal" id="adminHelpModal" hidden>
+    <div class="inv-modal-backdrop" data-close-modal="adminHelpModal"></div>
+    <div class="inv-modal-card admin-modal-narrow">
+      <div class="inv-modal-head">
+        <h3>Atajos de teclado</h3>
+        <button type="button" class="btn btn-outline btn-sm" data-close-modal="adminHelpModal">Cerrar</button>
+      </div>
+      <ul class="admin-shortcuts-list">
+        <li><kbd>?</kbd> Abrir esta ayuda</li>
+        <li><kbd>Esc</kbd> Cerrar modales abiertos</li>
+        <li><kbd>/</kbd> Enfocar búsqueda del panel (si no estás escribiendo en un campo)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="inv-modal" id="adminOrderDetailModal" hidden>
+    <div class="inv-modal-backdrop" data-close-modal="adminOrderDetailModal"></div>
+    <div class="inv-modal-card admin-modal-wide">
+      <div class="inv-modal-head">
+        <h3 id="adminOrderDetailTitle">Detalle del pedido</h3>
+        <button type="button" class="btn btn-outline btn-sm" data-close-modal="adminOrderDetailModal">Cerrar</button>
+      </div>
+      <div id="adminOrderDetailBody" class="admin-order-detail-body"></div>
+    </div>
+  </div>
+
+  <div class="admin-toast" id="adminToast" role="status" aria-live="polite"></div>
+  <!-- Opcional: si copiás config.example.js como config.js, descomentá la siguiente línea y colocarla ANTES de supabase-client.js -->
+  <!-- <script src="config.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="products-data.js"></script>
+  <script src="trade-in-data.js"></script>
+  <script src="admin.js" defer></script>
+</body>
+</html>

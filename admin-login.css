@@ -1,0 +1,223 @@
+:root {
+  --admin-login-bg: #0e0a12;
+  --admin-login-surface: #ffffff;
+  --admin-login-text: #181325;
+  --admin-login-muted: #6d6581;
+  --admin-login-pink: #e1306c;
+  --admin-login-pink-soft: #ffe4ef;
+}
+
+.admin-login-body {
+  margin: 0;
+  min-height: 100vh;
+  background: #f7f3fa;
+  color: var(--admin-login-text);
+}
+
+.admin-login-body.auth-checking .admin-login-layout {
+  opacity: 0;
+}
+
+.admin-login-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+}
+
+.admin-login-hero {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(circle at 82% 85%, rgba(225, 48, 108, 0.45), transparent 43%),
+    radial-gradient(circle at 12% 6%, rgba(255, 255, 255, 0.15), transparent 34%),
+    linear-gradient(160deg, #191120 0%, #100c18 54%, #2a1021 100%);
+}
+
+.admin-login-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.admin-login-hero-inner {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 92%);
+  margin: 0 auto;
+  min-height: 100%;
+  padding: 4rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.admin-login-brand {
+  margin: 0;
+  font-size: 0.92rem;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  color: #ffbfd2;
+}
+
+.admin-login-hero h1 {
+  margin: 1.1rem 0 0;
+  font-size: clamp(1.8rem, 3.3vw, 2.75rem);
+  line-height: 1.1;
+}
+
+.admin-login-lead {
+  margin: 0.95rem 0 0;
+  color: rgba(255, 255, 255, 0.86);
+  max-width: 40ch;
+}
+
+.admin-login-metrics {
+  margin-top: 1.7rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+}
+
+.admin-login-metrics article {
+  min-width: 110px;
+}
+
+.admin-login-metrics strong {
+  display: block;
+  font-size: 1.5rem;
+  color: #ffd0df;
+}
+
+.admin-login-metrics span {
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.admin-login-chips {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.admin-login-chips span {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  padding: 0.28rem 0.66rem;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-login-panel {
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: #f7f3fa;
+}
+
+.admin-login-card {
+  width: min(430px, 100%);
+  border: 1px solid #edddee;
+  border-radius: 18px;
+  background: var(--admin-login-surface);
+  box-shadow: 0 24px 54px rgba(41, 23, 45, 0.12);
+  padding: 1.5rem 1.35rem;
+}
+
+.admin-login-kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #9b8ca3;
+  font-weight: 700;
+}
+
+.admin-login-card h2 {
+  margin: 0.3rem 0 0;
+  font-size: 1.7rem;
+}
+
+.admin-login-sub {
+  margin: 0.5rem 0 1rem;
+  color: var(--admin-login-muted);
+  font-size: 0.92rem;
+}
+
+.admin-login-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-login-form label {
+  display: grid;
+  gap: 0.32rem;
+  font-size: 0.84rem;
+  color: #4f4664;
+  font-weight: 600;
+}
+
+.admin-login-form input {
+  border: 1px solid #e3d9ea;
+  border-radius: 10px;
+  min-height: 2.65rem;
+  padding: 0.5rem 0.74rem;
+  font: inherit;
+  background: #fcfbfe;
+}
+
+.admin-login-form input:focus {
+  outline: 2px solid rgba(225, 48, 108, 0.26);
+  outline-offset: 1px;
+  border-color: var(--admin-login-pink);
+}
+
+.admin-login-submit {
+  margin-top: 0.25rem;
+  min-height: 2.7rem;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.admin-login-hint {
+  margin: 0.92rem 0 0;
+  font-size: 0.78rem;
+  color: #6f6685;
+  background: var(--admin-login-pink-soft);
+  border: 1px solid #ffd2e3;
+  border-radius: 10px;
+  padding: 0.48rem 0.62rem;
+}
+
+.admin-login-error {
+  margin: 0.7rem 0 0;
+  min-height: 1.1rem;
+  font-size: 0.8rem;
+  color: #b42318;
+}
+
+.admin-login-links {
+  margin-top: 0.25rem;
+}
+
+.admin-login-links a {
+  font-size: 0.84rem;
+}
+
+@media (max-width: 960px) {
+  .admin-login-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-login-hero-inner {
+    min-height: 320px;
+    padding: 2.4rem 0 2rem;
+  }
+}

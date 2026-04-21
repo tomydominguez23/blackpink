@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pago de prueba · Webpay Plus</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 28rem;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        color: #111;
+      }
+      label {
+        display: block;
+        margin-top: 0.75rem;
+        font-weight: 600;
+      }
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 0.25rem;
+        padding: 0.5rem 0.6rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      }
+      button {
+        margin-top: 1.25rem;
+        width: 100%;
+        padding: 0.65rem 1rem;
+        border: 0;
+        border-radius: 10px;
+        background: #111;
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      .help {
+        font-size: 0.85rem;
+        color: #555;
+        margin-top: 0.35rem;
+      }
+      .err {
+        color: #a40000;
+        margin-top: 0.75rem;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Webpay Plus — prueba</h1>
+    <p class="help">
+      Usá credenciales de <strong>integración</strong> en el servidor (por defecto el SDK ya trae el comercio de prueba). Tarjeta VISA de prueba Transbank:
+      <code>4051885600446623</code>, CVV <code>123</code>, fecha futura. RUT formulario: <code>11.111.111-1</code>, clave
+      <code>123</code>.
+    </p>
+
+    <form id="f">
+      <label for="apiBase">URL base del API Node (sin barra final)</label>
+      <input id="apiBase" type="url" required placeholder="https://blackpinkphones.cl o http://localhost:3333" />
+      <p class="help">Ej.: proxy a <code>/api/webpay</code> → base <code>https://blackpinkphones.cl</code></p>
+
+      <label for="email">Email (cliente de prueba)</label>
+      <input id="email" type="email" required value="prueba@blackpinkphones.cl" />
+
+      <label for="pid">ID del producto (UUID en Supabase)</label>
+      <input id="pid" type="text" required placeholder="pegar uuid desde panel o CSV" />
+      <p class="help">Desde el admin o tabla <code>products.id</code>. Debe estar publicado y con stock.</p>
+
+      <label for="qty">Cantidad</label>
+      <input id="qty" type="number" min="1" max="5" value="1" />
+
+      <button type="submit" id="btn">Ir a pagar con Webpay</button>
+    </form>
+    <p id="msg" class="err" hidden></p>
+
+    <script>
+      (function () {
+        var apiInput = document.getElementById("apiBase");
+        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+          apiInput.value = "http://localhost:3333";
+        } else {
+          apiInput.value = "https://blackpinkphones.cl";
+        }
+
+        document.getElementById("f").addEventListener("submit", async function (e) {
+          e.preventDefault();
+          var btn = document.getElementById("btn");
+          var msg = document.getElementById("msg");
+          msg.hidden = true;
+          btn.disabled = true;
+          var base = apiInput.value.replace(/\/$/, "");
+          var body = {
+            customer_email: document.getElementById("email").value.trim(),
+            product_id: document.getElementById("pid").value.trim(),
+            quantity: parseInt(document.getElementById("qty").value, 10) || 1,
+          };
+          try {
+            var res = await fetch(base + "/api/webpay/create", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(body),
+            });
+            var data = await res.json().catch(function () {
+              return {};
+            });
+            if (!res.ok) {
+              throw new Error(data.error || "Error " + res.status);
+            }
+            if (!data.url || !data.token) {
+              throw new Error("Respuesta sin url/token");
+            }
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = data.url;
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "token_ws";
+            input.value = data.token;
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+          } catch (err) {
+            msg.textContent = String(err && err.message ? err.message : err);
+            msg.hidden = false;
+            btn.disabled = false;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

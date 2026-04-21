@@ -1,0 +1,10 @@
+# Configuración local / referencia para Supabase CLI
+# Ver: https://supabase.com/docs/guides/cli/config
+
+[functions.assistant-query]
+# false: evita 401 en POST cuando el gateway y el JWT del navegador no coinciden (p. ej. sesión recién refrescada).
+# La función igual exige sesión válida + rol admin/seller en verifyStaffUser().
+verify_jwt = false
+
+[functions.notify-admin-alert]
+verify_jwt = false

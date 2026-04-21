@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Inicia sesión en el panel de administración de Blackpink Store." />
+  <title>Iniciar sesión · Panel Blackpink Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="admin-login.css" />
+</head>
+<body class="admin-login-body">
+  <main class="admin-login-layout">
+    <section class="admin-login-hero" aria-label="Presentación Blackpink Store">
+      <div class="admin-login-hero-inner">
+        <p class="admin-login-brand">BLACKPINK STORE</p>
+        <h1>Bienvenido al panel de administración</h1>
+        <p class="admin-login-lead">Gestiona productos, inventario, leads y ventas desde una sola vista.</p>
+        <div class="admin-login-metrics">
+          <article><strong>2.5K+</strong><span>Clientes</span></article>
+          <article><strong>420+</strong><span>Equipos activos</span></article>
+          <article><strong>98%</strong><span>Satisfacción</span></article>
+        </div>
+        <div class="admin-login-chips">
+          <span>iPhone</span>
+          <span>Mac</span>
+          <span>iPad</span>
+          <span>Servicio técnico</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-login-panel" aria-labelledby="adminLoginTitle">
+      <div class="admin-login-card">
+        <p class="admin-login-kicker">Acceso seguro</p>
+        <h2 id="adminLoginTitle">Iniciar sesión</h2>
+        <p class="admin-login-sub">Ingresa con tu correo y contraseña de Supabase Auth para acceder al panel.</p>
+
+        <form id="adminLoginForm" class="admin-login-form">
+          <label>
+            Correo
+            <input id="adminUser" type="email" placeholder="admin@tudominio.com" autocomplete="username" required />
+          </label>
+          <label>
+            Contraseña
+            <input id="adminPass" type="password" placeholder="Tu contraseña" autocomplete="current-password" required />
+          </label>
+          <button type="submit" class="btn btn-primary admin-login-submit">Ingresar al panel</button>
+        </form>
+
+        <p class="admin-login-hint">El rol se valida desde la tabla <strong>profiles</strong> en Supabase.</p>
+        <p class="admin-login-error" id="adminLoginError" aria-live="polite"></p>
+
+        <div class="admin-login-links">
+          <a href="index.html">Volver a la tienda</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Opcional: <script src="config.js"></script> antes de supabase-client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="admin-login.js" defer></script>
+</body>
+</html>
