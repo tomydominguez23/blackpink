@@ -9,7 +9,7 @@ window.__SUPABASE_CONFIG__ = {
 };
 
 /*
-  Webpay Plus (Node): carpeta webpay-server/, copiar webpay-server/.env.example → .env
-  y ver comentarios al inicio de webpay-server/server.cjs. Página de prueba: checkout-webpay-prueba.html.
-  En producción el hosting debe proxear /api/webpay/* al proceso Node; checkout-carrito.html puede dejar la URL del API vacía (mismo sitio).
+  Webpay Plus (PHP): endpoints en /api/webpay/*.php.
+  Copiar api/webpay/config.example.php -> api/webpay/config.php y completar secrets.
+  Página de prueba: checkout-webpay-prueba.html.
 */
