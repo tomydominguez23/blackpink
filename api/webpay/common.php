@@ -17,11 +17,16 @@ if (is_file($localConfigPath)) {
             if (!is_string($key) || $key === '' || $value === null) {
                 continue;
             }
-            if (getenv($key) !== false) {
+            if (getenv($key) !== false || array_key_exists($key, $_ENV)) {
                 continue;
             }
-            putenv($key . '=' . (string) $value);
-            $_ENV[$key] = (string) $value;
+            $str = (string) $value;
+            // En algunos hostings compartidos putenv() está deshabilitada.
+            if (function_exists('putenv')) {
+                @putenv($key . '=' . $str);
+            }
+            $_ENV[$key] = $str;
+            $_SERVER[$key] = $str;
         }
     }
 }
@@ -29,10 +34,16 @@ if (is_file($localConfigPath)) {
 function bpw_env(string $key, ?string $default = null): ?string
 {
     $v = getenv($key);
-    if ($v === false || $v === '') {
-        return $default;
+    if ($v !== false && $v !== '') {
+        return (string) $v;
     }
-    return (string) $v;
+    if (array_key_exists($key, $_ENV) && (string) $_ENV[$key] !== '') {
+        return (string) $_ENV[$key];
+    }
+    if (array_key_exists($key, $_SERVER) && (string) $_SERVER[$key] !== '') {
+        return (string) $_SERVER[$key];
+    }
+    return $default;
 }
 
 function bpw_now_iso(): string
