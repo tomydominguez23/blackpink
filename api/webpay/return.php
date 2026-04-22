@@ -22,6 +22,16 @@ if ($order === null) {
     bpw_html_response(404, 'Pedido no encontrado', '<div class="card"><h1 class="err">Pedido no encontrado</h1><p>No existe una orden local para este token. Revisa si ya fue procesado o crea una nueva compra.</p><p><a href="/carrito.html">Volver al carrito</a></p></div>');
 }
 
+$currentStatus = strtolower((string) ($order['status'] ?? ''));
+if ($currentStatus === 'paid' || $currentStatus === 'shipped') {
+    $orderIdSafe = htmlspecialchars((string) ($order['id'] ?? ''), ENT_QUOTES, 'UTF-8');
+    bpw_html_response(
+        200,
+        'Pago ya confirmado',
+        '<div class="card"><h1 class="ok">Pago ya confirmado</h1><p>Este pedido ya fue procesado anteriormente.</p><ul class="meta"><li><strong>Pedido:</strong> ' . $orderIdSafe . '</li><li><strong>Estado:</strong> ' . htmlspecialchars($currentStatus, ENT_QUOTES, 'UTF-8') . '</li></ul><p><a href="/index.html">Volver al inicio</a></p></div>'
+    );
+}
+
 $commit = bpw_webpay_commit_transaction($token);
 if (!$commit['ok'] || !is_array($commit['data'])) {
     $msg = htmlspecialchars((string) $commit['error'], ENT_QUOTES, 'UTF-8');
@@ -61,6 +71,34 @@ if (!$approved) {
 
 $rpc = bpw_mark_order_paid_and_decrement_stock((string) $order['id']);
 if (!$rpc['ok']) {
+    // Idempotencia: si el pedido ya no está pending, pero quedó pagado por una confirmación previa,
+    // consideramos este retorno como exitoso para evitar falsos errores al refrescar la página.
+    if ($rpc['error'] === 'order_not_pending_or_missing') {
+        $maybeFinal = bpw_find_order_by_token($token);
+        $maybeStatus = strtolower((string) ($maybeFinal['status'] ?? ''));
+        if ($maybeStatus === 'paid' || $maybeStatus === 'shipped') {
+            $finalOrder = $maybeFinal ?: $order;
+            $notifications = ['email' => [], 'whatsapp' => ['sent' => false, 'error' => 'already_processed']];
+
+            $orderIdSafe = htmlspecialchars((string) ($finalOrder['id'] ?? $order['id']), ENT_QUOTES, 'UTF-8');
+            $buyOrderSafe = htmlspecialchars((string) ($data['buy_order'] ?? ''), ENT_QUOTES, 'UTF-8');
+            $authCodeSafe = htmlspecialchars((string) ($data['authorization_code'] ?? ''), ENT_QUOTES, 'UTF-8');
+            $amountFmt = number_format((int) ($data['amount'] ?? 0), 0, ',', '.');
+
+            $metaItems = '';
+            if ($authCodeSafe !== '') {
+                $metaItems .= '<li><strong>Código autorización:</strong> ' . $authCodeSafe . '</li>';
+            }
+            $metaItems .= '<li><strong>Nota:</strong> retorno ya procesado previamente.</li>';
+
+            bpw_html_response(
+                200,
+                'Pago aprobado',
+                '<div class="card"><h1 class="ok">Pago aprobado</h1><p>Tu pago ya había sido confirmado previamente.</p><ul class="meta"><li><strong>Pedido:</strong> ' . $orderIdSafe . '</li><li><strong>Orden comercio:</strong> ' . $buyOrderSafe . '</li><li><strong>Monto:</strong> $' . $amountFmt . ' CLP</li>' . $metaItems . '</ul><p><a href="/index.html">Volver al inicio</a></p></div>'
+            );
+        }
+    }
+
     bpw_patch_order((string) $order['id'], [
         'metadata' => array_merge($patchedMetadata, [
             'stock_confirm_error' => $rpc['error'],
