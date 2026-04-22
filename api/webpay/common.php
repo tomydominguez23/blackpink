@@ -373,9 +373,14 @@ function bpw_fetch_products_by_ids(array $productIds): array
     if ($productIds === []) {
         return [];
     }
+    // En PostgREST los UUID con guiones deben enviarse entre comillas en filtros "in".
+    $quotedIds = array_map(
+        static fn(string $id): string => '"' . str_replace('"', '', $id) . '"',
+        $productIds
+    );
     $res = bpw_supabase_request('GET', '/rest/v1/products', [
         'select' => 'id,title,price,stock,published,external_id',
-        'id' => 'in.(' . implode(',', $productIds) . ')',
+        'id' => 'in.(' . implode(',', $quotedIds) . ')',
     ]);
     if (!$res['ok'] || !is_array($res['json'])) {
         return [];
