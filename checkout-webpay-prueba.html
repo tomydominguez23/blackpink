@@ -61,9 +61,9 @@
     </p>
 
     <form id="f">
-      <label for="apiBase">URL base del API Node (sin barra final)</label>
+      <label for="apiBase">URL base del API PHP (sin barra final)</label>
       <input id="apiBase" type="url" required placeholder="https://blackpinkphones.cl o http://localhost:3333" />
-      <p class="help">Ej.: proxy a <code>/api/webpay</code> → base <code>https://blackpinkphones.cl</code></p>
+      <p class="help">Ej.: endpoints <code>/api/webpay/*.php</code> → base <code>https://blackpinkphones.cl</code></p>
 
       <label for="email">Email (cliente de prueba)</label>
       <input id="email" type="email" required value="prueba@blackpinkphones.cl" />
@@ -101,7 +101,7 @@
             quantity: parseInt(document.getElementById("qty").value, 10) || 1,
           };
           try {
-            var res = await fetch(base + "/api/webpay/create", {
+            var res = await fetch(base + "/api/webpay/create.php", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(body),

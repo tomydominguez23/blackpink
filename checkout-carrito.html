@@ -103,7 +103,7 @@
       />
       <p class="help">
         Si tu hosting ya enruta <code>/api/webpay/*</code> al servidor Node, dejá el campo vacío. Si el API está en otro host o puerto, pegá la base (sin barra final), p. ej.
-        <code>http://localhost:3333</code>. Tiene que responder <code>POST /api/webpay/create</code>.
+        <code>http://localhost:3333</code>. Tiene que responder <code>POST /api/webpay/create.php</code>.
       </p>
 
       <label for="email">Email</label>
@@ -174,14 +174,14 @@
 
         function apiCreateUrl(base) {
           var b = normalizeApiBase(base);
-          if (!b) return "/api/webpay/create";
-          return b + "/api/webpay/create";
+          if (!b) return "/api/webpay/create.php";
+          return b + "/api/webpay/create.php";
         }
 
         function apiHealthUrl(base) {
           var b = normalizeApiBase(base);
-          if (!b) return "/api/webpay/health";
-          return b + "/api/webpay/health";
+          if (!b) return "/api/webpay/health.php";
+          return b + "/api/webpay/health.php";
         }
 
         var apiInput = document.getElementById("apiBase");
@@ -238,7 +238,7 @@
                   errDetail =
                     "La URL " +
                     createUrl +
-                    " no devolvió JSON del servidor Node: suele ser que el hosting no enruta /api/webpay/* al proceso (webpay-server), o Node no está corriendo. Abrí en otra pestaña " +
+                    " no devolvió JSON del servidor de pago: revisá que exista /api/webpay/create.php y que PHP esté ejecutándose. Abrí en otra pestaña " +
                     apiHealthUrl(base) +
                     " — si no ves {\"ok\":true,...}, el API no está expuesto.";
                 } else if (rawBody && rawBody.length < 500) {
@@ -270,8 +270,8 @@
             if (rawMsg === "Failed to fetch" || rawMsg === "Load failed" || rawMsg === "NetworkError when attempting to fetch resource.") {
               rawMsg =
                 "No se pudo conectar con el servidor de pago (red o bloqueo del navegador). Revisá: " +
-                "1) Que exista un proxy en tu web hacia Node en <code>/api/webpay/</code> (nginx, Cloudflare, etc.), o que la URL base sea la correcta. " +
-                "2) CORS: en el <code>.env</code> del servidor Node, <code>CORS_ORIGIN</code> debe incluir este origen (<code>" +
+                "1) Que la URL base sea correcta y que exista el endpoint <code>/api/webpay/create.php</code>. " +
+                "2) CORS: en tu config del servidor PHP, <code>CORS_ORIGIN</code> debe incluir este origen (<code>" +
                 (location.origin || "") +
                 "</code>). " +
                 "3) Probá en otra pestaña: <a href=\"" +
