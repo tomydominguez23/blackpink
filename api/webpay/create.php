@@ -38,7 +38,33 @@ if ($items === []) {
 $productIds = array_values(array_unique(array_map(static fn(array $i): string => $i['product_id'], $items)));
 $products = bpw_fetch_products_by_ids($productIds);
 if ($products === []) {
-    bpw_json_response(422, ['ok' => false, 'error' => 'products_not_found']);
+    $probe = bpw_supabase_request('GET', '/rest/v1/products', [
+        'select' => 'id',
+        'limit' => '1',
+    ]);
+    if (!$probe['ok']) {
+        bpw_json_response(502, [
+            'ok' => false,
+            'error' => 'supabase_products_query_failed',
+            'detail' => [
+                'http_status' => $probe['status'],
+                'body' => $probe['text'],
+            ],
+        ]);
+    }
+    $probeRows = is_array($probe['json']) ? $probe['json'] : [];
+    if ($probeRows === []) {
+        bpw_json_response(422, [
+            'ok' => false,
+            'error' => 'catalog_empty_or_not_visible',
+            'requested_product_ids' => $productIds,
+        ]);
+    }
+    bpw_json_response(422, [
+        'ok' => false,
+        'error' => 'products_not_found',
+        'requested_product_ids' => $productIds,
+    ]);
 }
 $productMap = [];
 foreach ($products as $p) {
