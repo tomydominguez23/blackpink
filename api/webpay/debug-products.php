@@ -6,27 +6,51 @@ require __DIR__ . '/common.php';
 bpw_handle_options_preflight();
 bpw_allow_cors();
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-    bpw_json_response(405, ['ok' => false, 'error' => 'method_not_allowed']);
+$method = strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? ''));
+if ($method !== 'POST' && $method !== 'GET') {
+    bpw_json_response(405, [
+        'ok' => false,
+        'error' => 'method_not_allowed',
+        'allowed_methods' => ['GET', 'POST'],
+    ]);
 }
 
-$body = bpw_read_json_body();
-$rawItems = isset($body['items']) && is_array($body['items']) ? $body['items'] : [];
+if ($method === 'POST') {
+    $body = bpw_read_json_body();
+    $rawItems = isset($body['items']) && is_array($body['items']) ? $body['items'] : [];
 
-if ($rawItems === []) {
-    $singlePid = isset($body['product_id']) ? trim((string) $body['product_id']) : '';
-    $singleQty = isset($body['quantity']) ? (int) $body['quantity'] : 1;
+    if ($rawItems === []) {
+        $singlePid = isset($body['product_id']) ? trim((string) $body['product_id']) : '';
+        $singleQty = isset($body['quantity']) ? (int) $body['quantity'] : 1;
+        if ($singlePid !== '') {
+            $rawItems = [[
+                'product_id' => $singlePid,
+                'quantity' => $singleQty > 0 ? $singleQty : 1,
+            ]];
+        }
+    }
+} else {
+    $rawItems = [];
+    $singlePid = isset($_GET['product_id']) ? trim((string) $_GET['product_id']) : '';
+    $multi = isset($_GET['product_ids']) ? trim((string) $_GET['product_ids']) : '';
     if ($singlePid !== '') {
-        $rawItems = [[
-            'product_id' => $singlePid,
-            'quantity' => $singleQty > 0 ? $singleQty : 1,
-        ]];
+        $rawItems[] = ['product_id' => $singlePid, 'quantity' => 1];
+    }
+    if ($multi !== '') {
+        $ids = array_filter(array_map('trim', explode(',', $multi)));
+        foreach ($ids as $id) {
+            $rawItems[] = ['product_id' => $id, 'quantity' => 1];
+        }
     }
 }
 
 $items = bpw_normalize_items($rawItems);
 if ($items === []) {
-    bpw_json_response(422, ['ok' => false, 'error' => 'items_required']);
+    bpw_json_response(422, [
+        'ok' => false,
+        'error' => 'items_required',
+        'hint' => 'Usa POST con {"items":[{"product_id":"<uuid>","quantity":1}]} o GET con ?product_id=<uuid>',
+    ]);
 }
 
 $requestedIds = array_values(array_unique(array_map(static fn(array $i): string => $i['product_id'], $items)));

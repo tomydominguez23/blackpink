@@ -79,16 +79,17 @@ Debe devolver JSON con:
 
 Usa:
 
-- `GET /api/webpay/debug-products.php`
+- `GET /api/webpay/debug-products.php?product_id=<uuid>`
+- `GET /api/webpay/debug-products.php?product_ids=<uuid1>,<uuid2>`
 - `POST /api/webpay/debug-products.php`
 
-Body ejemplo:
+Body ejemplo (POST):
 
 ```json
 {
-  "product_ids": [
-    "11111111-1111-4111-8111-111111111111",
-    "22222222-2222-4222-8222-222222222222"
+  "items": [
+    { "product_id": "11111111-1111-4111-8111-111111111111", "quantity": 1 },
+    { "product_id": "22222222-2222-4222-8222-222222222222", "quantity": 1 }
   ]
 }
 ```
