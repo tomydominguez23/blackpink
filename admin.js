@@ -1112,6 +1112,7 @@
     }
 
     let products = [];
+    let supportsStockSourceProductColumn = true;
     let images = [];
     let colorImages = {};
     let variants = [];
@@ -1418,7 +1419,21 @@
       fillFormForEdit(dup);
     }
 
-    function toDbPayload(payload, keepExternalId) {
+    function isMissingStockSourceColumnError(err) {
+      const msg =
+        err && typeof err.message === "string"
+          ? err.message
+          : err && typeof err.details === "string"
+            ? err.details
+            : "";
+      return (
+        typeof msg === "string" &&
+        msg.includes("stock_source_product_id") &&
+        (msg.includes("schema cache") || msg.includes("Could not find the") || msg.includes("column"))
+      );
+    }
+
+    function toDbPayload(payload, keepExternalId, options) {
       function intOrNull(v) {
         const n = Math.round(Number(v));
         return Number.isFinite(n) ? n : null;
@@ -1435,7 +1450,7 @@
       } catch (_) {
         specsJson = {};
       }
-      return {
+      const dbPayload = {
         external_id: keepExternalId || payload.id,
         imei: imeiForDb,
         title: payload.title,
@@ -1455,7 +1470,36 @@
         capacities: Array.isArray(payload.capacities) ? payload.capacities : [],
         charger_price: payload.chargerPrice == null ? null : intOrNull(payload.chargerPrice),
         published: Boolean(payload.published),
-        stock_source_product_id: payload.stockSourceProductId || null,
+      };
+      const includeStockSource =
+        !options || options.includeStockSource === undefined ? true : Boolean(options.includeStockSource);
+      if (includeStockSource && supportsStockSourceProductColumn) {
+        dbPayload.stock_source_product_id = payload.stockSourceProductId || null;
+      }
+      return dbPayload;
+    }
+
+    async function saveProductToSupabase(payload, existingProduct) {
+      const isEdit = Boolean(existingProduct && existingProduct.dbId);
+      const stableExternalId = existingProduct ? existingProduct.id : payload.id;
+      async function runWrite(includeStockSource) {
+        const queryPayload = toDbPayload(payload, stableExternalId, { includeStockSource });
+        if (isEdit) {
+          return window.BP_SUPABASE.client.from("products").update(queryPayload).eq("id", existingProduct.dbId);
+        }
+        return window.BP_SUPABASE.client.from("products").insert(queryPayload).select("id").single();
+      }
+
+      let result = await runWrite(supportsStockSourceProductColumn);
+      let stockSourceColumnUnavailable = false;
+      if (result.error && supportsStockSourceProductColumn && isMissingStockSourceColumnError(result.error)) {
+        supportsStockSourceProductColumn = false;
+        stockSourceColumnUnavailable = true;
+        result = await runWrite(false);
+      }
+      return {
+        result,
+        stockSourceColumnUnavailable,
       };
     }
 
@@ -2280,15 +2324,17 @@
       };
 
       try {
+        let stockSourceColumnUnavailable = false;
         if (window.BP_SUPABASE) {
+          const prevP = existingProduct ? Number(existingProduct.price) : null;
+          const prevS = existingProduct ? Number(existingProduct.stock) : null;
+          const { result, stockSourceColumnUnavailable: missingStockColumn } = await saveProductToSupabase(
+            payload,
+            existingProduct
+          );
+          stockSourceColumnUnavailable = missingStockColumn;
+          if (result.error) throw result.error;
           if (existingProduct && existingProduct.dbId) {
-            const prevP = Number(existingProduct.price);
-            const prevS = Number(existingProduct.stock);
-            const { error } = await window.BP_SUPABASE.client
-              .from("products")
-              .update(toDbPayload(payload, existingProduct.id))
-              .eq("id", existingProduct.dbId);
-            if (error) throw error;
             await logProductAudit(existingProduct.dbId, "product_update", "Actualización desde panel", {
               price_before: prevP,
               price_after: Number(payload.price),
@@ -2296,12 +2342,7 @@
               stock_after: Number(payload.stock),
             });
           } else {
-            const { data: inserted, error } = await window.BP_SUPABASE.client
-              .from("products")
-              .insert(toDbPayload(payload, payload.id))
-              .select("id")
-              .single();
-            if (error) throw error;
+            const inserted = result.data;
             if (inserted && inserted.id) {
               await logProductAudit(inserted.id, "product_create", "Alta desde panel", {
                 price_after: Number(payload.price),
@@ -2323,7 +2364,13 @@
         }
         closeForm();
         refreshInventoryAuditPreview();
-        showToast(existingProduct ? "Producto actualizado correctamente." : "Producto agregado al inventario.");
+        if (stockSourceColumnUnavailable && payload.stockSourceProductId) {
+          showToast(
+            "Producto guardado, pero tu base actual no soporta stock compartido. Ejecuta la migración de stock compartido para habilitarlo."
+          );
+        } else {
+          showToast(existingProduct ? "Producto actualizado correctamente." : "Producto agregado al inventario.");
+        }
       } catch (err) {
         console.error(err);
         const msg =
