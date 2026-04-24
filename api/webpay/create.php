@@ -74,6 +74,22 @@ foreach ($products as $p) {
     $productMap[(string) $p['id']] = $p;
 }
 
+$missingIds = [];
+foreach ($productIds as $pid) {
+    if (!array_key_exists($pid, $productMap)) {
+        $missingIds[] = $pid;
+    }
+}
+if ($missingIds !== []) {
+    bpw_json_response(422, [
+        'ok' => false,
+        'error' => 'products_not_found',
+        'requested_product_ids' => $productIds,
+        'found_product_ids' => array_values(array_keys($productMap)),
+        'missing_product_ids' => $missingIds,
+    ]);
+}
+
 $subtotal = 0;
 $orderItems = [];
 foreach ($items as $line) {
