@@ -136,7 +136,7 @@ function bpw_is_uuid(string $value): bool
 
 /**
  * @param array<mixed> $items
- * @return array<int,array{product_id:string,quantity:int}>
+ * @return array<int,array{product_id:string,quantity:int,product_external_id:?string}>
  */
 function bpw_normalize_items(array $items): array
 {
@@ -147,13 +147,23 @@ function bpw_normalize_items(array $items): array
         }
         $pid = isset($row['product_id']) ? trim((string) $row['product_id']) : '';
         $qty = isset($row['quantity']) ? (int) $row['quantity'] : 0;
+        $external = isset($row['product_external_id']) ? trim((string) $row['product_external_id']) : '';
         if (!bpw_is_uuid($pid)) {
             continue;
         }
         if ($qty < 1 || $qty > 20) {
             continue;
         }
-        $out[] = ['product_id' => $pid, 'quantity' => $qty];
+        if ($external === '') {
+            $external = null;
+        } elseif (mb_strlen($external) > 120) {
+            $external = mb_substr($external, 0, 120);
+        }
+        $out[] = [
+            'product_id' => $pid,
+            'quantity' => $qty,
+            'product_external_id' => $external,
+        ];
     }
     return $out;
 }
@@ -364,28 +374,61 @@ function bpw_supabase_request(
     return bpw_http_json($method, $url, $headers, $payload);
 }
 
+function bpw_quote_in_value(string $value): string
+{
+    $clean = str_replace('\\', '\\\\', $value);
+    $clean = str_replace('"', '\"', $clean);
+    return '"' . $clean . '"';
+}
+
 /**
  * @param array<int,string> $productIds
+ * @param array<int,string> $externalIds
  * @return array<int,array<string,mixed>>
  */
-function bpw_fetch_products_by_ids(array $productIds): array
+function bpw_fetch_products_by_ids(array $productIds, array $externalIds = []): array
 {
-    if ($productIds === []) {
+    $rows = [];
+    if ($productIds !== []) {
+        $quotedIds = array_map(
+            static fn(string $id): string => bpw_quote_in_value($id),
+            $productIds
+        );
+        $res = bpw_supabase_request('GET', '/rest/v1/products', [
+            'select' => 'id,title,price,stock,published,external_id',
+            'id' => 'in.(' . implode(',', $quotedIds) . ')',
+        ]);
+        if ($res['ok'] && is_array($res['json'])) {
+            $rows = array_merge($rows, array_values(array_filter($res['json'], 'is_array')));
+        }
+    }
+
+    if ($externalIds !== []) {
+        $quotedExternalIds = array_map(
+            static fn(string $id): string => bpw_quote_in_value($id),
+            $externalIds
+        );
+        $resExternal = bpw_supabase_request('GET', '/rest/v1/products', [
+            'select' => 'id,title,price,stock,published,external_id',
+            'external_id' => 'in.(' . implode(',', $quotedExternalIds) . ')',
+        ]);
+        if ($resExternal['ok'] && is_array($resExternal['json'])) {
+            $rows = array_merge($rows, array_values(array_filter($resExternal['json'], 'is_array')));
+        }
+    }
+
+    if ($rows === []) {
         return [];
     }
-    // En PostgREST los UUID con guiones deben enviarse entre comillas en filtros "in".
-    $quotedIds = array_map(
-        static fn(string $id): string => '"' . str_replace('"', '', $id) . '"',
-        $productIds
-    );
-    $res = bpw_supabase_request('GET', '/rest/v1/products', [
-        'select' => 'id,title,price,stock,published,external_id',
-        'id' => 'in.(' . implode(',', $quotedIds) . ')',
-    ]);
-    if (!$res['ok'] || !is_array($res['json'])) {
-        return [];
+
+    $unique = [];
+    foreach ($rows as $row) {
+        if (!is_array($row) || !isset($row['id'])) {
+            continue;
+        }
+        $unique[(string) $row['id']] = $row;
     }
-    return array_values(array_filter($res['json'], 'is_array'));
+    return array_values($unique);
 }
 
 /**

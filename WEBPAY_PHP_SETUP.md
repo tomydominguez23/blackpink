@@ -6,6 +6,7 @@ Esta integración reemplaza el backend Node por endpoints PHP en:
 - `api/webpay/create.php`
 - `api/webpay/return.php`
 - `api/webpay/status.php`
+- `api/webpay/debug-products.php` (diagnóstico de IDs/carrito)
 
 ## 1) Requisitos mínimos
 
@@ -73,6 +74,31 @@ Debe devolver JSON con:
    - Ejecuta RPC `mark_order_paid_and_decrement_stock`
    - Deja pedido en `paid`
    - Envía notificaciones (email/whatsapp) si están configuradas
+
+## 4b) Diagnóstico rápido de productos (cuando aparece `products_not_found`)
+
+Usa:
+
+- `GET /api/webpay/debug-products.php`
+- `POST /api/webpay/debug-products.php`
+
+Body ejemplo:
+
+```json
+{
+  "product_ids": [
+    "11111111-1111-4111-8111-111111111111",
+    "22222222-2222-4222-8222-222222222222"
+  ]
+}
+```
+
+Respuesta:
+
+- `requested_product_ids`
+- `found_product_ids`
+- `missing_product_ids`
+- detalle por producto (`published`, `stock`, `title`, `price`)
 
 ## 5) Credenciales integración (test)
 
