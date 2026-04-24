@@ -130,7 +130,7 @@ if ($total <= 0) {
     bpw_json_response(422, ['ok' => false, 'error' => 'invalid_total']);
 }
 
-$order = bpw_insert_order([
+$orderPayload = [
     'status' => 'pending',
     'provider' => BPW_PROVIDER,
     'customer_email' => $email,
@@ -141,10 +141,22 @@ $order = bpw_insert_order([
         'shipping_amount' => $shipping,
         'subtotal_amount' => $subtotal,
     ],
+];
+$orderInsert = bpw_supabase_request('POST', '/rest/v1/orders', [], $orderPayload, [
+    'Prefer' => 'return=representation',
 ]);
-if (!is_array($order) || !isset($order['id'])) {
-    bpw_json_response(500, ['ok' => false, 'error' => 'cannot_create_order']);
+if (!$orderInsert['ok'] || !is_array($orderInsert['json']) || !isset($orderInsert['json'][0]) || !is_array($orderInsert['json'][0])) {
+    bpw_json_response(502, [
+        'ok' => false,
+        'error' => 'cannot_create_order',
+        'detail' => [
+            'http_status' => $orderInsert['status'],
+            'body' => $orderInsert['text'],
+            'hint' => 'Revisa SUPABASE_SERVICE_ROLE_KEY (debe ser service_role), existencia de tabla public.orders y SQL de migración ejecutado.',
+        ],
+    ]);
 }
+$order = $orderInsert['json'][0];
 
 $orderId = (string) $order['id'];
 $itemRows = [];
@@ -157,7 +169,8 @@ foreach ($orderItems as $oi) {
         'product_external_id' => $oi['product_external_id'],
     ];
 }
-if (!bpw_insert_order_items($itemRows)) {
+$itemsInsert = bpw_supabase_request('POST', '/rest/v1/order_items', [], $itemRows);
+if (!$itemsInsert['ok']) {
     bpw_patch_order($orderId, [
         'status' => 'failed',
         'metadata' => [
@@ -166,9 +179,19 @@ if (!bpw_insert_order_items($itemRows)) {
             'shipping_amount' => $shipping,
             'subtotal_amount' => $subtotal,
             'order_items_error' => 'cannot_create_order_items',
+            'order_items_http_status' => $itemsInsert['status'],
+            'order_items_error_body' => $itemsInsert['text'],
         ],
     ]);
-    bpw_json_response(500, ['ok' => false, 'error' => 'cannot_create_order_items']);
+    bpw_json_response(502, [
+        'ok' => false,
+        'error' => 'cannot_create_order_items',
+        'detail' => [
+            'http_status' => $itemsInsert['status'],
+            'body' => $itemsInsert['text'],
+            'hint' => 'Revisa tabla public.order_items y foreign keys (order_id/product_id).',
+        ],
+    ]);
 }
 
 $buyOrder = bpw_generate_buy_order($orderId);
