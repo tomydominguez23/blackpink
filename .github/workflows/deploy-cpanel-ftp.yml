@@ -1,0 +1,62 @@
+# Despliegue automático del sitio estático + PHP (Webpay) hacia cPanel por FTP/FTPS.
+# Configura los secretos en GitHub: ver DEPLOY_CPANEL.md
+
+name: Deploy a cPanel (FTP)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-cpanel-ftp-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Subir archivos por FTP
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Obtener código
+        uses: actions/checkout@v4
+
+      - name: Sincronizar con public_html (cPanel)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.CPANEL_FTP_SERVER }}
+          username: ${{ secrets.CPANEL_FTP_USERNAME }}
+          password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./
+          server-dir: ${{ secrets.CPANEL_FTP_SERVER_DIR != '' && secrets.CPANEL_FTP_SERVER_DIR || './public_html/' }}
+          log-level: minimal
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/.ftp-deploy-sync-state.json
+            **/api/webpay/config.php
+            **/config.js
+            **/*.sql
+            **/supabase-*
+            **/tests/**
+            **/*.test.mjs
+            **/smoke.test.mjs
+            **/package.json
+            **/package-lock.json
+            **/config.toml
+            **/index.ts
+            **/cli-latest
+            **/gotrue-version
+            **/pooler-url
+            **/postgres-version
+            **/project-ref
+            **/rest-version
+            **/storage-migration
+            **/storage-version
+            **/WEBPAY_PHP_SETUP.md
+            **/DEPLOY_CPANEL.md
