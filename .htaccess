@@ -1,0 +1,10 @@
+# cPanel / Apache: servir la tienda en la raíz y no listar carpetas
+DirectoryIndex index.html index.php
+Options -Indexes
+
+# Archivos de desarrollo que no deben verse en el navegador (por si quedaron en el servidor)
+<IfModule mod_authz_core.c>
+  <FilesMatch "^(package\.json|config\.toml|\.ftp-deploy-sync-state\.json)$">
+    Require all denied
+  </FilesMatch>
+</IfModule>
