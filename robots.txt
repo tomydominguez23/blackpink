@@ -1,0 +1,10 @@
+# Blackpink Store — https://blackpinkphones.cl
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /admin-login.html
+Disallow: /api/
+Disallow: /checkout-webpay-prueba.html
+Disallow: /checkout-carrito.html
+
+Sitemap: https://blackpinkphones.cl/sitemap.xml

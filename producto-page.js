@@ -105,6 +105,23 @@
     }
 
     document.title = `${p.title} · Blackpink Store`;
+    if (window.BP_SEO && typeof window.BP_SEO.applyPageMeta === "function") {
+      var desc =
+        (p.shortDescription && String(p.shortDescription).trim()) ||
+        `${p.title} — ${p.conditionLabel || "equipo Apple"} en Blackpink Store, Chile.`;
+      var img =
+        (Array.isArray(p.images) && p.images[0] && p.images[0].url) ||
+        p.imageUrl ||
+        p.image ||
+        "";
+      window.BP_SEO.applyPageMeta({
+        path: "/producto.html?id=" + encodeURIComponent(p.id),
+        title: document.title,
+        description: desc.slice(0, 160),
+        image: img,
+        ogType: "product",
+      });
+    }
     if (crumb) crumb.textContent = p.title;
 
     const crumbCat = document.getElementById("detailCrumbCat");

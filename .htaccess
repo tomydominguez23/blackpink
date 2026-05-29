@@ -2,6 +2,13 @@
 DirectoryIndex index.html index.php
 Options -Indexes
 
+# Una sola URL canónica (sin www) para buscadores
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP_HOST} ^www\.blackpinkphones\.cl$ [NC]
+  RewriteRule ^ https://blackpinkphones.cl%{REQUEST_URI} [R=301,L]
+</IfModule>
+
 # Evitar que el navegador/CDN sirva JS/CSS viejos tras un deploy
 <IfModule mod_headers.c>
   <FilesMatch "\.(html|js|css)$">
