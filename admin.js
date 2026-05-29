@@ -2164,6 +2164,7 @@
         }))
         .filter((v) => Number.isFinite(v.gb) && Number.isFinite(v.price) && Number.isFinite(v.stock));
       const totalVariantStock = cleanVariants.reduce((acc, v) => acc + v.stock, 0);
+      const willPublish = Boolean(fields.published.checked);
       if (!name || !category || !condition || !cleanVariants.length) {
         showToast("Completa los campos obligatorios del producto.", true);
         return;
@@ -2274,7 +2275,7 @@
         colors: colorNames.map((name) => ({ name, hex: colorHexFromName(name) })),
         capacities: cleanVariants.map((v) => formatCapacityLabelForStore(v.gb)),
         chargerPrice: null,
-        published: Boolean(fields.published.checked),
+        published: willPublish,
         updatedAt: nowTs,
         stockSourceProductId: resolvedStockSource,
       };

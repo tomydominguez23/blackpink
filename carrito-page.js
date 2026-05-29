@@ -177,19 +177,46 @@
     });
 
     var pay = document.getElementById("bpCartPay");
+    var payErr = document.getElementById("bpCartPayErr");
     if (pay) {
-      pay.addEventListener("click", function () {
+      pay.addEventListener("click", async function () {
         var email = (document.getElementById("bpCartEmail") && document.getElementById("bpCartEmail").value.trim()) || "";
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          window.alert("Ingresá un email válido para continuar con Webpay.");
+        if (payErr) {
+          payErr.hidden = true;
+          payErr.textContent = "";
+        }
+        if (!window.BlackpinkWebpayCheckout) {
+          window.alert("No se cargó el módulo de pago (webpay-checkout.js). Recargá la página.");
           return;
         }
+        pay.disabled = true;
+        var prevLabel = pay.textContent;
+        pay.textContent = "Conectando con Webpay…";
         try {
-          sessionStorage.setItem("bp_checkout_email", email);
-        } catch (_) {}
-        window.location.href = "checkout-carrito.html";
+          await window.BlackpinkWebpayCheckout.start({ email: email });
+        } catch (err) {
+          var rawMsg = String(err && err.message ? err.message : err);
+          rawMsg = window.BlackpinkWebpayCheckout.formatFetchError(
+            rawMsg,
+            window.BlackpinkWebpayCheckout.defaultApiBase()
+          );
+          if (payErr) {
+            payErr.textContent = rawMsg;
+            payErr.hidden = false;
+          } else {
+            window.alert(rawMsg);
+          }
+          pay.disabled = false;
+          pay.textContent = prevLabel;
+        }
       });
     }
+
+    try {
+      var savedEmail = sessionStorage.getItem("bp_checkout_email");
+      var emailInput = document.getElementById("bpCartEmail");
+      if (savedEmail && emailInput && !emailInput.value) emailInput.value = savedEmail;
+    } catch (_) {}
   }
 
   window.addEventListener("bp:cart-changed", function () {
