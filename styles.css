@@ -1018,6 +1018,11 @@ a:hover {
   background: #ede9fe;
   color: #5b21b6;
 }
+.product-chip--agotado {
+  background: #f3f4f6;
+  color: #6b7280;
+  margin-left: 0.35rem;
+}
 .product-fav {
   position: absolute;
   top: 0.6rem;
