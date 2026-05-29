@@ -3,29 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="refresh" content="0;url=carrito.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Redirigiendo al carrito · Blackpink Store</title>
-    <script>
-      window.location.replace("carrito.html");
-    </script>
+    <title>Redirigiendo al carrito…</title>
+    <script>location.replace("carrito.html");</script>
   </head>
   <body>
-    <p>Redirigiendo al carrito… <a href="carrito.html">Continuar</a></p>
-    <script src="cart.js"></script>
-    <script src="webpay-checkout.js"></script>
-    <script>
-      (function () {
-        if (!window.BlackpinkWebpayCheckout || !window.BlackpinkCart) return;
-        var st = window.BlackpinkCart.load();
-        var email = "";
-        try {
-          email = sessionStorage.getItem("bp_checkout_email") || "";
-        } catch (_) {}
-        if (!st.items.length || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
-        window.BlackpinkWebpayCheckout.start({ email: email }).catch(function () {
-          window.location.replace("carrito.html");
-        });
-      })();
-    </script>
+    <p>El pago se completa desde el <a href="carrito.html">carrito</a>.</p>
   </body>
 </html>

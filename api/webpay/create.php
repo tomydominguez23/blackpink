@@ -136,7 +136,7 @@ $orderPayload = [
     'customer_email' => $email,
     'total_amount' => $total,
     'metadata' => [
-        'source' => 'carrito',
+        'source' => 'checkout-carrito',
         'include_shipping' => $includeShipping,
         'shipping_amount' => $shipping,
         'subtotal_amount' => $subtotal,
@@ -174,7 +174,7 @@ if (!$itemsInsert['ok']) {
     bpw_patch_order($orderId, [
         'status' => 'failed',
         'metadata' => [
-            'source' => 'carrito',
+            'source' => 'checkout-carrito',
             'include_shipping' => $includeShipping,
             'shipping_amount' => $shipping,
             'subtotal_amount' => $subtotal,
@@ -207,14 +207,10 @@ $tx = bpw_webpay_create_transaction([
 if (!$tx['ok'] || !is_array($tx['data']) || !isset($tx['data']['token'], $tx['data']['url'])) {
     bpw_patch_order($orderId, [
         'status' => 'failed',
-        'metadata' => [
-            'source' => 'carrito',
-            'include_shipping' => $includeShipping,
-            'shipping_amount' => $shipping,
-            'subtotal_amount' => $subtotal,
+        'metadata' => array_merge($orderMetadata, [
             'webpay_create_error' => $tx['error'],
             'webpay_http_status' => $tx['status'],
-        ],
+        ]),
     ]);
     bpw_json_response(502, ['ok' => false, 'error' => 'webpay_create_failed', 'detail' => $tx['error']]);
 }
@@ -225,7 +221,7 @@ $url = (string) $tx['data']['url'];
 bpw_patch_order($orderId, [
     'provider_payment_id' => $token,
     'metadata' => [
-        'source' => 'carrito',
+        'source' => 'checkout-carrito',
         'include_shipping' => $includeShipping,
         'shipping_amount' => $shipping,
         'subtotal_amount' => $subtotal,

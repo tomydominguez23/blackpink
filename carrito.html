@@ -52,6 +52,16 @@
     .bp-cart-wa { display: block; text-align: center; margin-top: 0.85rem; font-size: 0.88rem; font-weight: 600; color: #db2777; }
     .bp-cart-empty { padding: 2rem 1.5rem; text-align: center; border: 1px dashed #cbd5e1; border-radius: 16px; background: #f8fafc; }
     .bp-cart-empty h2 { margin: 0 0 0.5rem; font-weight: 800; color: #0f172a; }
+    .bp-co { margin-top: 1.5rem; padding: 1.15rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; }
+    .bp-co-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; padding: 0.25rem; background: #f1f5f9; border-radius: 12px; margin-bottom: 1rem; }
+    .bp-co-tab { border: 0; background: transparent; padding: 0.55rem; border-radius: 10px; font-weight: 700; cursor: pointer; }
+    .bp-co-tab--active { background: #fff; }
+    .bp-co-field { margin-bottom: 0.75rem; }
+    .bp-co-field label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .bp-co-field input, .bp-co-field select { width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; }
+    .bp-co-row--2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .bp-co-field--hidden, .bp-co-row--hidden { display: none !important; }
+    .bp-cart-pay-err { color: #b91c1c; font-size: 0.85rem; margin-top: 0.5rem; }
   </style>
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -176,8 +186,7 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
-  <script src="cart.js?v=20260530" defer></script>
-  <script src="webpay-checkout.js?v=20260530" defer></script>
-  <script src="carrito-page.js?v=20260530" defer></script>
+  <script src="cart.js" defer></script>
+  <script src="carrito-page.js" defer></script>
 </body>
 </html>
