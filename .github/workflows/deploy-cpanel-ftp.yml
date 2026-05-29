@@ -44,6 +44,7 @@ jobs:
             **/*.sql
             supabase-migration-*.sql
             supabase-schema.sql
+            SUPABASE_EJECUTAR*.sql
             **/tests/**
             **/*.test.mjs
             **/smoke.test.mjs

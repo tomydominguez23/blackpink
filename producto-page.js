@@ -87,9 +87,15 @@
     const crumb = document.getElementById("detailCrumb");
     if (!media || !info) return;
 
-    const data = await getProducts();
+    let data = await getProducts();
+    let p = id ? data.find((x) => x.id === id) : null;
+    if (id && !p && window.BP_SUPABASE && window.BP_SUPABASE.fetchPublicProductById) {
+      try {
+        p = await window.BP_SUPABASE.fetchPublicProductById(id);
+        if (p) data = [...data, p];
+      } catch (_) {}
+    }
     window.__bpCatalogForCart = Array.isArray(data) ? data : [];
-    const p = id ? data.find((x) => x.id === id) : null;
 
     if (!p) {
       if (crumb) crumb.textContent = "No encontrado";

@@ -2,6 +2,13 @@
 DirectoryIndex index.html index.php
 Options -Indexes
 
+# Evitar que el navegador/CDN sirva JS/CSS viejos tras un deploy
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|js|css)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
 # Archivos de desarrollo que no deben verse en el navegador (por si quedaron en el servidor)
 <IfModule mod_authz_core.c>
   <FilesMatch "^(package\.json|config\.toml|\.ftp-deploy-sync-state\.json)$">
