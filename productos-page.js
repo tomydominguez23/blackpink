@@ -111,10 +111,16 @@
     const badge = disc
       ? `<span class="product-badge" aria-label="Descuento">-${disc}%</span>`
       : "";
+    const totalStock = Math.max(0, Number(p.stock) || 0);
+    const agotadoChip =
+      totalStock < 1
+        ? '<span class="product-chip product-chip--agotado">Agotado</span>'
+        : "";
     return `
-      <article class="product-card product-card--listing">
+      <article class="product-card product-card--listing${totalStock < 1 ? " product-card--agotado" : ""}">
         <div class="product-media-shell">
           <span class="product-chip ${conditionClass}">${conditionLabel}</span>
+          ${agotadoChip}
           <button type="button" class="product-fav" aria-label="Guardar ${escapeHtml(p.title)}" title="Guardar producto">♡</button>
           <a class="product-card-media" href="producto.html?id=${encodeURIComponent(p.id)}">
             <img src="${escapeHtml(p.image)}" alt="" loading="lazy" width="400" height="400" />

@@ -45,7 +45,6 @@
       .from("products")
       .select("*")
       .eq("published", true)
-      .gt("stock", 0)
       .order("updated_at", { ascending: false });
     if (error) throw error;
     return (data || []).map(mapProductRow);

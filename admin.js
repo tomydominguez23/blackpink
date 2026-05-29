@@ -2164,12 +2164,7 @@
         }))
         .filter((v) => Number.isFinite(v.gb) && Number.isFinite(v.price) && Number.isFinite(v.stock));
       const totalVariantStock = cleanVariants.reduce((acc, v) => acc + v.stock, 0);
-      const wantsPublished = Boolean(fields.published.checked);
-      const willPublish = totalVariantStock > 0 && wantsPublished;
-      if (totalVariantStock <= 0 && wantsPublished) {
-        fields.published.checked = false;
-        showToast("Sin stock: el producto se despublicó automáticamente del catálogo.", false);
-      }
+      const willPublish = Boolean(fields.published.checked);
       if (!name || !category || !condition || !cleanVariants.length) {
         showToast("Completa los campos obligatorios del producto.", true);
         return;

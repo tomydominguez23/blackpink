@@ -289,20 +289,6 @@
       return match ? Math.max(0, Number(match.stock) || 0) : 0;
     }
 
-    function capacityAvailabilityLabel(stk) {
-      if (stk < 1) return "";
-      if (stk === 1) return '<span class="pd-cap-stock">Solo 1 disponible</span>';
-      if (stk <= 3) return `<span class="pd-cap-stock">${stk} disponibles</span>`;
-      return "";
-    }
-
-    const allCapacities = Array.isArray(p.capacities) ? p.capacities : [];
-    const availableCapacities =
-      variants.length && allCapacities.length
-        ? allCapacities.filter((c) => variantStockForGb(normalizeGbValue(c)) > 0)
-        : allCapacities;
-    const displayCapacities = availableCapacities.length ? availableCapacities : allCapacities;
-
     const colorsHtml =
       displayColors.length
         ? `<div class="pd-selector-group">
@@ -322,15 +308,30 @@
           </div>`
         : "";
 
+    const allCapacities = Array.isArray(p.capacities) ? p.capacities : [];
+    let initialCapIndex = 0;
+    for (let ci = 0; ci < allCapacities.length; ci++) {
+      const gbCheck = normalizeGbValue(allCapacities[ci]);
+      if (variantStockForGb(gbCheck) > 0) {
+        initialCapIndex = ci;
+        break;
+      }
+    }
+
     const capsHtml =
-      p.capacities && p.capacities.length
+      allCapacities.length
         ? `<div class="pd-selector-group">
             <p class="pd-selector-label">SELECCIONA LA CAPACIDAD</p>
             <div class="pd-capacity-options">
-              ${p.capacities
+              ${allCapacities
                 .map((c, i) => {
                   const gb = normalizeGbValue(c);
-                  return `<button type="button" class="pd-cap-btn${i === 0 ? " active" : ""}" data-gb="${Number.isFinite(gb) ? gb : ""}" data-cap-label="${escapeHtml(c)}">
+                  const out = variantStockForGb(gb) < 1;
+                  return `<button type="button" class="pd-cap-btn${i === initialCapIndex ? " active" : ""}${
+                    out ? " pd-cap-btn--out" : ""
+                  }" data-gb="${Number.isFinite(gb) ? gb : ""}" data-cap-label="${escapeHtml(c)}"${
+                    out ? ' aria-disabled="true"' : ""
+                  }>
                     <span class="pd-cap-label">${escapeHtml(c)}</span>
                   </button>`;
                 })
@@ -350,24 +351,46 @@
           </div>`
         : "";
 
-    const capacityValues = Array.isArray(p.capacities) ? p.capacities : [];
-    const initialCapacity = capacityValues.length ? capacityValues[0] : "";
+    const capacityValues = allCapacities;
+    const initialCapacity = capacityValues.length ? capacityValues[initialCapIndex] : "";
     const initialGb = normalizeGbValue(initialCapacity);
     const initialVariant =
       Number.isFinite(initialGb) && variants.length
         ? variants.find((v) => v.gb === initialGb) || null
         : null;
     const initialColor = displayColors.length ? displayColors[0].name : "";
+    const initialSoldOut = variantStockForGb(initialGb) < 1;
 
-    function priceBlock(price, oldPrice) {
+    function priceBlock(price, oldPrice, soldOut) {
       const hasDiscount = oldPrice && oldPrice > price;
       const disc = hasDiscount ? Math.round((1 - price / oldPrice) * 100) : null;
       return `
       <div class="pd-price-block">
         ${disc ? `<span class="pd-discount-badge">-${disc}%</span>` : ""}
         <span class="pd-main-price">${formatClp(price)}</span>
+        ${soldOut ? '<span class="pd-agotado-badge">Agotado</span>' : ""}
         ${hasDiscount ? `<span class="pd-old-price">${formatClp(oldPrice)}</span>` : ""}
       </div>`;
+    }
+
+    function updatePurchaseUI() {
+      const capBtn = info.querySelector(".pd-cap-btn.active");
+      const selectedGb = capBtn ? Number(capBtn.dataset.gb) : NaN;
+      const selectedVariant =
+        Number.isFinite(selectedGb) && variants.length
+          ? variants.find((v) => v.gb === selectedGb) || null
+          : null;
+      const soldOut = variantStockForGb(selectedGb) < 1;
+      const price = selectedVariant ? selectedVariant.price : Number(p.price) || 0;
+      const oldP = selectedVariant ? selectedVariant.oldPrice : Number(p.oldPrice) || 0;
+
+      const priceBlockEl = info.querySelector(".pd-price-block");
+      if (priceBlockEl) priceBlockEl.outerHTML = priceBlock(price, oldP, soldOut);
+
+      const addBtn = info.querySelector(".pd-add-to-cart");
+      const agotadoBtn = info.querySelector(".pd-btn-agotado");
+      if (addBtn) addBtn.hidden = soldOut;
+      if (agotadoBtn) agotadoBtn.hidden = !soldOut;
     }
 
     info.innerHTML = `
@@ -376,8 +399,15 @@
       ${colorsHtml}
       ${capsHtml}
       ${chargerHtml}
-      ${priceBlock(initialVariant ? initialVariant.price : Number(p.price) || 0, initialVariant ? initialVariant.oldPrice : Number(p.oldPrice) || 0)}
-      <button type="button" class="pd-add-to-cart">Agregar al carro</button>
+      ${priceBlock(
+        initialVariant ? initialVariant.price : Number(p.price) || 0,
+        initialVariant ? initialVariant.oldPrice : Number(p.oldPrice) || 0,
+        initialSoldOut
+      )}
+      <div class="pd-purchase-actions">
+        <button type="button" class="pd-add-to-cart"${initialSoldOut ? " hidden" : ""}>Agregar al carro</button>
+        <button type="button" class="pd-btn-agotado" disabled${initialSoldOut ? "" : " hidden"}>Agotado</button>
+      </div>
       <div class="pd-shipping-info">
         <div class="pd-shipping-row">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16,8 20,8 23,11 23,16 16,16"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
@@ -425,8 +455,6 @@
         btn.classList.add("active");
         const selectedGb = Number(btn.dataset.gb);
         const capLabel = btn.getAttribute("data-cap-label") || "";
-        const selectedVariant =
-          Number.isFinite(selectedGb) && variants.length ? variants.find((v) => v.gb === selectedGb) || null : null;
 
         const titleVariant = info.querySelector(".pd-title-variant");
         if (titleVariant) {
@@ -435,14 +463,7 @@
           titleVariant.textContent = `${capLabel}${colorName ? ` · ${colorName}` : ""}`;
         }
 
-        const priceBlockEl = info.querySelector(".pd-price-block");
-        if (priceBlockEl) {
-          priceBlockEl.outerHTML = priceBlock(
-            selectedVariant ? selectedVariant.price : Number(p.price) || 0,
-            selectedVariant ? selectedVariant.oldPrice : Number(p.oldPrice) || 0
-          );
-        }
-
+        updatePurchaseUI();
       });
     });
 
@@ -475,12 +496,8 @@
         const price = selectedVariant ? selectedVariant.price : Number(p.price) || 0;
         const productStock = Math.max(0, Number(p.stock) || 0);
         const variantStock = selectedVariant ? Math.max(0, Number(selectedVariant.stock) || 0) : 0;
-        // Límite máximo en carrito: el mayor entre stock de variante y del producto (evita quedar capado en 1 si _variants trae stock bajo y el producto tiene más).
-        const maxQty = selectedVariant ? Math.max(productStock, variantStock) : productStock;
-        if (maxQty < 1) {
-          window.alert("Sin stock para esta variante.");
-          return;
-        }
+        const maxQty = selectedVariant ? variantStock : productStock;
+        if (maxQty < 1) return;
         const productUuid =
           p.dbId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(p.dbId))
             ? String(p.dbId)
