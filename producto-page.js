@@ -283,6 +283,26 @@
             .filter((v) => Number.isFinite(v.gb))
         : [];
 
+    function variantStockForGb(gb) {
+      if (!Number.isFinite(gb) || !variants.length) return Math.max(0, Number(p.stock) || 0);
+      const match = variants.find((v) => v.gb === gb);
+      return match ? Math.max(0, Number(match.stock) || 0) : 0;
+    }
+
+    function capacityAvailabilityLabel(stk) {
+      if (stk < 1) return "";
+      if (stk === 1) return '<span class="pd-cap-stock">Solo 1 disponible</span>';
+      if (stk <= 3) return `<span class="pd-cap-stock">${stk} disponibles</span>`;
+      return "";
+    }
+
+    const allCapacities = Array.isArray(p.capacities) ? p.capacities : [];
+    const availableCapacities =
+      variants.length && allCapacities.length
+        ? allCapacities.filter((c) => variantStockForGb(normalizeGbValue(c)) > 0)
+        : allCapacities;
+    const displayCapacities = availableCapacities.length ? availableCapacities : allCapacities;
+
     const colorsHtml =
       displayColors.length
         ? `<div class="pd-selector-group">

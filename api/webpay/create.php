@@ -136,7 +136,7 @@ $orderPayload = [
     'customer_email' => $email,
     'total_amount' => $total,
     'metadata' => [
-        'source' => 'checkout-carrito',
+        'source' => 'carrito',
         'include_shipping' => $includeShipping,
         'shipping_amount' => $shipping,
         'subtotal_amount' => $subtotal,
@@ -174,7 +174,7 @@ if (!$itemsInsert['ok']) {
     bpw_patch_order($orderId, [
         'status' => 'failed',
         'metadata' => [
-            'source' => 'checkout-carrito',
+            'source' => 'carrito',
             'include_shipping' => $includeShipping,
             'shipping_amount' => $shipping,
             'subtotal_amount' => $subtotal,
@@ -208,7 +208,7 @@ if (!$tx['ok'] || !is_array($tx['data']) || !isset($tx['data']['token'], $tx['da
     bpw_patch_order($orderId, [
         'status' => 'failed',
         'metadata' => [
-            'source' => 'checkout-carrito',
+            'source' => 'carrito',
             'include_shipping' => $includeShipping,
             'shipping_amount' => $shipping,
             'subtotal_amount' => $subtotal,
@@ -225,7 +225,7 @@ $url = (string) $tx['data']['url'];
 bpw_patch_order($orderId, [
     'provider_payment_id' => $token,
     'metadata' => [
-        'source' => 'checkout-carrito',
+        'source' => 'carrito',
         'include_shipping' => $includeShipping,
         'shipping_amount' => $shipping,
         'subtotal_amount' => $subtotal,

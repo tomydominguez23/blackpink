@@ -8,7 +8,7 @@ if ($tbkToken !== '') {
     bpw_html_response(
         400,
         'Pago cancelado',
-        '<div class="card"><h1 class="err">Pago cancelado o abortado</h1><p>Webpay devolvió un flujo de anulación (<code>TBK_TOKEN</code>).</p><p><a href="/checkout-carrito.html">Intentar nuevamente</a></p></div>'
+        '<div class="card"><h1 class="err">Pago cancelado o abortado</h1><p>Webpay devolvió un flujo de anulación (<code>TBK_TOKEN</code>).</p><p><a href="/carrito.html">Intentar nuevamente</a></p></div>'
     );
 }
 
@@ -43,7 +43,7 @@ if (!$commit['ok'] || !is_array($commit['data'])) {
             'webpay_commit_failed_at' => bpw_now_iso(),
         ]),
     ]);
-    bpw_html_response(502, 'Error al confirmar', '<div class="card"><h1 class="err">No se pudo confirmar el pago</h1><p>Detalle: <code>' . $msg . '</code></p><p><a href="/checkout-carrito.html">Reintentar</a></p></div>');
+    bpw_html_response(502, 'Error al confirmar', '<div class="card"><h1 class="err">No se pudo confirmar el pago</h1><p>Detalle: <code>' . $msg . '</code></p><p><a href="/carrito.html">Reintentar</a></p></div>');
 }
 
 $data = $commit['data'];
@@ -65,7 +65,7 @@ if (!$approved) {
     bpw_html_response(
         402,
         'Pago rechazado',
-        '<div class="card"><h1 class="err">Pago no aprobado</h1><p>Estado: <code>' . $statusSafe . '</code> · response_code: <code>' . $responseCode . '</code>.</p><p><a href="/checkout-carrito.html">Volver a intentar</a></p></div>'
+        '<div class="card"><h1 class="err">Pago no aprobado</h1><p>Estado: <code>' . $statusSafe . '</code> · response_code: <code>' . $responseCode . '</code>.</p><p><a href="/carrito.html">Volver a intentar</a></p></div>'
     );
 }
 
