@@ -50,6 +50,19 @@
     return (data || []).map(mapProductRow);
   }
 
+
+  async function fetchPublicProductById(publicId) {
+    const pid = String(publicId || "").trim();
+    if (!pid) return null;
+    const uuidRe =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    let query = client.from("products").select("*").eq("published", true);
+    query = uuidRe.test(pid) ? query.eq("id", pid) : query.eq("external_id", pid);
+    const { data, error } = await query.maybeSingle();
+    if (error) throw error;
+    return data ? mapProductRow(data) : null;
+  }
+
   async function signInAdmin(email, password) {
     return client.auth.signInWithPassword({ email, password });
   }
@@ -256,6 +269,7 @@
     SUPABASE_ANON_KEY,
     mapProductRow,
     fetchPublicProducts,
+    fetchPublicProductById,
     signInAdmin,
     signOutAdmin,
     getCurrentSession,
