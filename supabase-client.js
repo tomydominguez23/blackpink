@@ -40,6 +40,7 @@
     };
   }
 
+  /* Catálogo publicado (stock 0 visible; Agotado por variante en ficha). */
   async function fetchPublicProducts() {
     const { data, error } = await client
       .from("products")
