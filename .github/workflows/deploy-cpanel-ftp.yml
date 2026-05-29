@@ -42,7 +42,8 @@ jobs:
             **/api/webpay/config.php
             **/config.js
             **/*.sql
-            **/supabase-*
+            supabase-migration-*.sql
+            supabase-schema.sql
             **/tests/**
             **/*.test.mjs
             **/smoke.test.mjs
