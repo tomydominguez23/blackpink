@@ -1018,11 +1018,6 @@ a:hover {
   background: #ede9fe;
   color: #5b21b6;
 }
-.product-chip--agotado {
-  background: #f3f4f6;
-  color: #6b7280;
-  margin-left: 0.35rem;
-}
 .product-fav {
   position: absolute;
   top: 0.6rem;
@@ -1637,73 +1632,6 @@ a:hover {
 }
 .pd-cap-btn:hover:not(.active) {
   border-color: #aaa;
-}
-.pd-cap-btn--out {
-  position: relative;
-  color: #9ca3af;
-  border-color: #e5e7eb;
-  background: #f9fafb;
-  overflow: hidden;
-}
-.pd-cap-btn--out .pd-cap-label {
-  text-decoration: line-through;
-  text-decoration-thickness: 1.5px;
-}
-.pd-cap-btn--out::after {
-  content: "";
-  position: absolute;
-  left: -8%;
-  top: 50%;
-  width: 116%;
-  height: 1.5px;
-  background: #cbd5e1;
-  transform: rotate(-14deg);
-  pointer-events: none;
-}
-.pd-cap-btn--out.active {
-  border-color: #d1d5db;
-  background: #f3f4f6;
-  color: #6b7280;
-}
-
-.pd-price-block {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-  margin-bottom: 1rem;
-}
-.pd-agotado-badge {
-  display: inline-block;
-  padding: 0.2rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #6b7280;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-}
-.pd-purchase-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  margin-bottom: 1.25rem;
-}
-.pd-purchase-actions .pd-add-to-cart {
-  margin-bottom: 0;
-}
-.pd-btn-agotado {
-  display: block;
-  width: 100%;
-  text-align: center;
-  padding: 0.9rem 1.5rem;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #6b7280;
-  background: #fff;
-  border: 1.5px solid #d1d5db;
-  border-radius: 8px;
-  cursor: not-allowed;
 }
 
 /* Charger addon */
@@ -4675,7 +4603,160 @@ body.bp-modal-open {
   text-decoration: underline;
 }
 
+.bp-cart-pay-note {
+  margin: 0.65rem 0 0;
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.bp-cart-pay-err {
+  margin: 0.65rem 0 0;
+  font-size: 0.85rem;
+  color: #b91c1c;
+  line-height: 1.45;
+}
+
+.bp-co {
+  margin-top: 1.75rem;
+  padding: 1.25rem 1.15rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.bp-co-title {
+  margin: 0 0 0.85rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.bp-co-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+  padding: 0.25rem;
+  background: #f1f5f9;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.bp-co-tab {
+  border: 0;
+  background: transparent;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #64748b;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.bp-co-tab--active {
+  background: #fff;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.bp-co-hint,
+.bp-co-pickup-note {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.bp-co-pickup {
+  padding: 0.85rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.bp-co-pickup strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #0f172a;
+}
+
+.bp-co-pickup p {
+  margin: 0;
+}
+
+.bp-co-section-label {
+  margin: 0 0 0.75rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 800;
+  color: #64748b;
+}
+
+.bp-co-row {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.bp-co-row--2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.bp-co-field {
+  margin-bottom: 0.75rem;
+}
+
+.bp-co-field label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.bp-co-opt {
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.bp-co-field input,
+.bp-co-field select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.bp-co-field--hidden,
+.bp-co-row--hidden {
+  display: none !important;
+}
+
+.bp-co-save {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.88rem;
+  color: #475569;
+  cursor: pointer;
+}
+
+.bp-co-save input {
+  margin-top: 0.15rem;
+}
+
 @media (max-width: 640px) {
+  .bp-co-row--2 {
+    grid-template-columns: 1fr;
+  }
+
   .bp-cart-modal-card {
     padding: 1.25rem 1.15rem 1.15rem;
     border-radius: 18px;
