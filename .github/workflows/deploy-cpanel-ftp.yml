@@ -23,6 +23,30 @@ jobs:
       - name: Obtener código
         uses: actions/checkout@v4
 
+      - name: Generar api/webpay/config.php (secretos Supabase/Webpay)
+        run: php scripts/generate-webpay-config.php
+        env:
+          SITE_URL: https://bpphones.cl
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          WEBPAY_MODE: ${{ secrets.WEBPAY_MODE }}
+          WEBPAY_COMMERCE_CODE: ${{ secrets.WEBPAY_COMMERCE_CODE }}
+          WEBPAY_API_KEY_SECRET: ${{ secrets.WEBPAY_API_KEY_SECRET }}
+          SHIPPING_CLP: ${{ secrets.SHIPPING_CLP }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          ADMIN_ALERT_EMAIL: ${{ secrets.ADMIN_ALERT_EMAIL }}
+
+      - name: Subir config.php Webpay (si se generó)
+        if: hashFiles('api/webpay/config.php') != ''
+        run: bash scripts/upload-webpay-config-ftp.sh
+        env:
+          CPANEL_FTP_SERVER: ${{ secrets.CPANEL_FTP_SERVER }}
+          CPANEL_FTP_USERNAME: ${{ secrets.CPANEL_FTP_USERNAME }}
+          CPANEL_FTP_PASSWORD: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          CPANEL_FTP_PORT: ${{ secrets.CPANEL_FTP_PORT }}
+          CPANEL_FTP_SERVER_DIR: ${{ secrets.CPANEL_FTP_SERVER_DIR }}
+
       - name: Sincronizar con public_html (cPanel)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:

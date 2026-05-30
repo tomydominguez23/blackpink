@@ -11,23 +11,26 @@ const BPW_PROVIDER = 'webpay_plus';
 
 $localConfigPath = __DIR__ . '/config.php';
 if (is_file($localConfigPath)) {
-    $localConfig = require $localConfigPath;
-    if (is_array($localConfig)) {
-        foreach ($localConfig as $key => $value) {
-            if (!is_string($key) || $key === '' || $value === null) {
-                continue;
+    try {
+        $localConfig = require $localConfigPath;
+        if (is_array($localConfig)) {
+            foreach ($localConfig as $key => $value) {
+                if (!is_string($key) || $key === '' || $value === null) {
+                    continue;
+                }
+                if (getenv($key) !== false || array_key_exists($key, $_ENV)) {
+                    continue;
+                }
+                $str = (string) $value;
+                if (function_exists('putenv')) {
+                    @putenv($key . '=' . $str);
+                }
+                $_ENV[$key] = $str;
+                $_SERVER[$key] = $str;
             }
-            if (getenv($key) !== false || array_key_exists($key, $_ENV)) {
-                continue;
-            }
-            $str = (string) $value;
-            // En algunos hostings compartidos putenv() está deshabilitada.
-            if (function_exists('putenv')) {
-                @putenv($key . '=' . $str);
-            }
-            $_ENV[$key] = $str;
-            $_SERVER[$key] = $str;
         }
+    } catch (Throwable $e) {
+        error_log('webpay config.php error: ' . $e->getMessage());
     }
 }
 
@@ -87,15 +90,33 @@ function bpw_html_response(int $status, string $title, string $bodyHtml): void
 
 function bpw_allow_cors(): void
 {
-    $allowed = bpw_env('CORS_ORIGIN', bpw_current_origin());
-    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-    if ($allowed === '*') {
-        header('Access-Control-Allow-Origin: *');
-    } elseif ($origin !== '' && $origin === $allowed) {
-        header('Access-Control-Allow-Origin: ' . $allowed);
+    $configured = trim((string) bpw_env('CORS_ORIGIN', ''));
+    $fallback = bpw_current_origin();
+    $allowedList = [];
+    if ($configured !== '') {
+        foreach (preg_split('/\s*,\s*/', $configured) as $part) {
+            $part = rtrim(trim($part), '/');
+            if ($part !== '') {
+                $allowedList[] = $part;
+            }
+        }
+    }
+    if ($allowedList === []) {
+        $allowedList[] = rtrim($fallback, '/');
+    }
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? rtrim(trim((string) $_SERVER['HTTP_ORIGIN']), '/') : '';
+    $allow = $allowedList[0];
+    if ($origin !== '') {
+        foreach ($allowedList as $candidate) {
+            if (strcasecmp($origin, $candidate) === 0) {
+                $allow = $candidate;
+                break;
+            }
+        }
+    }
+    header('Access-Control-Allow-Origin: ' . $allow);
+    if ($origin !== '') {
         header('Vary: Origin');
-    } else {
-        header('Access-Control-Allow-Origin: ' . $allowed);
     }
     header('Access-Control-Allow-Headers: Content-Type, Authorization, apikey');
     header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
@@ -156,8 +177,8 @@ function bpw_normalize_items(array $items): array
         }
         if ($external === '') {
             $external = null;
-        } elseif (mb_strlen($external) > 120) {
-            $external = mb_substr($external, 0, 120);
+        } elseif (strlen($external) > 120) {
+            $external = function_exists('mb_substr') ? mb_substr($external, 0, 120) : substr($external, 0, 120);
         }
         $out[] = [
             'product_id' => $pid,

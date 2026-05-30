@@ -207,7 +207,7 @@ $tx = bpw_webpay_create_transaction([
 if (!$tx['ok'] || !is_array($tx['data']) || !isset($tx['data']['token'], $tx['data']['url'])) {
     bpw_patch_order($orderId, [
         'status' => 'failed',
-        'metadata' => array_merge($orderMetadata, [
+        'metadata' => array_merge((array) ($order['metadata'] ?? []), [
             'webpay_create_error' => $tx['error'],
             'webpay_http_status' => $tx['status'],
         ]),
