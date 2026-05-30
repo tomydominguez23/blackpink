@@ -4652,6 +4652,32 @@ body.bp-modal-open {
   color: #64748b;
   cursor: pointer;
   font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.bp-co-tab-label {
+  font-size: 0.92rem;
+}
+
+.bp-co-tab-price {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #64748b;
+}
+
+.bp-co-tab-price--free {
+  color: #16a34a;
+}
+
+.bp-co-tab--active .bp-co-tab-price {
+  color: #0f172a;
+}
+
+.bp-co-tab--active .bp-co-tab-price--free {
+  color: #16a34a;
 }
 
 .bp-co-tab--active {

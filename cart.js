@@ -150,7 +150,9 @@
 
   function setIncludeShipping(on) {
     var st = load();
-    st.includeShipping = Boolean(on);
+    var next = Boolean(on);
+    if (st.includeShipping === next) return;
+    st.includeShipping = next;
     save(st);
   }
 
