@@ -44,11 +44,13 @@ fi
 TMP_SCRIPT="$(mktemp)"
 trap 'rm -f "$TMP_SCRIPT"' EXIT
 
+# user/pass separados: el usuario admin@bpphones.cl rompe `open -u` si lleva @ sin comillas.
 cat > "$TMP_SCRIPT" <<LFTP_SCRIPT
 set cmd:fail-exit yes
 set ftp:ssl-force true
 set ssl:verify-certificate no
-open -u ${CPANEL_FTP_USERNAME} -p ${PORT} ftps://${CPANEL_FTP_SERVER}
+open -p ${PORT} ftps://${CPANEL_FTP_SERVER}
+user "${CPANEL_FTP_USERNAME}"
 cd ${REMOTE_DIR}
 mkdir -p api/webpay
 cd api/webpay

@@ -133,7 +133,6 @@ jobs:
             **/.github/**
             **/node_modules/**
             **/.ftp-deploy-sync-state.json
-            **/api/webpay/config.php
             **/config.js
             **/*.sql
             supabase-migration-*.sql
