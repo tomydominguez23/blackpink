@@ -48,7 +48,7 @@ cat > "$TMP_SCRIPT" <<LFTP_SCRIPT
 set cmd:fail-exit yes
 set ftp:ssl-force true
 set ssl:verify-certificate no
-open -p ${PORT} ftps://${CPANEL_FTP_SERVER}
+open -u ${CPANEL_FTP_USERNAME} -p ${PORT} ftps://${CPANEL_FTP_SERVER}
 cd ${REMOTE_DIR}
 mkdir -p api/webpay
 cd api/webpay
@@ -59,6 +59,6 @@ LFTP_SCRIPT
 echo "Subiendo config.php → ${REMOTE_DIR}/api/webpay/config.php (FTPS ${CPANEL_FTP_SERVER}:${PORT})"
 
 export LFTP_PASSWORD="${CPANEL_FTP_PASSWORD}"
-lftp -u "${CPANEL_FTP_USERNAME}", -f "$TMP_SCRIPT"
+lftp -f "$TMP_SCRIPT"
 
 echo "config.php subido correctamente."
