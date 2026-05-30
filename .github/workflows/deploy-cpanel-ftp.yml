@@ -89,6 +89,9 @@ jobs:
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           ADMIN_ALERT_EMAIL: ${{ secrets.ADMIN_ALERT_EMAIL }}
 
+      - name: Generar deploy-version.json (marcador visible del deploy)
+        run: bash scripts/write-deploy-version.sh
+
       - name: Subir config.php Webpay (si se generó)
         if: hashFiles('api/webpay/config.php') != ''
         continue-on-error: true
@@ -120,7 +123,7 @@ jobs:
           port: ${{ secrets.CPANEL_FTP_PORT != '' && secrets.CPANEL_FTP_PORT || '21' }}
           local-dir: ./
           server-dir: ${{ steps.ftpdir.outputs.dir }}
-          state-name: .ftp-deploy-sync-bpphones-v5.json
+          state-name: .ftp-deploy-sync-bpphones-v6.json
           log-level: standard
           exclude: |
             **/.git*
@@ -151,3 +154,6 @@ jobs:
             **/storage-version
             **/WEBPAY_PHP_SETUP.md
             **/DEPLOY_CPANEL.md
+
+      - name: Verificar sitio en vivo tras deploy
+        run: bash scripts/verify-deploy-live.sh
