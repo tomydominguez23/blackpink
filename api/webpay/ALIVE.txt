@@ -1,0 +1,2 @@
+Blackpink Webpay API — no borrar esta carpeta.
+Si falta, el carrito no puede pagar. Restaurar con GitHub Actions → Deploy a cPanel (FTP).

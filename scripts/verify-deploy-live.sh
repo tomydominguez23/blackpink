@@ -3,8 +3,9 @@ set -eu
 
 SITE="${DEPLOY_VERIFY_URL:-https://bpphones.cl/deploy-version.json}"
 EXPECTED_SHA="${GITHUB_SHA:-}"
-MAX_ATTEMPTS="${DEPLOY_VERIFY_ATTEMPTS:-6}"
+MAX_ATTEMPTS="${DEPLOY_VERIFY_ATTEMPTS:-8}"
 SLEEP_SEC="${DEPLOY_VERIFY_SLEEP:-10}"
+FAIL=0
 
 if [ -z "$EXPECTED_SHA" ]; then
   echo "Sin GITHUB_SHA; omitiendo verificación post-deploy."
@@ -13,30 +14,55 @@ fi
 
 echo "Verificando deploy en ${SITE} (commit ${EXPECTED_SHA:0:7})…"
 
+check_webpay() {
+  local ping_ok=0
+  local health_ok=0
+  local ping_body=""
+  local health_body=""
+
+  if ping_body="$(curl -fsSL "https://bpphones.cl/api/webpay/ping.php" 2>/dev/null)"; then
+    if printf '%s' "$ping_body" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d.get('ok') else 1)" 2>/dev/null; then
+      ping_ok=1
+      echo "OK: api/webpay/ping.php responde."
+    fi
+  fi
+
+  if health_body="$(curl -fsSL "https://bpphones.cl/api/webpay/health.php" 2>/dev/null)"; then
+    if printf '%s' "$health_body" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d.get('supabase_configured') and d.get('config_php_present') else 1)" 2>/dev/null; then
+      health_ok=1
+      echo "OK: api/webpay/health.php con Supabase configurado."
+    fi
+  fi
+
+  if [ "$ping_ok" -eq 0 ]; then
+    echo "::error::Falta api/webpay en el servidor (ping.php no responde). No subas archivos a mano por FTP: usá GitHub Actions."
+    FAIL=1
+  fi
+  if [ "$health_ok" -eq 0 ]; then
+    echo "::error::api/webpay/health.php no está OK (404 o sin config.php). Re-ejecutá Deploy a cPanel (FTP)."
+    FAIL=1
+  fi
+}
+
 for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
   if BODY="$(curl -fsSL "$SITE" 2>/dev/null)"; then
     LIVE_SHA="$(printf '%s' "$BODY" | python3 -c "import json,sys; print(json.load(sys.stdin).get('commit',''))" 2>/dev/null || true)"
     THEME="$(printf '%s' "$BODY" | python3 -c "import json,sys; print(json.load(sys.stdin).get('theme',''))" 2>/dev/null || true)"
     if [ "$LIVE_SHA" = "$EXPECTED_SHA" ]; then
-      echo "OK: el sitio público refleja el commit ${EXPECTED_SHA:0:7} (theme=${THEME})."
-      HEALTH="$(curl -fsSL "https://bpphones.cl/api/webpay/health.php" 2>/dev/null || true)"
-      if [ -n "$HEALTH" ]; then
-        SB="$(printf '%s' "$HEALTH" | python3 -c "import json,sys; d=json.load(sys.stdin); print('true' if d.get('supabase_configured') else 'false')" 2>/dev/null || true)"
-        CFG="$(printf '%s' "$HEALTH" | python3 -c "import json,sys; d=json.load(sys.stdin); print('true' if d.get('config_php_present') else 'false')" 2>/dev/null || true)"
-        if [ "$SB" = "true" ] && [ "$CFG" = "true" ]; then
-          echo "OK: api/webpay/config.php presente y Supabase configurado."
-        else
-          echo "::warning::El sitio se desplegó pero falta api/webpay/config.php en el servidor (supabase_configured=${SB}, config_php_present=${CFG}). Revisá el paso de deploy FTP."
-        fi
+      echo "OK: deploy-version.json = commit ${EXPECTED_SHA:0:7} (theme=${THEME})."
+      check_webpay
+      if [ "$FAIL" -eq 0 ]; then
+        exit 0
       fi
-      exit 0
+      echo "Intento ${attempt}/${MAX_ATTEMPTS}: archivos HTML actualizados pero Webpay roto."
+    else
+      echo "Intento ${attempt}/${MAX_ATTEMPTS}: commit en vivo=${LIVE_SHA:-desconocido}, esperado=${EXPECTED_SHA:0:7}"
     fi
-    echo "Intento ${attempt}/${MAX_ATTEMPTS}: commit en vivo=${LIVE_SHA:-desconocido}, esperado=${EXPECTED_SHA:0:7}"
   else
     echo "Intento ${attempt}/${MAX_ATTEMPTS}: no se pudo leer ${SITE}"
   fi
   sleep "$SLEEP_SEC"
 done
 
-echo "::warning::El sitio aún no muestra deploy-version.json con el commit actual. Revisá CPANEL_FTP_SERVER_DIR (debe ser ./ para admin@bpphones.cl) y la carpeta /home/ditecnoc/public_html/bpphones.cl en cPanel."
-exit 0
+echo "::error::Deploy incompleto. Revisá CPANEL_FTP_SERVER_DIR (./ para admin@bpphones.cl) y NO reemplaces la carpeta api/ manualmente."
+exit 1

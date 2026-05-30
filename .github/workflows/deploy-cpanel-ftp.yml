@@ -125,7 +125,7 @@ jobs:
           port: ${{ secrets.CPANEL_FTP_PORT != '' && secrets.CPANEL_FTP_PORT || '21' }}
           local-dir: ./
           server-dir: ${{ steps.ftpdir.outputs.dir }}
-          state-name: .ftp-deploy-sync-bpphones-v6.json
+          state-name: .ftp-deploy-sync-bpphones-v7.json
           log-level: standard
           exclude: |
             **/.git*
