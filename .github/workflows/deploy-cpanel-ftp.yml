@@ -66,7 +66,8 @@ jobs:
           port: ${{ secrets.CPANEL_FTP_PORT != '' && secrets.CPANEL_FTP_PORT || '21' }}
           local-dir: ./
           server-dir: ${{ secrets.CPANEL_FTP_SERVER_DIR != '' && secrets.CPANEL_FTP_SERVER_DIR || './public_html/bpphones.cl/' }}
-          log-level: minimal
+          state-name: .ftp-deploy-sync-bpphones.json
+          log-level: standard
           exclude: |
             **/.git*
             **/.git*/**
