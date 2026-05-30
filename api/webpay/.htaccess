@@ -3,3 +3,9 @@
   php_flag display_errors Off
   php_flag log_errors On
 </IfModule>
+
+<IfModule mod_authz_core.c>
+  <Files "config.php">
+    Require all denied
+  </Files>
+</IfModule>

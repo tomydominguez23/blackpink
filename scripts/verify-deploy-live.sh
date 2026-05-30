@@ -19,6 +19,16 @@ for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
     THEME="$(printf '%s' "$BODY" | python3 -c "import json,sys; print(json.load(sys.stdin).get('theme',''))" 2>/dev/null || true)"
     if [ "$LIVE_SHA" = "$EXPECTED_SHA" ]; then
       echo "OK: el sitio público refleja el commit ${EXPECTED_SHA:0:7} (theme=${THEME})."
+      HEALTH="$(curl -fsSL "https://bpphones.cl/api/webpay/health.php" 2>/dev/null || true)"
+      if [ -n "$HEALTH" ]; then
+        SB="$(printf '%s' "$HEALTH" | python3 -c "import json,sys; d=json.load(sys.stdin); print('true' if d.get('supabase_configured') else 'false')" 2>/dev/null || true)"
+        CFG="$(printf '%s' "$HEALTH" | python3 -c "import json,sys; d=json.load(sys.stdin); print('true' if d.get('config_php_present') else 'false')" 2>/dev/null || true)"
+        if [ "$SB" = "true" ] && [ "$CFG" = "true" ]; then
+          echo "OK: api/webpay/config.php presente y Supabase configurado."
+        else
+          echo "::warning::El sitio se desplegó pero falta api/webpay/config.php en el servidor (supabase_configured=${SB}, config_php_present=${CFG}). Revisá el paso de deploy FTP."
+        fi
+      fi
       exit 0
     fi
     echo "Intento ${attempt}/${MAX_ATTEMPTS}: commit en vivo=${LIVE_SHA:-desconocido}, esperado=${EXPECTED_SHA:0:7}"
