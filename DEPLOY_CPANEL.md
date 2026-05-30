@@ -56,7 +56,7 @@ Crea estos secretos (nombres **exactos**):
 | `CPANEL_FTP_USERNAME` | Sí | `admin@bpphones.cl` |
 | `CPANEL_FTP_PASSWORD` | Sí | Contraseña de la cuenta FTP |
 | `CPANEL_FTP_PORT` | No | `21` (opcional; el workflow usa 21 si no existe) |
-| `CPANEL_FTP_SERVER_DIR` | No | Por defecto `./public_html/bpphones.cl/` |
+| `CPANEL_FTP_SERVER_DIR` | No | Por defecto `./public_html/bpphones.cl/`. **Si antes tenías `./public_html/`, cámbialo o borra el secreto.** |
 | `SUPABASE_URL` | Para Webpay | `https://kodehyjdonripddobqgs.supabase.co` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Para Webpay | Clave **service_role** de Supabase (Dashboard → API) |
 | `WEBPAY_MODE` | No | `integration` o `production` |
