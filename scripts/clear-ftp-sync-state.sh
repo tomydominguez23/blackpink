@@ -8,7 +8,7 @@ for var in CPANEL_FTP_SERVER CPANEL_FTP_USERNAME CPANEL_FTP_PASSWORD; do
   fi
 done
 PORT="${CPANEL_FTP_PORT:-21}"
-REMOTE_DIR="${CPANEL_FTP_SERVER_DIR:-./bpphones.cl/}"
+REMOTE_DIR="${CPANEL_FTP_SERVER_DIR:-./public_html/bpphones.cl/}"
 REMOTE_DIR="${REMOTE_DIR%/}"
 STATE_FILE="${REMOTE_DIR}/.ftp-deploy-sync-state.json"
 if ! command -v lftp >/dev/null 2>&1; then

@@ -1,4 +1,4 @@
 Blackpink / BP Phones — marcador de despliegue FTP
 Sitio canónico: https://bpphones.cl
-Carpeta destino: bpphones.cl (dentro de public_html en el servidor)
+Carpeta destino: /home/ditecnoc/public_html/bpphones.cl
 Si ves este archivo en el navegador, el FTP apunta a la carpeta correcta del dominio.
