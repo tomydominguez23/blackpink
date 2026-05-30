@@ -47,6 +47,15 @@ jobs:
           CPANEL_FTP_PORT: ${{ secrets.CPANEL_FTP_PORT }}
           CPANEL_FTP_SERVER_DIR: ${{ secrets.CPANEL_FTP_SERVER_DIR }}
 
+      - name: Limpiar estado FTP (subida completa al cambiar carpeta)
+        run: bash scripts/clear-ftp-sync-state.sh
+        env:
+          CPANEL_FTP_SERVER: ${{ secrets.CPANEL_FTP_SERVER }}
+          CPANEL_FTP_USERNAME: ${{ secrets.CPANEL_FTP_USERNAME }}
+          CPANEL_FTP_PASSWORD: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          CPANEL_FTP_PORT: ${{ secrets.CPANEL_FTP_PORT }}
+          CPANEL_FTP_SERVER_DIR: ${{ secrets.CPANEL_FTP_SERVER_DIR }}
+
       - name: Sincronizar con public_html/bpphones.cl (cPanel)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
