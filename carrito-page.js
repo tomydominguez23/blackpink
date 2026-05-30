@@ -373,17 +373,38 @@
 
   function checkPayServer() {
     checkPayServerFresh().then(function (ok) {
-      if (ok !== false) return;
       var root = document.getElementById("bpCartRoot");
-      if (!root || root.querySelector(".bp-cart-server-warn")) return;
-      var warn = document.createElement("div");
-      warn.className = "bp-cart-empty bp-cart-server-warn";
-      warn.style.marginBottom = "1rem";
-      warn.innerHTML =
-        "<h2>Pago temporalmente no disponible en el servidor</h2>" +
-        '<p class="bp-cart-lead">Falta configurar Supabase en el hosting (<code>api/webpay/config.php</code>). ' +
-        "El administrador debe agregar el secreto <strong>SUPABASE_SERVICE_ROLE_KEY</strong> en GitHub y volver a desplegar.</p>";
-      root.insertBefore(warn, root.firstChild);
+      if (!root) return;
+
+      fetch(window.BlackpinkWebpayCheckout.apiHealthUrl(), { cache: "no-store" })
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function (data) {
+          if (ok === false) {
+            if (root.querySelector(".bp-cart-server-warn")) return;
+            var warn = document.createElement("div");
+            warn.className = "bp-cart-empty bp-cart-server-warn";
+            warn.style.marginBottom = "1rem";
+            warn.innerHTML =
+              "<h2>Pago temporalmente no disponible en el servidor</h2>" +
+              '<p class="bp-cart-lead">Falta configurar Supabase en el hosting (<code>api/webpay/config.php</code>). ' +
+              "El administrador debe agregar el secreto <strong>SUPABASE_SERVICE_ROLE_KEY</strong> en GitHub y volver a desplegar.</p>";
+            root.insertBefore(warn, root.firstChild);
+            return;
+          }
+          if (data && data.supabase_configured && data.payments_live === false && !root.querySelector(".bp-cart-test-warn")) {
+            var testWarn = document.createElement("div");
+            testWarn.className = "bp-cart-empty bp-cart-test-warn";
+            testWarn.style.marginBottom = "1rem";
+            testWarn.innerHTML =
+              "<h2>Webpay en modo prueba</h2>" +
+              '<p class="bp-cart-lead">Los pagos <strong>no cobran dinero real</strong> hasta configurar producción Transbank en GitHub Secrets ' +
+              "(<code>WEBPAY_MODE=production</code>, <code>WEBPAY_COMMERCE_CODE</code>, <code>WEBPAY_API_KEY_SECRET</code>).</p>";
+            root.insertBefore(testWarn, root.firstChild);
+          }
+        })
+        .catch(function () {});
     });
   }
 })();

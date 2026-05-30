@@ -41,7 +41,12 @@ check_webpay() {
   if health_body="$(curl -fsSL "https://bpphones.cl/api/webpay/health.php" 2>/dev/null)"; then
     if printf '%s' "$health_body" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d.get('supabase_configured') and d.get('config_php_present') else 1)" 2>/dev/null; then
       health_ok=1
-      echo "OK: api/webpay/health.php con Supabase configurado."
+      if printf '%s' "$health_body" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d.get('payments_live') else 1)" 2>/dev/null; then
+        echo "OK: api/webpay/health.php con pagos reales (production)."
+      else
+        mode="$(printf '%s' "$health_body" | python3 -c "import json,sys; print(json.load(sys.stdin).get('mode',''))" 2>/dev/null || true)"
+        echo "::warning::Webpay en modo ${mode:-desconocido} (sin cobro real). Configurá WEBPAY_MODE=production + credenciales Transbank en GitHub Secrets."
+      fi
     fi
   fi
 

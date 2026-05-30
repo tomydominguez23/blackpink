@@ -251,6 +251,53 @@ function bpw_webpay_api_base(): string
 }
 
 /**
+ * Estado Webpay para health/diagnóstico (no aborta la petición).
+ *
+ * @return array{
+ *   mode:string,
+ *   commerce_code:?string,
+ *   api_key_configured:bool,
+ *   payments_live:bool,
+ *   using_test_credentials:bool,
+ *   setup_hint:?string
+ * }
+ */
+function bpw_webpay_status(): array
+{
+    $mode = strtolower((string) bpw_env('WEBPAY_MODE', 'integration'));
+    $cc = trim((string) bpw_env('WEBPAY_COMMERCE_CODE', ''));
+    $secret = trim((string) bpw_env('WEBPAY_API_KEY_SECRET', ''));
+
+    if ($mode === 'production') {
+        $paymentsLive = ($cc !== '' && $secret !== '');
+        return [
+            'mode' => 'production',
+            'commerce_code' => $cc !== '' ? $cc : null,
+            'api_key_configured' => $secret !== '',
+            'payments_live' => $paymentsLive,
+            'using_test_credentials' => false,
+            'setup_hint' => $paymentsLive
+                ? null
+                : 'Pagos reales: agregá WEBPAY_COMMERCE_CODE y WEBPAY_API_KEY_SECRET en GitHub Secrets y redeploy.',
+        ];
+    }
+
+    $effectiveCode = $cc !== '' ? $cc : BPW_INTEGRATION_COMMERCE_CODE;
+    $usingTest = ($cc === '' || $cc === BPW_INTEGRATION_COMMERCE_CODE);
+
+    return [
+        'mode' => 'integration',
+        'commerce_code' => $effectiveCode,
+        'api_key_configured' => true,
+        'payments_live' => false,
+        'using_test_credentials' => $usingTest,
+        'setup_hint' => $usingTest
+            ? 'Modo prueba Transbank (sin cobro real). Para pagos reales: WEBPAY_MODE=production + credenciales en GitHub Secrets.'
+            : null,
+    ];
+}
+
+/**
  * @return array{commerce_code:string,api_key_secret:string}
  */
 function bpw_webpay_credentials(): array
