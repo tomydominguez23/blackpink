@@ -72,6 +72,9 @@ jobs:
           echo "Usuario FTP: ${FTP_USER:-'(secreto)'}"
           echo "Carpeta remota FTP: ${DIR} → /home/ditecnoc/public_html/bpphones.cl"
 
+      - name: Instalar lftp
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
       - name: Generar api/webpay/config.php (secretos Supabase/Webpay)
         run: php scripts/generate-webpay-config.php
         env:
@@ -88,6 +91,7 @@ jobs:
 
       - name: Subir config.php Webpay (si se generó)
         if: hashFiles('api/webpay/config.php') != ''
+        continue-on-error: true
         run: bash scripts/upload-webpay-config-ftp.sh
         env:
           CPANEL_FTP_SERVER: ${{ secrets.CPANEL_FTP_SERVER }}
@@ -97,6 +101,7 @@ jobs:
           CPANEL_FTP_SERVER_DIR: ${{ steps.ftpdir.outputs.dir }}
 
       - name: Limpiar estado FTP (forzar subida completa)
+        continue-on-error: true
         run: bash scripts/clear-ftp-sync-state.sh
         env:
           CPANEL_FTP_SERVER: ${{ secrets.CPANEL_FTP_SERVER }}

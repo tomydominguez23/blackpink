@@ -10,8 +10,8 @@ $outPath = __DIR__ . '/../api/webpay/config.php';
 $supabaseUrl = trim((string) (getenv('SUPABASE_URL') ?: 'https://kodehyjdonripddobqgs.supabase.co'));
 $serviceKey = trim((string) (getenv('SUPABASE_SERVICE_ROLE_KEY') ?: ''));
 
-if ($supabaseUrl === '' || $serviceKey === '') {
-    fwrite(STDERR, "Omitiendo config.php: faltan SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY en el entorno.\n");
+if ($serviceKey === '') {
+    fwrite(STDERR, "Omitiendo config.php: falta SUPABASE_SERVICE_ROLE_KEY en el entorno.\n");
     exit(0);
 }
 
