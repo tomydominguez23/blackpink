@@ -44,6 +44,7 @@ cd ${dir}
 rm -f .ftp-deploy-sync-state.json
 rm -f .ftp-deploy-sync-bpphones-v5.json
 rm -f .ftp-deploy-sync-bpphones-v6.json
+rm -f .ftp-deploy-sync-bpphones-v7.json
 bye
 LFTP_EOF
 }
