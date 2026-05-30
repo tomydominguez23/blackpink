@@ -17,8 +17,16 @@ if ($serviceKey === '') {
 
 $siteUrl = rtrim(trim((string) (getenv('SITE_URL') ?: 'https://bpphones.cl')), '/');
 $webpayMode = trim((string) (getenv('WEBPAY_MODE') ?: 'integration'));
+if ($webpayMode === '') {
+    $webpayMode = 'integration';
+}
 $commerceCode = trim((string) (getenv('WEBPAY_COMMERCE_CODE') ?: ''));
 $apiSecret = trim((string) (getenv('WEBPAY_API_KEY_SECRET') ?: ''));
+
+if (strtolower($webpayMode) === 'production' && ($commerceCode === '' || $apiSecret === '')) {
+    fwrite(STDERR, "::error::WEBPAY_MODE=production requiere WEBPAY_COMMERCE_CODE y WEBPAY_API_KEY_SECRET en GitHub Secrets.\n");
+    exit(1);
+}
 $shipping = trim((string) (getenv('SHIPPING_CLP') ?: '15000'));
 $resendKey = trim((string) (getenv('RESEND_API_KEY') ?: ''));
 $emailFrom = trim((string) (getenv('EMAIL_FROM') ?: ''));

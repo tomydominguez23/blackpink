@@ -69,11 +69,29 @@ Crea estos secretos (nombres **exactos**):
 | `CPANEL_FTP_SERVER_DIR` | No | Con `admin@bpphones.cl` usar **`./`** o dejar vacío. Solo `./public_html/bpphones.cl/` si la cuenta FTP NO es `admin@bpphones.cl` |
 | `SUPABASE_URL` | Para Webpay | `https://kodehyjdonripddobqgs.supabase.co` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Para Webpay | Clave **service_role** de Supabase (Dashboard → API) |
-| `WEBPAY_MODE` | No | `integration` o `production` |
-| `WEBPAY_COMMERCE_CODE` | Producción | Código comercio Transbank |
-| `WEBPAY_API_KEY_SECRET` | Producción | API Key secreta Transbank |
+| `WEBPAY_MODE` | Pagos reales | **`production`** (sin esto queda modo prueba) |
+| `WEBPAY_COMMERCE_CODE` | Pagos reales | Código comercio Transbank (12 dígitos, ej. `5970…`) |
+| `WEBPAY_API_KEY_SECRET` | Pagos reales | API Key Secret de Transbank (portal comercio) |
 
 No subas contraseñas al código: solo en secretos de GitHub.
+
+### Activar pagos reales (Transbank producción)
+
+Hoy el deploy **regenera** `api/webpay/config.php` en cada ejecución. Si antes tenías producción manual en el servidor, un redeploy sin secretos Webpay lo vuelve a **modo prueba** (`597055555532`).
+
+1. En [GitHub Secrets](https://github.com/tomydominguez23/blackpink/settings/secrets/actions), crea o actualiza:
+   - `WEBPAY_MODE` = `production`
+   - `WEBPAY_COMMERCE_CODE` = tu código comercio Blackpink en Transbank
+   - `WEBPAY_API_KEY_SECRET` = tu API Key Secret de Transbank
+2. En el **portal Transbank** (producción), registra la URL de retorno:
+   - `https://bpphones.cl/api/webpay/return.php`
+3. **Actions → Deploy a cPanel (FTP) → Run workflow**
+4. Verifica **https://bpphones.cl/api/webpay/health.php**:
+   - `"mode": "production"`
+   - `"payments_live": true`
+   - `"webpay_api_base"` debe apuntar a `webpay3g.transbank.cl` (sin la `int` de integración)
+
+Si falta algún secreto de producción, el deploy fallará al generar `config.php` (así no se publica un sitio a medias).
 
 Cuando los secretos FTP estén guardados, cada **push a `main`** dispara **Deploy a cPanel (FTP)**. Si además existen `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY`, el workflow genera y sube `api/webpay/config.php` automáticamente.
 
