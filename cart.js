@@ -74,6 +74,18 @@
     return { subtotal: sub, shipping: ship, total: sub + ship, includeShipping: st.includeShipping };
   }
 
+  function clearAll() {
+    save({ items: [], includeShipping: false });
+  }
+
+  function hasInvalidProductIds() {
+    var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return load().items.some(function (it) {
+      var id = String(it.productId || "").trim();
+      return !id || (!UUID_RE.test(id) && !/^custom-\d+$/i.test(id));
+    });
+  }
+
   function refreshHeaderBadge() {
     var n = countItems();
     document.querySelectorAll(".header-cart").forEach(function (a) {
@@ -345,6 +357,8 @@
     setIncludeShipping: setIncludeShipping,
     getTotals: getTotals,
     countItems: countItems,
+    clearAll: clearAll,
+    hasInvalidProductIds: hasInvalidProductIds,
     refreshHeaderBadge: refreshHeaderBadge,
     openAddedModal: openAddedModal,
     lineKey: lineKey,
