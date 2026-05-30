@@ -38,6 +38,7 @@ set cmd:fail-exit no
 set ftp:ssl-force true
 set ssl:verify-certificate no
 open -p ${PORT} ftps://${CPANEL_FTP_SERVER}
+user "${CPANEL_FTP_USERNAME}"
 cd ${REMOTE_DIR}
 # api suele ser un ZIP subido a mano — impide crear api/webpay/
 rm -f api
@@ -73,6 +74,6 @@ LFTP_SCRIPT
 echo "Reparando layout FTP en ${REMOTE_DIR} (eliminar api.zip, PHP sueltos, subir .htaccess)…"
 
 export LFTP_PASSWORD="${CPANEL_FTP_PASSWORD}"
-lftp -u "${CPANEL_FTP_USERNAME}", -f "$TMP_SCRIPT"
+lftp -f "$TMP_SCRIPT"
 
 echo "Layout FTP reparado."
