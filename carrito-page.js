@@ -82,7 +82,11 @@
 
     var formHtml = Co
       ? Co.renderFormHtml(savedCustomer)
-      : "<p class=\"bp-cart-lead\">Completá tus datos antes de pagar.</p>";
+      : '<div class="bp-cart-empty" style="margin-top:1rem">' +
+        "<h2>Faltan scripts de checkout</h2>" +
+        '<p class="bp-cart-lead">No se cargó <code>checkout-customer.js</code>. Recargá con Ctrl+Shift+R (Mac: Cmd+Shift+R).</p>' +
+        '<button type="button" class="btn btn-primary" onclick="location.reload()">Recargar</button>' +
+        "</div>";
 
     var rows = st.items
       .map(function (it) {
@@ -285,4 +289,5 @@
 
   window.addEventListener("bp:cart-changed", render);
   document.addEventListener("DOMContentLoaded", render);
+  window.__bpCartPageInit = render;
 })();
