@@ -301,15 +301,28 @@
               gb: normalizeGbValue(v.gb),
               price: Number(v.price) || 0,
               oldPrice: Number(v.oldPrice) || 0,
-              stock: Math.max(0, Number(v.stock) || 0),
+              stock:
+                v.stock == null || v.stock === ""
+                  ? null
+                  : Math.max(0, Number(v.stock) || 0),
             }))
             .filter((v) => Number.isFinite(v.gb))
         : [];
 
     function variantStockForGb(gb) {
-      if (!Number.isFinite(gb) || !variants.length) return Math.max(0, Number(p.stock) || 0);
+      const productStock = Math.max(0, Number(p.stock) || 0);
+      if (!variants.length) return productStock;
+      if (!Number.isFinite(gb)) return productStock;
+
       const match = variants.find((v) => v.gb === gb);
-      return match ? Math.max(0, Number(match.stock) || 0) : 0;
+      if (!match) return productStock;
+
+      if (match.stock == null) return productStock;
+
+      const anyVariantInStock = variants.some((v) => v.stock != null && v.stock > 0);
+      if (match.stock < 1 && productStock > 0 && !anyVariantInStock) return productStock;
+
+      return match.stock;
     }
 
     const colorsHtml =
@@ -386,6 +399,13 @@
     const initialColor = displayColors.length ? displayColors[0].name : "";
     const initialSoldOut = variantStockForGb(initialGb) < 1;
 
+    function selectedGbFromUi() {
+      const activeCap = info.querySelector(".pd-cap-btn.active");
+      if (activeCap) return Number(activeCap.dataset.gb);
+      if (allCapacities.length) return normalizeGbValue(allCapacities[0]);
+      return NaN;
+    }
+
     function priceBlock(price, oldPrice) {
       const hasDiscount = oldPrice && oldPrice > price;
       const disc = hasDiscount ? Math.round((1 - price / oldPrice) * 100) : null;
@@ -398,8 +418,7 @@
     }
 
     function updatePurchaseUI() {
-      const capBtn = info.querySelector(".pd-cap-btn.active");
-      const selectedGb = capBtn ? Number(capBtn.dataset.gb) : NaN;
+      const selectedGb = selectedGbFromUi();
       const selectedVariant =
         Number.isFinite(selectedGb) && variants.length
           ? variants.find((v) => v.gb === selectedGb) || null
@@ -412,7 +431,9 @@
       if (priceBlockEl) priceBlockEl.outerHTML = priceBlock(price, oldP);
 
       const addBtn = info.querySelector(".pd-add-to-cart");
+      const agotadoBtn = info.querySelector(".pd-btn-agotado");
       if (addBtn) addBtn.hidden = soldOut;
+      if (agotadoBtn) agotadoBtn.hidden = !soldOut;
     }
 
     info.innerHTML = `
@@ -427,6 +448,7 @@
       )}
       <div class="pd-purchase-actions">
         <button type="button" class="pd-add-to-cart"${initialSoldOut ? " hidden" : ""}>Agregar al carro</button>
+        <button type="button" class="pd-btn-agotado" disabled${initialSoldOut ? "" : " hidden"}>Agotado</button>
       </div>
       <div class="pd-shipping-info">
         <div class="pd-shipping-row">
