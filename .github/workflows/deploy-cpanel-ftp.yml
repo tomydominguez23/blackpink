@@ -77,6 +77,15 @@ jobs:
       - name: Instalar lftp
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 
+      - name: Reparar servidor FTP (api.zip, PHP sueltos, .htaccess)
+        run: bash scripts/fix-ftp-server-layout.sh
+        env:
+          CPANEL_FTP_SERVER: ${{ secrets.CPANEL_FTP_SERVER }}
+          CPANEL_FTP_USERNAME: ${{ secrets.CPANEL_FTP_USERNAME }}
+          CPANEL_FTP_PASSWORD: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          CPANEL_FTP_PORT: ${{ secrets.CPANEL_FTP_PORT }}
+          CPANEL_FTP_SERVER_DIR: ${{ steps.ftpdir.outputs.dir }}
+
       - name: Generar api/webpay/config.php (secretos Supabase/Webpay)
         run: php scripts/generate-webpay-config.php
         env:
@@ -125,16 +134,19 @@ jobs:
           port: ${{ secrets.CPANEL_FTP_PORT != '' && secrets.CPANEL_FTP_PORT || '21' }}
           local-dir: ./
           server-dir: ${{ steps.ftpdir.outputs.dir }}
-          state-name: .ftp-deploy-sync-bpphones-v7.json
+          state-name: .ftp-deploy-sync-bpphones-v8.json
           log-level: standard
           exclude: |
             **/.git*
             **/.git*/**
             **/.github/**
+            **/__MACOSX/**
             **/node_modules/**
+            **/scripts/**
             **/.ftp-deploy-sync-state.json
             **/config.js
             **/*.sql
+            **/*.sh
             supabase-migration-*.sql
             supabase-schema.sql
             SUPABASE_EJECUTAR*.sql

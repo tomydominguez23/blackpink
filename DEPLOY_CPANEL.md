@@ -115,8 +115,9 @@ En unos minutos el sitio en tu dominio debería reflejar los cambios.
 | Webpay error 500 / HTML en lugar de JSON | Raíz del dominio = carpeta FTP; probá `https://bpphones.cl/api/webpay/ping.php` y `health.php` |
 | “La URL create.php no devolvió JSON” | Falta `SUPABASE_SERVICE_ROLE_KEY` → GitHub Secrets → redeploy, o subir `api/webpay/config.php` manualmente |
 | Webpay “missing_supabase” | Secreto `SUPABASE_SERVICE_ROLE_KEY` en GitHub + redeploy. Verificá `https://bpphones.cl/api/webpay/health.php` → `"supabase_configured": true` |
-| Carrito no paga / Webpay 404 | **No subas archivos a mano por FTP** (puede borrar `api/webpay/`). Solo **GitHub Actions → Deploy a cPanel → Run workflow**. Verificá `https://bpphones.cl/api/webpay/ping.php` |
-| Subí FTP manual y se rompió todo | Restaurá con **Actions → Deploy a cPanel (FTP) → Run workflow**. No mezclar FTP manual con GitHub |
+| Ves **Index of /** en vez de la tienda | Falta `.htaccess` o subiste FTP manual sin archivos ocultos. **No subas a mano.** Mergeá el fix y ejecutá Deploy en GitHub |
+| Error FTP `api: Not a directory` | En el servidor hay un **archivo** `api` (ZIP), no carpeta. El script `fix-ftp-server-layout.sh` lo borra antes del deploy |
+| Carrito / Webpay 404 o HTML | Misma causa: carpeta `api/webpay/` rota. Solo redeploy por GitHub Actions |
 | Deploy falla `Unknown command /api/webpay/config.php` | Corregido en scripts `upload-webpay-config-ftp.sh` (merge PR FTP). El fallo en config.php **no debe** bloquear el resto del deploy |
 | GitHub actualizado pero cPanel no | Revisá Actions: si falló antes de “Subir sitio a bpphones.cl”, el FTP no corrió. En cPanel abrí **`public_html/bpphones.cl`**, no otra carpeta. Verificá **https://bpphones.cl/deploy-version.json** |
 | Veo sitio blanco / sin tema neón | Recarga forzada **Ctrl+Shift+R**. Los CSS ahora llevan `?v=2`; si sigue igual, compará `deploy-version.json` con el commit en GitHub |
