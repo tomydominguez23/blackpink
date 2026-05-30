@@ -34,12 +34,14 @@ Si necesitas revisar o cambiar la contraseña: **cPanel → Cuentas FTP**.
 2. Abre **Cuentas FTP** (o **FTP Accounts**).
 3. Usa la cuenta principal o crea una solo para despliegue (recomendado).
 
-En cPanel la ruta del dominio suele verse como **`/public_html/bpphones.cl`**.
+En cPanel la carpeta del sitio es:
 
-- Si al conectar por FTP entras **directo en `public_html`**, el secreto o valor por defecto debe ser **`./bpphones.cl/`** (así lo deja el workflow).
-- Si el FTP abre en la **raíz de la cuenta** (`/home/tuusuario/`), usa **`./public_html/bpphones.cl/`**.
+**`/home/ditecnoc/public_html/bpphones.cl`**
 
-Define `CPANEL_FTP_SERVER_DIR` solo si necesitas otra ruta (siempre con barra final).
+El workflow sube por defecto a **`./public_html/bpphones.cl/`** (equivalente FTP desde la raíz de la cuenta).
+
+Opcional: secreto `CPANEL_FTP_SERVER_DIR` = `./public_html/bpphones.cl/`  
+(también acepta pegar `public_html/bpphones.cl` o la ruta absoluta; se normaliza sola).
 
 Tras el deploy, comprueba **https://bpphones.cl/deploy-root.txt** — debe mostrar el marcador de despliegue.
 

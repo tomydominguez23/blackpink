@@ -26,19 +26,36 @@ jobs:
       - name: Resolver carpeta remota FTP
         id: ftpdir
         run: |
+          # Destino en servidor: /home/ditecnoc/public_html/bpphones.cl
+          # (ruta relativa al home FTP: ./public_html/bpphones.cl/)
           DIR="${{ secrets.CPANEL_FTP_SERVER_DIR }}"
           if [ -z "$DIR" ]; then
-            DIR="./bpphones.cl/"
+            DIR="./public_html/bpphones.cl/"
           fi
+          DIR="${DIR#/home/ditecnoc/}"
+          DIR="${DIR#/home/ditecnoc}"
           case "$DIR" in
+            public_html/bpphones.cl|public_html/bpphones.cl/*)
+              DIR="./public_html/bpphones.cl/"
+              ;;
+            ./public_html/bpphones.cl|./public_html/bpphones.cl/*)
+              DIR="./public_html/bpphones.cl/"
+              ;;
+            bpphones.cl|bpphones.cl/*|./bpphones.cl|./bpphones.cl/*)
+              DIR="./public_html/bpphones.cl/"
+              ;;
             ./public_html/|public_html/|./public_html|public_html)
-              echo "::error::CPANEL_FTP_SERVER_DIR no debe ser public_html/. Usa ./bpphones.cl/ o ./public_html/bpphones.cl/"
+              echo "::error::CPANEL_FTP_SERVER_DIR no puede ser solo public_html/. Usa ./public_html/bpphones.cl/"
               exit 1
               ;;
           esac
+          case "$DIR" in
+            ./*) ;;
+            *) DIR="./${DIR}" ;;
+          esac
           case "$DIR" in */) ;; *) DIR="${DIR}/" ;; esac
           echo "dir=${DIR}" >> "$GITHUB_OUTPUT"
-          echo "Carpeta FTP remota: ${DIR}"
+          echo "Carpeta FTP remota (→ /home/ditecnoc/public_html/bpphones.cl): ${DIR}"
 
       - name: Generar api/webpay/config.php (secretos Supabase/Webpay)
         run: php scripts/generate-webpay-config.php
@@ -83,7 +100,7 @@ jobs:
           port: ${{ secrets.CPANEL_FTP_PORT != '' && secrets.CPANEL_FTP_PORT || '21' }}
           local-dir: ./
           server-dir: ${{ steps.ftpdir.outputs.dir }}
-          state-name: .ftp-deploy-sync-bpphones-v2.json
+          state-name: .ftp-deploy-sync-bpphones-v3.json
           log-level: standard
           exclude: |
             **/.git*
