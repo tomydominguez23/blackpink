@@ -75,6 +75,7 @@ jobs:
           echo "Carpeta remota FTP: ${DIR} → /home/ditecnoc/public_html/bpphones.cl"
 
       - name: Reparar servidor FTP (api.zip, PHP sueltos, .htaccess)
+        continue-on-error: true
         run: bash scripts/fix-ftp-server-layout.sh
         env:
           CPANEL_FTP_SERVER: ${{ secrets.CPANEL_FTP_SERVER }}
