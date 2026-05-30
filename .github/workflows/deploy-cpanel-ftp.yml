@@ -74,9 +74,6 @@ jobs:
           echo "Usuario FTP: ${FTP_USER:-'(secreto)'}"
           echo "Carpeta remota FTP: ${DIR} → /home/ditecnoc/public_html/bpphones.cl"
 
-      - name: Instalar lftp
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
-
       - name: Reparar servidor FTP (api.zip, PHP sueltos, .htaccess)
         run: bash scripts/fix-ftp-server-layout.sh
         env:
