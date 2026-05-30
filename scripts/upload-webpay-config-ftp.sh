@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Sube solo api/webpay/config.php por FTPS si existe (tras generate-webpay-config.php).
-set -euo pipefail
+set -eu
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CONFIG="${ROOT}/api/webpay/config.php"
 if [[ ! -f "$CONFIG" ]]; then
