@@ -13,41 +13,35 @@ flowchart LR
   E --> F[Tu dominio actualizado]
 ```
 
-## 1. Credenciales FTP (Blackpink / Ditecno)
+## 1. Datos FTP (Ditecno / bpphones.cl)
 
-Hosting **Ditecno** — sitio público en **https://bpphones.cl** (cuenta FTP asociada al hosting):
+Copia esto en **GitHub Secrets** y en tu cliente FTP (FileZilla, etc.). **Nunca** subas la contraseña al repositorio.
 
-| Dato | Valor para este proyecto |
-|------|--------------------------|
-| Servidor FTP | `ftp.ditecno.cl` |
-| Usuario FTP | `admin@bpphones.cl` |
-| Puerto FTPS explícito | `21` |
-| Protocolo en GitHub Actions | `ftps` (FTPS explícito; ya configurado en el workflow) |
-| Directorio remoto (servidor) | `/home/ditecnoc/public_html/bpphones.cl` |
-| Ruta FTP (relativa al home) | `./public_html/bpphones.cl/` |
-| Contraseña | La de la cuenta FTP en cPanel *(no va en el código)* |
+| Campo | Valor |
+|-------|--------|
+| **Servidor / host** | `ftp.ditecno.cl` |
+| **Usuario** | `admin@bpphones.cl` |
+| **Contraseña** | La de cPanel *(solo en secretos de GitHub, no en el código)* |
+| **Puerto** | `21` |
+| **Protocolo** | **FTPS explícito** (FTP sobre TLS / “Explicit FTP over TLS”) |
+| **Carpeta en el servidor** | `/home/ditecnoc/public_html/bpphones.cl` |
 
-Si necesitas revisar o cambiar la contraseña: **cPanel → Cuentas FTP**.
+### Ruta al conectar por FTP
 
-### Cómo obtener otros datos en cPanel
+La cuenta `admin@bpphones.cl` suele abrir **ya dentro** de la carpeta del sitio. En el cliente FTP:
 
-1. Entra a **cPanel** de tu hosting.
-2. Abre **Cuentas FTP** (o **FTP Accounts**).
-3. Usa la cuenta principal o crea una solo para despliegue (recomendado).
+- **Directorio remoto / carpeta inicial:** `/` o vacío (raíz de la sesión)
+- En GitHub, secreto `CPANEL_FTP_SERVER_DIR` = **`./`** o **no crear ese secreto** (el workflow usa `./` solo)
 
-En cPanel la carpeta del sitio es:
+Si usas la cuenta principal del hosting (no `admin@bpphones.cl`), la ruta FTP suele ser `./public_html/bpphones.cl/`.
 
-**`/home/ditecnoc/public_html/bpphones.cl`**
+### Comprobar en cPanel
 
-El workflow sube a **dos rutas FTP** (una suele ser la correcta según cómo abra tu cliente FTP):
+1. **Administrador de archivos** → `/home/ditecnoc/public_html/bpphones.cl`
+2. Tras el deploy debe haber `index.html`, `styles.css`, carpeta `api/`, etc.
+3. **Dominios** → `bpphones.cl` → raíz del documento = `/home/ditecnoc/public_html/bpphones.cl`
 
-1. `./public_html/bpphones.cl/` → `/home/ditecnoc/public_html/bpphones.cl`
-2. `./bpphones.cl/` → si el FTP ya entra dentro de `public_html`
-
-Opcional: secreto `CPANEL_FTP_SERVER_DIR` = `./public_html/bpphones.cl/`  
-(también acepta pegar `public_html/bpphones.cl` o la ruta absoluta; se normaliza sola).
-
-Tras el deploy, comprueba **https://bpphones.cl/deploy-root.txt** — debe mostrar el marcador de despliegue.
+Tras el deploy: **https://bpphones.cl/deploy-root.txt**
 
 > **FTPS:** El workflow usa `protocol: ftps`. Si tu proveedor solo permite FTP plano, en `.github/workflows/deploy-cpanel-ftp.yml` cambia `protocol: ftps` por `protocol: ftp`.
 
