@@ -11,14 +11,14 @@ return [
     'WEBPAY_COMMERCE_CODE' => '',
     'WEBPAY_API_KEY_SECRET' => '',
 
-    // Si no defines WEBPAY_RETURN_URL se usa: https://tu-dominio/api/webpay/return.php
-    'WEBPAY_RETURN_URL' => '',
+    // Debe coincidir con el dominio público y con Transbank (integración/producción)
+    'WEBPAY_RETURN_URL' => 'https://bpphones.cl/api/webpay/return.php',
 
-    // CORS para checkout-carrito.html
+    // Origen del checkout (carrito en el mismo dominio)
     'CORS_ORIGIN' => 'https://bpphones.cl',
 
     // Supabase service role (obligatorio para crear/actualizar orders + rpc stock)
-    'SUPABASE_URL' => 'https://TU_REFERENCIA.supabase.co',
+    'SUPABASE_URL' => 'https://kodehyjdonripddobqgs.supabase.co',
     'SUPABASE_SERVICE_ROLE_KEY' => 'TU_SERVICE_ROLE_KEY',
 
     // Envío (si include_shipping=true desde checkout)

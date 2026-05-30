@@ -1,6 +1,6 @@
-# cPanel / Apache: servir la tienda en la raíz y no listar carpetas
+# cPanel / Apache: tienda en la raíz
 DirectoryIndex index.html index.php
-Options -Indexes
+Options -Indexes -MultiViews
 
 # URL canónica: bpphones.cl (sin www) y redirección desde dominio anterior
 <IfModule mod_rewrite.c>
@@ -11,14 +11,14 @@ Options -Indexes
   RewriteRule ^ https://bpphones.cl%{REQUEST_URI} [R=301,L]
 </IfModule>
 
-# Evitar que el navegador/CDN sirva JS/CSS viejos tras un deploy
+# Cache: solo si mod_headers está disponible (evita error 500 en algunos hostings)
 <IfModule mod_headers.c>
   <FilesMatch "\.(html|js|css)$">
     Header set Cache-Control "no-cache, must-revalidate"
   </FilesMatch>
 </IfModule>
 
-# Archivos de desarrollo que no deben verse en el navegador (por si quedaron en el servidor)
+# Archivos de desarrollo que no deben verse en el navegador
 <IfModule mod_authz_core.c>
   <FilesMatch "^(package\.json|config\.toml|\.ftp-deploy-sync-state\.json)$">
     Require all denied

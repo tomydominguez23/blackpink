@@ -23,7 +23,7 @@ Hosting **Ditecno** — sitio público en **https://bpphones.cl** (cuenta FTP as
 | Usuario FTP | `admin@bpphones.cl` |
 | Puerto FTPS explícito | `21` |
 | Protocolo en GitHub Actions | `ftps` (FTPS explícito; ya configurado en el workflow) |
-| Directorio remoto | `./public_html/` (salvo que el sitio esté en otra carpeta) |
+| Directorio remoto | Debe ser la **misma carpeta** que el dominio `bpphones.cl` (ver abajo) |
 | Contraseña | La de la cuenta FTP en cPanel *(no va en el código)* |
 
 Si necesitas revisar o cambiar la contraseña: **cPanel → Cuentas FTP**.
@@ -35,6 +35,16 @@ Si necesitas revisar o cambiar la contraseña: **cPanel → Cuentas FTP**.
 3. Usa la cuenta principal o crea una solo para despliegue (recomendado).
 
 Si el sitio vive en un subdominio o carpeta, el directorio puede ser `./public_html/subcarpeta/` (con barra final).
+
+### Muy importante: `bpphones.cl` y la carpeta FTP
+
+Si al entrar a **https://bpphones.cl** ves un listado tipo *“Index of /”* (solo `admin/`, `cgi-bin/`, etc.) y **no** la tienda, el dominio **no** apunta a la misma carpeta donde sube el FTP.
+
+1. En cPanel: **Dominios** → **bpphones.cl** → anota la **raíz del documento** (Document Root).
+2. En GitHub secretos, define `CPANEL_FTP_SERVER_DIR` con esa ruta (ej. `./public_html/` o la ruta exacta del dominio).
+3. Tras el próximo deploy, abre **https://bpphones.cl/deploy-root.txt** — debe mostrar el marcador de despliegue (no error 500 ni listado de carpetas).
+
+**Opción alternativa en cPanel:** cambiar la raíz de `bpphones.cl` para que use la misma carpeta que `public_html` (donde ya están `index.html`, `styles.css`, `api/`, etc.).
 
 > **FTPS:** El workflow usa `protocol: ftps`. Si tu proveedor solo permite FTP plano, en `.github/workflows/deploy-cpanel-ftp.yml` cambia `protocol: ftps` por `protocol: ftp`.
 
@@ -52,25 +62,27 @@ Crea estos secretos (nombres **exactos**):
 | `CPANEL_FTP_USERNAME` | Sí | `admin@bpphones.cl` |
 | `CPANEL_FTP_PASSWORD` | Sí | Contraseña de la cuenta FTP |
 | `CPANEL_FTP_PORT` | No | `21` (opcional; el workflow usa 21 si no existe) |
-| `CPANEL_FTP_SERVER_DIR` | No | `./public_html/` si el dominio apunta a la raíz |
+| `CPANEL_FTP_SERVER_DIR` | No | Ruta remota FTP; por defecto `./public_html/` |
+| `SUPABASE_URL` | Para Webpay | `https://kodehyjdonripddobqgs.supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Para Webpay | Clave **service_role** de Supabase (Dashboard → API) |
+| `WEBPAY_MODE` | No | `integration` o `production` |
+| `WEBPAY_COMMERCE_CODE` | Producción | Código comercio Transbank |
+| `WEBPAY_API_KEY_SECRET` | Producción | API Key secreta Transbank |
 
 No subas contraseñas al código: solo en secretos de GitHub.
 
-Cuando los tres secretos obligatorios estén guardados, cada **push a `main`** disparará el workflow **Deploy a cPanel (FTP)** y subirá el sitio por FTPS al puerto 21.
+Cuando los secretos FTP estén guardados, cada **push a `main`** dispara **Deploy a cPanel (FTP)**. Si además existen `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY`, el workflow genera y sube `api/webpay/config.php` automáticamente.
 
 ## 3. Archivos que no se sobrescriben
 
-Por seguridad, el despliegue **no toca** estos archivos en el servidor (debes crearlos una vez en cPanel):
+- `config.js` — copia desde `config.example.js` si personalizas Supabase en el front (el sitio ya trae valores por defecto en `supabase-client.js`).
 
-- `api/webpay/config.php` — copia desde `api/webpay/config.example.php` (ver `WEBPAY_PHP_SETUP.md`)
-- `config.js` — copia desde `config.example.js` si usas Supabase en el front
-
-El resto del sitio (HTML, CSS, JS, PHP de Webpay excepto `config.php`) se sincroniza desde GitHub.
+El resto del sitio (HTML, CSS, JS, PHP de Webpay) se sincroniza desde GitHub.
 
 ## 4. Primera vez
 
 1. Fusiona o activa el workflow en `main`.
-2. Asegúrate de que en el servidor ya existen `config.php` y `config.js` con tus claves reales.
+2. Configura secretos `SUPABASE_*` para Webpay, o copia manualmente `api/webpay/config.example.php` → `config.php` en el servidor.
 3. Haz un push a `main` o ejecuta el workflow a mano: **Actions → Deploy a cPanel (FTP) → Run workflow**.
 
 Revisa la pestaña **Actions** en GitHub; si falla, suele ser usuario/contraseña, ruta `public_html` o FTPS deshabilitado.
@@ -96,7 +108,9 @@ En unos minutos el sitio en tu dominio debería reflejar los cambios.
 | Error de login FTP | Usuario/contraseña; a veces el usuario lleva `@tudominio.cl` |
 | Carpeta vacía o sitio en subcarpeta | Valor de `CPANEL_FTP_SERVER_DIR` |
 | Timeout / conexión | Prueba `protocol: ftp` o confirma que el firewall del hosting permite tu IP (algunos hosts restringen FTP) |
-| Webpay deja de funcionar | Que `api/webpay/config.php` siga en el servidor y no se haya borrado |
+| Webpay error 500 / HTML en lugar de JSON | Raíz del dominio = carpeta FTP; probá `https://bpphones.cl/api/webpay/ping.php` y `health.php` |
+| Webpay “missing_supabase” | Secretos `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` en GitHub o `config.php` en servidor |
+| Listado “Index of /” en bpphones.cl | Alinear Document Root del dominio con `CPANEL_FTP_SERVER_DIR` |
 
 ## Alternativa más robusta (opcional)
 

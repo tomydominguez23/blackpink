@@ -56,7 +56,8 @@ Debe coincidir con `WEBPAY_RETURN_URL` si lo configuras manualmente.
 
 Abrir en navegador:
 
-- `https://bpphones.cl/api/webpay/health.php`
+- `https://bpphones.cl/api/webpay/ping.php` (PHP básico, sin Supabase)
+- `https://bpphones.cl/api/webpay/health.php` (config completa)
 
 Debe devolver JSON con:
 
