@@ -1,4 +1,5 @@
 import { Client } from 'basic-ftp';
+import { parseFtpEndpoint, normalizeRemoteDir, required } from './ftp-utils.mjs';
 
 const STATE_FILES = [
   '.ftp-deploy-sync-state.json',
@@ -7,20 +8,6 @@ const STATE_FILES = [
   '.ftp-deploy-sync-bpphones-v7.json',
   '.ftp-deploy-sync-bpphones-v8.json',
 ];
-
-function normalizeRemoteDir(raw = './') {
-  let dir = String(raw).replace(/\r|\n/g, '').replace(/['"]/g, '');
-  dir = dir.replace(/^\/home\/ditecnoc\/?/, '');
-  if (!dir || dir === '.' || dir === './' || dir === '/') return '.';
-  if (dir.startsWith('./')) dir = dir.slice(2);
-  return dir;
-}
-
-function required(name) {
-  const value = process.env[name];
-  if (!value) throw new Error(`Falta ${name}`);
-  return value;
-}
 
 async function deleteStateInDir(client, dir) {
   try {
@@ -50,12 +37,15 @@ async function main() {
     }
   }
 
+  const { host, port } = parseFtpEndpoint(
+    required('CPANEL_FTP_SERVER'),
+    process.env.CPANEL_FTP_PORT || '21'
+  );
   const primary = normalizeRemoteDir(process.env.CPANEL_FTP_SERVER_DIR || './');
-  const port = parseInt(process.env.CPANEL_FTP_PORT || '21', 10);
   const client = new Client(60000);
 
   await client.access({
-    host: required('CPANEL_FTP_SERVER'),
+    host,
     user: required('CPANEL_FTP_USERNAME'),
     password: required('CPANEL_FTP_PASSWORD'),
     port,
