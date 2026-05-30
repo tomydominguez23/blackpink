@@ -1097,6 +1097,19 @@ a:hover {
   font-weight: 700;
   font-size: 1.05rem;
 }
+.product-price--agotado {
+  color: #fca5a5;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.product-card--agotado .product-installments,
+.product-card--agotado .product-shipping-note {
+  opacity: 0.55;
+}
+.product-card--agotado .product-card-btn {
+  opacity: 0.72;
+}
 .product-old {
   font-size: 0.9rem;
   color: var(--muted);
@@ -1623,6 +1636,49 @@ a:hover {
 }
 .pd-cap-btn .pd-cap-stock.pd-cap-stock--out {
   color: #c62828;
+}
+
+.pd-cap-btn--out,
+.pd-cap-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  pointer-events: none;
+  border-style: dashed;
+  color: var(--muted);
+  background: var(--bg-elevated);
+}
+
+.pd-cap-btn--out .pd-cap-label,
+.pd-cap-btn:disabled .pd-cap-label {
+  text-decoration: line-through;
+}
+
+.pd-cap-btn--out.active,
+.pd-cap-btn:disabled.active {
+  box-shadow: none;
+  border-color: var(--border-subtle);
+  background: var(--bg-elevated);
+}
+
+.pd-main-price--agotado {
+  color: #fca5a5;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pd-btn-agotado {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 0.9rem 1.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--bg-elevated);
+  border: 1px dashed rgba(252, 165, 165, 0.45);
+  border-radius: 8px;
+  cursor: not-allowed;
 }
 
 .pd-stock-line {

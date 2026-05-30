@@ -112,15 +112,18 @@
       ? `<span class="product-badge" aria-label="Descuento">-${disc}%</span>`
       : "";
     const totalStock = Math.max(0, Number(p.stock) || 0);
-    const agotadoChip =
-      totalStock < 1
-        ? '<span class="product-chip product-chip--agotado">Agotado</span>'
-        : "";
+    const soldOut = totalStock < 1;
+    const priceRowHtml = soldOut
+      ? `<div class="product-price-row"><span class="product-price product-price--agotado">Agotado</span></div>`
+      : `<div class="product-price-row">
+            ${badge}
+            <span class="product-price">${formatClp(p.price)}</span>
+            ${old}
+          </div>`;
     return `
-      <article class="product-card product-card--listing${totalStock < 1 ? " product-card--agotado" : ""}">
+      <article class="product-card product-card--listing${soldOut ? " product-card--agotado" : ""}">
         <div class="product-media-shell">
           <span class="product-chip ${conditionClass}">${conditionLabel}</span>
-          ${agotadoChip}
           <button type="button" class="product-fav" aria-label="Guardar ${escapeHtml(p.title)}" title="Guardar producto">♡</button>
           <a class="product-card-media" href="producto.html?id=${encodeURIComponent(p.id)}">
             <img src="${escapeHtml(p.image)}" alt="" loading="lazy" width="400" height="400" />
@@ -130,11 +133,7 @@
           <p class="product-cat-label">${escapeHtml(p.categoryLabel)}</p>
           <h3><a href="producto.html?id=${encodeURIComponent(p.id)}">${escapeHtml(p.title)}</a></h3>
           <p class="product-stars" aria-hidden="true">★★★★★</p>
-          <div class="product-price-row">
-            ${badge}
-            <span class="product-price">${formatClp(p.price)}</span>
-            ${old}
-          </div>
+          ${priceRowHtml}
           <p class="product-installments">Hasta 12 cuotas de ${monthly}</p>
           <p class="product-shipping-note">Envío a todo Chile: ${formatClp(15000)}</p>
           ${p.category === "iphone" && Array.isArray(p.colors) && p.colors.length
