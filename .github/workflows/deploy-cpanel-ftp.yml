@@ -41,7 +41,7 @@ jobs:
           DIR="${DIR#/home/ditecnoc/}"
           DIR="${DIR#/home/ditecnoc}"
           case "$DIR" in
-            ./|./|""|".")
+            /|./|./|""|".")
               DIR="./"
               ;;
             public_html/bpphones.cl|public_html/bpphones.cl/*|./public_html/bpphones.cl|./public_html/bpphones.cl/*)
