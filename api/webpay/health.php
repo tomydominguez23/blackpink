@@ -20,6 +20,10 @@ bpw_json_response(200, [
     'webpay_api_base' => bpw_webpay_api_base(),
     'commerce_code' => $creds['commerce_code'],
     'supabase_configured' => bpw_env('SUPABASE_URL', '') !== '' && bpw_env('SUPABASE_SERVICE_ROLE_KEY', '') !== '',
+    'config_php_present' => is_file(__DIR__ . '/config.php'),
+    'setup_hint' => bpw_env('SUPABASE_SERVICE_ROLE_KEY', '') === ''
+        ? 'Agrega SUPABASE_SERVICE_ROLE_KEY en GitHub Secrets y redeploy, o sube api/webpay/config.php al servidor.'
+        : null,
     'resend_configured' => bpw_env('RESEND_API_KEY', '') !== '' && bpw_env('EMAIL_FROM', '') !== '',
     'whatsapp_configured' => (
         bpw_env('WHATSAPP_WEBHOOK_URL', '') !== ''

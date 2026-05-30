@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 $outPath = __DIR__ . '/../api/webpay/config.php';
 
-$supabaseUrl = trim((string) (getenv('SUPABASE_URL') ?: ''));
+$supabaseUrl = trim((string) (getenv('SUPABASE_URL') ?: 'https://kodehyjdonripddobqgs.supabase.co'));
 $serviceKey = trim((string) (getenv('SUPABASE_SERVICE_ROLE_KEY') ?: ''));
 
 if ($supabaseUrl === '' || $serviceKey === '') {

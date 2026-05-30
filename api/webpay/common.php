@@ -348,7 +348,7 @@ function bpw_webpay_status_transaction(string $token): array
 
 function bpw_supabase_url(): string
 {
-    $url = bpw_env('SUPABASE_URL', '');
+    $url = bpw_env('SUPABASE_URL', 'https://kodehyjdonripddobqgs.supabase.co');
     if ($url === '') {
         bpw_json_response(500, ['ok' => false, 'error' => 'missing_supabase_url']);
     }
