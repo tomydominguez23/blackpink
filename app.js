@@ -426,8 +426,17 @@
     const badge = disc
       ? `<span class="product-badge">-${disc}%</span>`
       : "";
+    const totalStock = Math.max(0, Number(p.stock) || 0);
+    const soldOut = totalStock < 1;
+    const priceRowHtml = soldOut
+      ? `<div class="product-price-row"><span class="product-price product-price--agotado">Agotado</span></div>`
+      : `<div class="product-price-row">
+            ${badge}
+            <span class="product-price">${formatClp(p.price)}</span>
+            ${old}
+          </div>`;
     return `
-      <article class="product-card product-card--listing">
+      <article class="product-card product-card--listing${soldOut ? " product-card--agotado" : ""}">
         <div class="product-media-shell">
           <span class="product-chip ${conditionClass}">${conditionLabel}</span>
           <button type="button" class="product-fav" aria-label="Guardar ${escapeHtml(p.title)}" title="Guardar producto">♡</button>
@@ -439,11 +448,7 @@
           <p class="product-cat-label">${escapeHtml(p.categoryLabel)}</p>
           <h3><a href="producto.html?id=${encodeURIComponent(p.id)}">${escapeHtml(p.title)}</a></h3>
           <p class="product-stars" aria-hidden="true">★★★★★</p>
-          <div class="product-price-row">
-            ${badge}
-            <span class="product-price">${formatClp(p.price)}</span>
-            ${old}
-          </div>
+          ${priceRowHtml}
           <p class="product-installments">Hasta 12 cuotas de ${monthly}</p>
           <p class="product-shipping-note">Envío a todo Chile: ${formatClp(15000)}</p>
           ${p.category === "iphone" && Array.isArray(p.colors) && p.colors.length

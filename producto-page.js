@@ -332,7 +332,7 @@
         : "";
 
     const allCapacities = Array.isArray(p.capacities) ? p.capacities : [];
-    let initialCapIndex = 0;
+    let initialCapIndex = -1;
     for (let ci = 0; ci < allCapacities.length; ci++) {
       const gbCheck = normalizeGbValue(allCapacities[ci]);
       if (variantStockForGb(gbCheck) > 0) {
@@ -350,10 +350,11 @@
                 .map((c, i) => {
                   const gb = normalizeGbValue(c);
                   const out = variantStockForGb(gb) < 1;
-                  return `<button type="button" class="pd-cap-btn${i === initialCapIndex ? " active" : ""}${
+                  const isActive = !out && i === initialCapIndex;
+                  return `<button type="button" class="pd-cap-btn${isActive ? " active" : ""}${
                     out ? " pd-cap-btn--out" : ""
                   }" data-gb="${Number.isFinite(gb) ? gb : ""}" data-cap-label="${escapeHtml(c)}"${
-                    out ? ' aria-disabled="true"' : ""
+                    out ? " disabled aria-disabled=\"true\"" : ""
                   }>
                     <span class="pd-cap-label">${escapeHtml(c)}</span>
                   </button>`;
@@ -375,7 +376,8 @@
         : "";
 
     const capacityValues = allCapacities;
-    const initialCapacity = capacityValues.length ? capacityValues[initialCapIndex] : "";
+    const initialCapacity =
+      initialCapIndex >= 0 ? capacityValues[initialCapIndex] : capacityValues[0] || "";
     const initialGb = normalizeGbValue(initialCapacity);
     const initialVariant =
       Number.isFinite(initialGb) && variants.length
@@ -385,13 +387,18 @@
     const initialSoldOut = variantStockForGb(initialGb) < 1;
 
     function priceBlock(price, oldPrice, soldOut) {
+      if (soldOut) {
+        return `
+      <div class="pd-price-block">
+        <span class="pd-main-price pd-main-price--agotado">Agotado</span>
+      </div>`;
+      }
       const hasDiscount = oldPrice && oldPrice > price;
       const disc = hasDiscount ? Math.round((1 - price / oldPrice) * 100) : null;
       return `
       <div class="pd-price-block">
         ${disc ? `<span class="pd-discount-badge">-${disc}%</span>` : ""}
         <span class="pd-main-price">${formatClp(price)}</span>
-        ${soldOut ? '<span class="pd-agotado-badge">Agotado</span>' : ""}
         ${hasDiscount ? `<span class="pd-old-price">${formatClp(oldPrice)}</span>` : ""}
       </div>`;
     }
@@ -474,6 +481,7 @@
 
     info.querySelectorAll(".pd-cap-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
+        if (btn.disabled || btn.classList.contains("pd-cap-btn--out")) return;
         info.querySelectorAll(".pd-cap-btn").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
         const selectedGb = Number(btn.dataset.gb);
