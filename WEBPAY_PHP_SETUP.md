@@ -29,8 +29,8 @@ Esta integración reemplaza el backend Node por endpoints PHP en:
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_ROLE_KEY`
    - `WEBPAY_MODE` (`integration` al inicio)
-   - `WEBPAY_RETURN_URL` (ej. `https://blackpinkphones.cl/api/webpay/return.php`)
-   - `CORS_ORIGIN` (ej. `https://blackpinkphones.cl`)
+   - `WEBPAY_RETURN_URL` (ej. `https://bpphones.cl/api/webpay/return.php`)
+   - `CORS_ORIGIN` (ej. `https://bpphones.cl`)
 
 3. Opcional para notificaciones:
 
@@ -48,7 +48,7 @@ Esta integración reemplaza el backend Node por endpoints PHP en:
 
 En tu portal Transbank para ambiente de integración, registra como URL de retorno:
 
-- `https://blackpinkphones.cl/api/webpay/return.php`
+- `https://bpphones.cl/api/webpay/return.php`
 
 Debe coincidir con `WEBPAY_RETURN_URL` si lo configuras manualmente.
 
@@ -56,7 +56,7 @@ Debe coincidir con `WEBPAY_RETURN_URL` si lo configuras manualmente.
 
 Abrir en navegador:
 
-- `https://blackpinkphones.cl/api/webpay/health.php`
+- `https://bpphones.cl/api/webpay/health.php`
 
 Debe devolver JSON con:
 

@@ -1,6 +1,6 @@
 # Despliegue automático: GitHub → cPanel (FTP)
 
-Este repositorio incluye un workflow de GitHub Actions que, en cada **push a `main`**, sube los archivos del sitio a tu hosting cPanel por **FTPS**, de modo que tu dominio (por ejemplo `https://blackpinkphones.cl`) se actualice sin subir archivos a mano.
+Este repositorio incluye un workflow de GitHub Actions que, en cada **push a `main`**, sube los archivos del sitio a tu hosting cPanel por **FTPS**, de modo que tu dominio (por ejemplo `https://bpphones.cl`) se actualice sin subir archivos a mano.
 
 ## Flujo de trabajo
 
@@ -15,12 +15,12 @@ flowchart LR
 
 ## 1. Credenciales FTP (Blackpink / Ditecno)
 
-Hosting **Ditecno** con cuenta FTP para **blackpinkphones.cl**:
+Hosting **Ditecno** — sitio público en **https://bpphones.cl** (cuenta FTP asociada al hosting):
 
 | Dato | Valor para este proyecto |
 |------|--------------------------|
 | Servidor FTP | `ftp.ditecno.cl` |
-| Usuario FTP | `admin@blackpinkphones.cl` |
+| Usuario FTP | `admin@bpphones.cl` |
 | Puerto FTPS explícito | `21` |
 | Protocolo en GitHub Actions | `ftps` (FTPS explícito; ya configurado en el workflow) |
 | Directorio remoto | `./public_html/` (salvo que el sitio esté en otra carpeta) |
@@ -49,7 +49,7 @@ Crea estos secretos (nombres **exactos**):
 | Secreto | Obligatorio | Valor para Blackpink |
 |---------|-------------|----------------------|
 | `CPANEL_FTP_SERVER` | Sí | `ftp.ditecno.cl` |
-| `CPANEL_FTP_USERNAME` | Sí | `admin@blackpinkphones.cl` |
+| `CPANEL_FTP_USERNAME` | Sí | `admin@bpphones.cl` |
 | `CPANEL_FTP_PASSWORD` | Sí | Contraseña de la cuenta FTP |
 | `CPANEL_FTP_PORT` | No | `21` (opcional; el workflow usa 21 si no existe) |
 | `CPANEL_FTP_SERVER_DIR` | No | `./public_html/` si el dominio apunta a la raíz |

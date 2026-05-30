@@ -2,11 +2,13 @@
 DirectoryIndex index.html index.php
 Options -Indexes
 
-# Una sola URL canónica (sin www) para buscadores
+# URL canónica: bpphones.cl (sin www) y redirección desde dominio anterior
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteCond %{HTTP_HOST} ^www\.blackpinkphones\.cl$ [NC]
-  RewriteRule ^ https://blackpinkphones.cl%{REQUEST_URI} [R=301,L]
+  RewriteCond %{HTTP_HOST} ^(www\.)?blackpinkphones\.cl$ [NC]
+  RewriteRule ^ https://bpphones.cl%{REQUEST_URI} [R=301,L]
+  RewriteCond %{HTTP_HOST} ^www\.bpphones\.cl$ [NC]
+  RewriteRule ^ https://bpphones.cl%{REQUEST_URI} [R=301,L]
 </IfModule>
 
 # Evitar que el navegador/CDN sirva JS/CSS viejos tras un deploy
