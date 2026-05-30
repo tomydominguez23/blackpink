@@ -903,12 +903,12 @@ body {
     padding: 2rem 0;
   }
 
-  .product-card--listing .product-actions {
+  .product-card--listing .product-card-actions {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .product-card--listing .btn {
+  .product-card--listing .product-card-btn {
     width: 100%;
     min-height: 44px;
   }
