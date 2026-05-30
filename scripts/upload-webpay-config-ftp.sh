@@ -1,20 +1,19 @@
 #!/usr/bin/env bash
-# Sube solo api/webpay/config.php por FTPS si existe (tras generate-webpay-config.php).
 set -eu
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CONFIG="${ROOT}/api/webpay/config.php"
-if [[ ! -f "$CONFIG" ]]; then
+if [ ! -f "$CONFIG" ]; then
   echo "No hay config.php generado; omitiendo subida FTP."
   exit 0
 fi
 for var in CPANEL_FTP_SERVER CPANEL_FTP_USERNAME CPANEL_FTP_PASSWORD; do
-  if [[ -z "${!var:-}" ]]; then
+  if [ -z "${!var:-}" ]; then
     echo "Faltan credenciales FTP para subir config.php."
     exit 0
   fi
 done
 PORT="${CPANEL_FTP_PORT:-21}"
-REMOTE_DIR="${CPANEL_FTP_SERVER_DIR:-./public_html/bpphones.cl/}"
+REMOTE_DIR="${CPANEL_FTP_SERVER_DIR:-./}"
 REMOTE_DIR="${REMOTE_DIR%/}"
 REMOTE_PATH="${REMOTE_DIR}/api/webpay/config.php"
 if ! command -v lftp >/dev/null 2>&1; then

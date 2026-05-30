@@ -1,5 +1,5 @@
 # Despliegue automático del sitio estático + PHP (Webpay) hacia cPanel por FTP/FTPS.
-# Configura los secretos en GitHub: ver DEPLOY_CPANEL.md
+# Secretos: ver DEPLOY_CPANEL.md
 
 name: Deploy a cPanel (FTP)
 
@@ -17,7 +17,7 @@ jobs:
   deploy:
     name: Subir archivos por FTP
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Obtener código
@@ -25,37 +25,48 @@ jobs:
 
       - name: Resolver carpeta remota FTP
         id: ftpdir
+        env:
+          FTP_USER: ${{ secrets.CPANEL_FTP_USERNAME }}
         run: |
-          # Destino en servidor: /home/ditecnoc/public_html/bpphones.cl
-          # (ruta relativa al home FTP: ./public_html/bpphones.cl/)
+          # Sitio en servidor: /home/ditecnoc/public_html/bpphones.cl
+          # Cuenta admin@bpphones.cl → al conectar por FTP ya estás EN esa carpeta → usar ./
           DIR="${{ secrets.CPANEL_FTP_SERVER_DIR }}"
           if [ -z "$DIR" ]; then
-            DIR="./public_html/bpphones.cl/"
+            if echo "$FTP_USER" | grep -qi 'bpphones\.cl'; then
+              DIR="./"
+            else
+              DIR="./public_html/bpphones.cl/"
+            fi
           fi
           DIR="${DIR#/home/ditecnoc/}"
           DIR="${DIR#/home/ditecnoc}"
           case "$DIR" in
-            public_html/bpphones.cl|public_html/bpphones.cl/*)
-              DIR="./public_html/bpphones.cl/"
+            ./|./|""|".")
+              DIR="./"
               ;;
-            ./public_html/bpphones.cl|./public_html/bpphones.cl/*)
+            public_html/bpphones.cl|public_html/bpphones.cl/*|./public_html/bpphones.cl|./public_html/bpphones.cl/*)
               DIR="./public_html/bpphones.cl/"
               ;;
             bpphones.cl|bpphones.cl/*|./bpphones.cl|./bpphones.cl/*)
-              DIR="./public_html/bpphones.cl/"
+              if echo "$FTP_USER" | grep -qi 'bpphones\.cl'; then
+                DIR="./"
+              else
+                DIR="./public_html/bpphones.cl/"
+              fi
               ;;
             ./public_html/|public_html/|./public_html|public_html)
-              echo "::error::CPANEL_FTP_SERVER_DIR no puede ser solo public_html/. Usa ./public_html/bpphones.cl/"
+              echo "::error::No uses solo public_html/. Para admin@bpphones.cl usa ./ o deja el secreto vacío."
               exit 1
               ;;
           esac
           case "$DIR" in
-            ./*) ;;
+            ./*|./) ;;
             *) DIR="./${DIR}" ;;
           esac
           case "$DIR" in */) ;; *) DIR="${DIR}/" ;; esac
           echo "dir=${DIR}" >> "$GITHUB_OUTPUT"
-          echo "Carpeta FTP remota (→ /home/ditecnoc/public_html/bpphones.cl): ${DIR}"
+          echo "Usuario FTP: ${FTP_USER:-'(secreto)'}"
+          echo "Carpeta remota FTP: ${DIR} → /home/ditecnoc/public_html/bpphones.cl"
 
       - name: Generar api/webpay/config.php (secretos Supabase/Webpay)
         run: php scripts/generate-webpay-config.php
@@ -81,7 +92,7 @@ jobs:
           CPANEL_FTP_PORT: ${{ secrets.CPANEL_FTP_PORT }}
           CPANEL_FTP_SERVER_DIR: ${{ steps.ftpdir.outputs.dir }}
 
-      - name: Limpiar estado FTP (subida completa al cambiar carpeta)
+      - name: Limpiar estado FTP (forzar subida completa)
         run: bash scripts/clear-ftp-sync-state.sh
         env:
           CPANEL_FTP_SERVER: ${{ secrets.CPANEL_FTP_SERVER }}
@@ -90,7 +101,7 @@ jobs:
           CPANEL_FTP_PORT: ${{ secrets.CPANEL_FTP_PORT }}
           CPANEL_FTP_SERVER_DIR: ${{ steps.ftpdir.outputs.dir }}
 
-      - name: Sincronizar (ruta cuenta → public_html/bpphones.cl)
+      - name: Subir sitio a bpphones.cl (FTPS)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.CPANEL_FTP_SERVER }}
@@ -100,49 +111,7 @@ jobs:
           port: ${{ secrets.CPANEL_FTP_PORT != '' && secrets.CPANEL_FTP_PORT || '21' }}
           local-dir: ./
           server-dir: ${{ steps.ftpdir.outputs.dir }}
-          state-name: .ftp-deploy-sync-bpphones-v4a.json
-          log-level: standard
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.github/**
-            **/node_modules/**
-            **/.ftp-deploy-sync-state.json
-            **/api/webpay/config.php
-            **/config.js
-            **/*.sql
-            supabase-migration-*.sql
-            supabase-schema.sql
-            SUPABASE_EJECUTAR*.sql
-            **/tests/**
-            **/*.test.mjs
-            **/smoke.test.mjs
-            **/package.json
-            **/package-lock.json
-            **/config.toml
-            **/index.ts
-            **/cli-latest
-            **/gotrue-version
-            **/pooler-url
-            **/postgres-version
-            **/project-ref
-            **/rest-version
-            **/storage-migration
-            **/storage-version
-            **/WEBPAY_PHP_SETUP.md
-            **/DEPLOY_CPANEL.md
-
-      - name: Sincronizar (ruta si FTP abre en public_html → bpphones.cl)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-        with:
-          server: ${{ secrets.CPANEL_FTP_SERVER }}
-          username: ${{ secrets.CPANEL_FTP_USERNAME }}
-          password: ${{ secrets.CPANEL_FTP_PASSWORD }}
-          protocol: ftps
-          port: ${{ secrets.CPANEL_FTP_PORT != '' && secrets.CPANEL_FTP_PORT || '21' }}
-          local-dir: ./
-          server-dir: ./bpphones.cl/
-          state-name: .ftp-deploy-sync-bpphones-v4b.json
+          state-name: .ftp-deploy-sync-bpphones-v5.json
           log-level: standard
           exclude: |
             **/.git*
