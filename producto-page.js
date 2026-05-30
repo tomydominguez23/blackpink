@@ -386,13 +386,7 @@
     const initialColor = displayColors.length ? displayColors[0].name : "";
     const initialSoldOut = variantStockForGb(initialGb) < 1;
 
-    function priceBlock(price, oldPrice, soldOut) {
-      if (soldOut) {
-        return `
-      <div class="pd-price-block">
-        <span class="pd-main-price pd-main-price--agotado">Agotado</span>
-      </div>`;
-      }
+    function priceBlock(price, oldPrice) {
       const hasDiscount = oldPrice && oldPrice > price;
       const disc = hasDiscount ? Math.round((1 - price / oldPrice) * 100) : null;
       return `
@@ -415,12 +409,10 @@
       const oldP = selectedVariant ? selectedVariant.oldPrice : Number(p.oldPrice) || 0;
 
       const priceBlockEl = info.querySelector(".pd-price-block");
-      if (priceBlockEl) priceBlockEl.outerHTML = priceBlock(price, oldP, soldOut);
+      if (priceBlockEl) priceBlockEl.outerHTML = priceBlock(price, oldP);
 
       const addBtn = info.querySelector(".pd-add-to-cart");
-      const agotadoBtn = info.querySelector(".pd-btn-agotado");
       if (addBtn) addBtn.hidden = soldOut;
-      if (agotadoBtn) agotadoBtn.hidden = !soldOut;
     }
 
     info.innerHTML = `
@@ -431,12 +423,10 @@
       ${chargerHtml}
       ${priceBlock(
         initialVariant ? initialVariant.price : Number(p.price) || 0,
-        initialVariant ? initialVariant.oldPrice : Number(p.oldPrice) || 0,
-        initialSoldOut
+        initialVariant ? initialVariant.oldPrice : Number(p.oldPrice) || 0
       )}
       <div class="pd-purchase-actions">
         <button type="button" class="pd-add-to-cart"${initialSoldOut ? " hidden" : ""}>Agregar al carro</button>
-        <button type="button" class="pd-btn-agotado" disabled${initialSoldOut ? "" : " hidden"}>Agotado</button>
       </div>
       <div class="pd-shipping-info">
         <div class="pd-shipping-row">
