@@ -550,6 +550,26 @@ body::before {
   box-shadow: 0 6px 32px rgba(255, 45, 154, 0.55);
 }
 
+.bp-cart-pay-err {
+  display: block;
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  background: rgba(255, 45, 154, 0.12);
+  border: 1px solid rgba(255, 45, 154, 0.45);
+  color: #ffb8d9;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.bp-cart-pay-err[hidden] {
+  display: none !important;
+}
+
+.bp-cart-server-warn {
+  border-color: rgba(255, 45, 154, 0.35);
+}
+
 /* Inputs globales en páginas públicas */
 input:not([type="checkbox"]):not([type="radio"]),
 select,

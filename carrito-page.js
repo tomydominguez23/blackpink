@@ -46,6 +46,114 @@
     if (totalEl) totalEl.textContent = formatClp(totals.total);
   }
 
+  var payServerOk = null;
+
+  function showPayError(payErr, msg) {
+    if (payErr) {
+      payErr.textContent = msg;
+      payErr.removeAttribute("hidden");
+      payErr.setAttribute("role", "alert");
+      payErr.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    window.alert(msg);
+  }
+
+  function focusFirstInvalidField(customerData) {
+    var map = [
+      ["bpCoFirstName", !customerData.firstName],
+      ["bpCoLastName", !customerData.lastName],
+      ["bpCoRut", !customerData.rut],
+      ["bpCoPhone", !customerData.phone || customerData.phone.replace(/\D/g, "").length < 8],
+      ["bpCoEmail", !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerData.email || "")],
+      ["bpCoAddress", customerData.delivery === "shipping" && !customerData.address],
+      ["bpCoCommune", customerData.delivery === "shipping" && !customerData.commune],
+    ];
+    for (var i = 0; i < map.length; i++) {
+      if (map[i][1]) {
+        var el = document.getElementById(map[i][0]);
+        if (el) {
+          el.focus();
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        break;
+      }
+    }
+  }
+
+  function handlePayClick() {
+    var root = document.getElementById("bpCartRoot");
+    var pay = document.getElementById("bpCartPay");
+    var payErr = document.getElementById("bpCartPayErr");
+    if (!root || !pay) return;
+
+    if (payErr) {
+      payErr.hidden = true;
+      payErr.textContent = "";
+    }
+
+    var CoLive = window.BlackpinkCheckoutCustomer;
+    var WpLive = window.BlackpinkWebpayCheckout;
+    if (!WpLive || !CoLive) {
+      var missing = [];
+      if (!CoLive) missing.push("checkout-customer.js");
+      if (!WpLive) missing.push("webpay-checkout.js");
+      showPayError(
+        payErr,
+        "No se cargaron los scripts de pago (" + missing.join(", ") + "). Recargá con Ctrl+Shift+R."
+      );
+      return;
+    }
+
+    if (payServerOk === false) {
+      showPayError(
+        payErr,
+        "El servidor aún no tiene configurado el pago (falta api/webpay/config.php con SUPABASE_SERVICE_ROLE_KEY). Contactá al administrador."
+      );
+      return;
+    }
+
+    var customerData = CoLive.readForm(root);
+    var errs = CoLive.validate(customerData);
+    if (errs.length) {
+      focusFirstInvalidField(customerData);
+      showPayError(payErr, errs.join(" "));
+      return;
+    }
+
+    if (customerData.saveInfo) CoLive.save(customerData);
+    else CoLive.save({ saveInfo: false });
+
+    var stPay = window.BlackpinkCart.load();
+    var UUID_RE = WpLive.UUID_RE;
+    for (var i = 0; i < stPay.items.length; i++) {
+      if (!UUID_RE.test(String(stPay.items[i].productId || ""))) {
+        showPayError(
+          payErr,
+          "Hay productos sin ID válido de catálogo. Volvé a agregarlos desde la tienda."
+        );
+        return;
+      }
+    }
+
+    var items = stPay.items.map(function (it) {
+      return { product_id: String(it.productId), quantity: Number(it.quantity) || 1 };
+    });
+
+    pay.disabled = true;
+    pay.textContent = "Conectando con Webpay…";
+
+    WpLive.start({
+      email: customerData.email,
+      includeShipping: Boolean(stPay.includeShipping),
+      items: items,
+      customer: customerPayload(customerData),
+    }).catch(function (err) {
+      pay.disabled = false;
+      pay.textContent = "Pagar con Webpay";
+      showPayError(payErr, String(err && err.message ? err.message : err));
+    });
+  }
+
   function render() {
     var root = document.getElementById("bpCartRoot");
     if (!root) return;
@@ -207,85 +315,14 @@
         render();
       });
     });
-
-    var pay = document.getElementById("bpCartPay");
-    var payErr = document.getElementById("bpCartPayErr");
-    if (!pay) return;
-
-    pay.addEventListener("click", function () {
-      if (payErr) {
-        payErr.hidden = true;
-        payErr.textContent = "";
-      }
-      var CoLive = window.BlackpinkCheckoutCustomer;
-      var WpLive = window.BlackpinkWebpayCheckout;
-      if (!WpLive || !CoLive) {
-        var missing = [];
-        if (!CoLive) missing.push("checkout-customer.js");
-        if (!WpLive) missing.push("webpay-checkout.js");
-        var msg =
-          "No se cargaron los scripts de pago (" +
-          missing.join(", ") +
-          "). Recargá con Ctrl+Shift+R o probá en otra pestaña.";
-        if (payErr) {
-          payErr.textContent = msg;
-          payErr.hidden = false;
-        } else window.alert(msg);
-        return;
-      }
-
-      var customerData = CoLive.readForm(root);
-      var errs = CoLive.validate(customerData);
-      if (errs.length) {
-        if (payErr) {
-          payErr.textContent = errs.join(" ");
-          payErr.hidden = false;
-        } else window.alert(errs.join("\n"));
-        return;
-      }
-
-      if (customerData.saveInfo) CoLive.save(customerData);
-      else CoLive.save({ saveInfo: false });
-
-      var stPay = window.BlackpinkCart.load();
-      var UUID_RE = WpLive.UUID_RE;
-      for (var i = 0; i < stPay.items.length; i++) {
-        if (!UUID_RE.test(String(stPay.items[i].productId || ""))) {
-          var bad =
-            "Hay productos sin ID válido de catálogo. Volvé a agregarlos desde la tienda.";
-          if (payErr) {
-            payErr.textContent = bad;
-            payErr.hidden = false;
-          } else window.alert(bad);
-          return;
-        }
-      }
-
-      var items = stPay.items.map(function (it) {
-        return { product_id: String(it.productId), quantity: Number(it.quantity) || 1 };
-      });
-
-      pay.disabled = true;
-      pay.textContent = "Conectando con Webpay…";
-
-      WpLive
-        .start({
-          email: customerData.email,
-          includeShipping: Boolean(stPay.includeShipping),
-          items: items,
-          customer: customerPayload(customerData),
-        })
-        .catch(function (err) {
-          pay.disabled = false;
-          pay.textContent = "Pagar con Webpay";
-          var raw = String(err && err.message ? err.message : err);
-          if (payErr) {
-            payErr.textContent = raw;
-            payErr.hidden = false;
-          } else window.alert(raw);
-        });
-    });
   }
+
+  document.addEventListener("click", function (e) {
+    if (e.target && e.target.closest && e.target.closest("#bpCartPay")) {
+      e.preventDefault();
+      handlePayClick();
+    }
+  });
 
   window.addEventListener("bp:cart-changed", render);
   document.addEventListener("DOMContentLoaded", function () {
@@ -301,6 +338,7 @@
         return res.json();
       })
       .then(function (data) {
+        payServerOk = Boolean(data && data.supabase_configured);
         if (data && data.supabase_configured === false) {
           var root = document.getElementById("bpCartRoot");
           if (!root || root.querySelector(".bp-cart-server-warn")) return;
