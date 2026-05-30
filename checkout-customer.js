@@ -120,14 +120,15 @@
   function readForm(root) {
     root = root || document;
     function val(id) {
-      var el = root.getElementById(id);
+      var el = document.getElementById(id);
       return el ? String(el.value || "").trim() : "";
     }
     function checked(id) {
-      var el = root.getElementById(id);
+      var el = document.getElementById(id);
       return el ? Boolean(el.checked) : false;
     }
-    var activeTab = root.querySelector(".bp-co-tab.bp-co-tab--active[data-delivery]");
+    var scope = root.querySelector ? root : document;
+    var activeTab = scope.querySelector(".bp-co-tab.bp-co-tab--active[data-delivery]");
     var delivery = activeTab ? activeTab.getAttribute("data-delivery") : "shipping";
     if (delivery !== "pickup") delivery = "shipping";
     return {
