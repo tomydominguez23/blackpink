@@ -60,15 +60,15 @@
     }
 
     var Co = window.BlackpinkCheckoutCustomer;
-    var savedCustomer = Co ? Co.load() : null;
-
-    if (Co && savedCustomer && window.BlackpinkCart) {
-      window.BlackpinkCart.setIncludeShipping(savedCustomer.delivery === "shipping");
-    }
-
     var st = window.BlackpinkCart.load();
     var totals = window.BlackpinkCart.getTotals();
     var ship = window.BlackpinkCart.SHIPPING_CLP;
+    var savedCustomer = Co ? Co.load() : null;
+    var formCustomer = Co
+      ? Object.assign({}, savedCustomer || Co.load(), {
+          delivery: st.includeShipping ? "shipping" : "pickup",
+        })
+      : null;
 
     if (!st.items.length) {
       root.innerHTML =
@@ -81,7 +81,7 @@
     }
 
     var formHtml = Co
-      ? Co.renderFormHtml(savedCustomer)
+      ? Co.renderFormHtml(formCustomer)
       : '<div class="bp-cart-empty" style="margin-top:1rem">' +
         "<h2>Faltan scripts de checkout</h2>" +
         '<p class="bp-cart-lead">No se cargó <code>checkout-customer.js</code>. Recargá con Ctrl+Shift+R (Mac: Cmd+Shift+R).</p>' +
@@ -288,6 +288,32 @@
   }
 
   window.addEventListener("bp:cart-changed", render);
-  document.addEventListener("DOMContentLoaded", render);
-  window.__bpCartPageInit = render;
+  document.addEventListener("DOMContentLoaded", function () {
+    render();
+    checkPayServer();
+  });
+
+  function checkPayServer() {
+    var Wp = window.BlackpinkWebpayCheckout;
+    if (!Wp || typeof Wp.apiHealthUrl !== "function") return;
+    fetch(Wp.apiHealthUrl())
+      .then(function (res) {
+        return res.json();
+      })
+      .then(function (data) {
+        if (data && data.supabase_configured === false) {
+          var root = document.getElementById("bpCartRoot");
+          if (!root || root.querySelector(".bp-cart-server-warn")) return;
+          var warn = document.createElement("div");
+          warn.className = "bp-cart-empty bp-cart-server-warn";
+          warn.style.marginBottom = "1rem";
+          warn.innerHTML =
+            "<h2>Pago temporalmente no disponible en el servidor</h2>" +
+            '<p class="bp-cart-lead">Falta configurar Supabase en el hosting (<code>api/webpay/config.php</code>). ' +
+            "El administrador debe agregar el secreto <strong>SUPABASE_SERVICE_ROLE_KEY</strong> en GitHub y volver a desplegar.</p>";
+          root.insertBefore(warn, root.firstChild);
+        }
+      })
+      .catch(function () {});
+  }
 })();

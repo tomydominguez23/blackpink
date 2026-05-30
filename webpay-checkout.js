@@ -24,6 +24,23 @@
   }
 
   function formatFetchError(rawMsg, base, createUrl) {
+    var msg = String(rawMsg || "");
+    var known = {
+      missing_supabase_url:
+        "El servidor no tiene configurado Supabase (falta config.php). Agregá SUPABASE_SERVICE_ROLE_KEY en GitHub → Settings → Secrets.",
+      missing_supabase_service_role_key:
+        "Falta la clave service_role de Supabase en el servidor. Configurala en GitHub Secrets o en api/webpay/config.php.",
+      customer_email_required: "Ingresá un email válido.",
+      items_required: "El carrito está vacío o sin productos válidos.",
+      products_not_found:
+        "Uno o más productos del carrito no existen en el inventario. Volvé a agregarlos desde la tienda.",
+      product_unavailable: "Hay un producto sin stock o no publicado.",
+      insufficient_stock: "No hay stock suficiente para la cantidad elegida.",
+      cannot_create_order:
+        "No se pudo crear el pedido en la base de datos. Revisá la configuración de Supabase.",
+      webpay_create_failed: "Transbank no pudo crear la transacción. Revisá credenciales Webpay.",
+    };
+    if (known[msg]) return known[msg];
     if (
       rawMsg === "Failed to fetch" ||
       rawMsg === "Load failed" ||
@@ -34,10 +51,10 @@
         apiHealthUrl(base)
       );
     }
-    if (/<!DOCTYPE|<html/i.test(rawMsg)) {
+    if (/<!DOCTYPE|<html/i.test(msg)) {
       return "La URL " + createUrl + " no devolvió JSON del API de pago.";
     }
-    return rawMsg;
+    return msg;
   }
 
   /**

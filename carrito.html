@@ -194,71 +194,9 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
-  <script>
-    (function () {
-      var BP_CART_ASSET_V = "5";
-      var BP_CART_SCRIPTS = [
-        "cart.js",
-        "checkout-customer.js",
-        "webpay-checkout.js",
-        "carrito-page.js",
-      ];
-
-      function showLoadError(file) {
-        var root = document.getElementById("bpCartRoot");
-        if (!root) return;
-        root.innerHTML =
-          '<div class="bp-cart-empty">' +
-          "<h2>No se pudieron cargar los scripts del carrito</h2>" +
-          '<p class="bp-cart-lead">Faltó <code>' +
-          file +
-          "</code>. Esto suele pasar por caché del navegador después de una actualización.</p>" +
-          '<p class="bp-cart-lead"><button type="button" class="btn btn-primary" id="bpCartReload">Recargar página</button></p>' +
-          "</div>";
-        var btn = document.getElementById("bpCartReload");
-        if (btn) {
-          btn.addEventListener("click", function () {
-            location.reload();
-          });
-        }
-      }
-
-      function verifyCheckoutGlobals() {
-        var missing = [];
-        if (!window.BlackpinkCart) missing.push("cart.js");
-        if (!window.BlackpinkCheckoutCustomer) missing.push("checkout-customer.js");
-        if (!window.BlackpinkWebpayCheckout) missing.push("webpay-checkout.js");
-        if (missing.length) {
-          showLoadError(missing.join(", "));
-          return false;
-        }
-        return true;
-      }
-
-      function loadScript(index) {
-        if (index >= BP_CART_SCRIPTS.length) {
-          if (!verifyCheckoutGlobals()) return;
-          if (typeof window.__bpCartPageInit === "function") {
-            window.__bpCartPageInit();
-          }
-          return;
-        }
-
-        var file = BP_CART_SCRIPTS[index];
-        var el = document.createElement("script");
-        el.src = file + "?v=" + BP_CART_ASSET_V;
-        el.async = false;
-        el.onload = function () {
-          loadScript(index + 1);
-        };
-        el.onerror = function () {
-          showLoadError(file);
-        };
-        document.body.appendChild(el);
-      }
-
-      loadScript(0);
-    })();
-  </script>
+  <script src="cart.js?v=6"></script>
+  <script src="checkout-customer.js?v=6"></script>
+  <script src="webpay-checkout.js?v=6"></script>
+  <script src="carrito-page.js?v=6"></script>
 </body>
 </html>
