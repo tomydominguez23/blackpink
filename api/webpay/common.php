@@ -8,6 +8,10 @@ declare(strict_types=1);
 const BPW_INTEGRATION_COMMERCE_CODE = '597055555532';
 const BPW_INTEGRATION_API_KEY_SECRET = '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C';
 const BPW_PROVIDER = 'webpay_plus';
+const BPW_DEFAULT_SUPABASE_URL = 'https://kodehyjdonripddobqgs.supabase.co';
+
+@ini_set('display_errors', '0');
+@ini_set('log_errors', '1');
 
 $localConfigPath = __DIR__ . '/config.php';
 if (is_file($localConfigPath)) {
@@ -348,18 +352,39 @@ function bpw_webpay_status_transaction(string $token): array
 
 function bpw_supabase_url(): string
 {
-    $url = bpw_env('SUPABASE_URL', 'https://kodehyjdonripddobqgs.supabase.co');
+    $url = bpw_env('SUPABASE_URL', BPW_DEFAULT_SUPABASE_URL);
     if ($url === '') {
-        bpw_json_response(500, ['ok' => false, 'error' => 'missing_supabase_url']);
+        bpw_json_response(500, [
+            'ok' => false,
+            'error' => 'missing_supabase_url',
+            'message' => 'Falta SUPABASE_URL en api/webpay/config.php.',
+        ]);
     }
     return rtrim($url, '/');
+}
+
+function bpw_require_supabase_config(): void
+{
+    $key = bpw_env('SUPABASE_SERVICE_ROLE_KEY', '');
+    if ($key !== '') {
+        return;
+    }
+    bpw_json_response(503, [
+        'ok' => false,
+        'error' => 'missing_supabase_service_role_key',
+        'message' => 'Falta configurar SUPABASE_SERVICE_ROLE_KEY en GitHub Secrets (Actions) y volver a desplegar, o subir api/webpay/config.php al servidor.',
+    ]);
 }
 
 function bpw_supabase_service_key(): string
 {
     $key = bpw_env('SUPABASE_SERVICE_ROLE_KEY', '');
     if ($key === '') {
-        bpw_json_response(500, ['ok' => false, 'error' => 'missing_supabase_service_role_key']);
+        bpw_json_response(500, [
+            'ok' => false,
+            'error' => 'missing_supabase_service_role_key',
+            'message' => 'Falta SUPABASE_SERVICE_ROLE_KEY en api/webpay/config.php.',
+        ]);
     }
     return $key;
 }

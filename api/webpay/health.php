@@ -19,7 +19,8 @@ bpw_json_response(200, [
     'mode' => $mode,
     'webpay_api_base' => bpw_webpay_api_base(),
     'commerce_code' => $creds['commerce_code'],
-    'supabase_configured' => bpw_env('SUPABASE_URL', '') !== '' && bpw_env('SUPABASE_SERVICE_ROLE_KEY', '') !== '',
+    'supabase_configured' => bpw_env('SUPABASE_SERVICE_ROLE_KEY', '') !== '',
+    'supabase_url' => bpw_env('SUPABASE_URL', BPW_DEFAULT_SUPABASE_URL),
     'config_php_present' => is_file(__DIR__ . '/config.php'),
     'setup_hint' => bpw_env('SUPABASE_SERVICE_ROLE_KEY', '') === ''
         ? 'Agrega SUPABASE_SERVICE_ROLE_KEY en GitHub Secrets y redeploy, o sube api/webpay/config.php al servidor.'
