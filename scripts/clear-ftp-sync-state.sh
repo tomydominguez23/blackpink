@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Borra el estado de sincronización en el servidor para forzar subida completa.
-set -euo pipefail
+set -eu
 for var in CPANEL_FTP_SERVER CPANEL_FTP_USERNAME CPANEL_FTP_PASSWORD; do
   if [[ -z "${!var:-}" ]]; then
     echo "Sin credenciales FTP; omitiendo limpieza de estado."
