@@ -106,7 +106,8 @@ En unos minutos el sitio en tu dominio debería reflejar los cambios.
 | Carpeta vacía o sitio en subcarpeta | Valor de `CPANEL_FTP_SERVER_DIR` |
 | Timeout / conexión | Prueba `protocol: ftp` o confirma que el firewall del hosting permite tu IP (algunos hosts restringen FTP) |
 | Webpay error 500 / HTML en lugar de JSON | Raíz del dominio = carpeta FTP; probá `https://bpphones.cl/api/webpay/ping.php` y `health.php` |
-| Webpay “missing_supabase” | Secretos `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` en GitHub o `config.php` en servidor |
+| “La URL create.php no devolvió JSON” | Falta `SUPABASE_SERVICE_ROLE_KEY` → GitHub Secrets → redeploy, o subir `api/webpay/config.php` manualmente |
+| Webpay “missing_supabase” | Secreto `SUPABASE_SERVICE_ROLE_KEY` en GitHub o `config.php` en servidor |
 | Deploy falla `Unknown command /api/webpay/config.php` | Corregido en scripts `upload-webpay-config-ftp.sh` (merge PR FTP). El fallo en config.php **no debe** bloquear el resto del deploy |
 | GitHub actualizado pero cPanel no | Revisá Actions: si falló un paso antes de “Subir sitio a bpphones.cl”, el FTP no corrió. Re-ejecutá el workflow manualmente |
 

@@ -23,13 +23,37 @@
     return b + "/api/webpay/health.php";
   }
 
+  function parseApiBody(rawBody) {
+    if (!rawBody) return {};
+    var trimmed = String(rawBody).trim();
+    try {
+      return trimmed ? JSON.parse(trimmed) : {};
+    } catch (_) {}
+
+    var match = trimmed.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        return JSON.parse(match[0]);
+      } catch (_) {}
+    }
+
+    var codeMatch = trimmed.match(
+      /"(missing_supabase[^"]+|customer_email_required|items_required|products_not_found|product_unavailable|insufficient_stock|cannot_create_order|webpay_create_failed)"/
+    );
+    if (codeMatch) {
+      return { ok: false, error: codeMatch[1] };
+    }
+
+    return {};
+  }
+
   function formatFetchError(rawMsg, base, createUrl) {
     var msg = String(rawMsg || "");
     var known = {
       missing_supabase_url:
-        "El servidor no tiene configurado Supabase (falta config.php). Agregá SUPABASE_SERVICE_ROLE_KEY en GitHub → Settings → Secrets.",
+        "El servidor no tiene configurado Supabase. Agregá SUPABASE_SERVICE_ROLE_KEY en GitHub → Settings → Secrets y redeploy.",
       missing_supabase_service_role_key:
-        "Falta la clave service_role de Supabase en el servidor. Configurala en GitHub Secrets o en api/webpay/config.php.",
+        "Falta la clave service_role de Supabase en el servidor. En GitHub → Settings → Secrets → Actions agregá SUPABASE_SERVICE_ROLE_KEY (Dashboard Supabase → Project Settings → API → service_role) y volvé a desplegar.",
       customer_email_required: "Ingresá un email válido.",
       items_required: "El carrito está vacío o sin productos válidos.",
       products_not_found:
@@ -47,14 +71,37 @@
       rawMsg === "NetworkError when attempting to fetch resource."
     ) {
       return (
-        "No se pudo conectar con el servidor de pago. Revisá que exista /api/webpay/create.php y probá: " +
-        apiHealthUrl(base)
+        "No se pudo conectar con el servidor de pago. Revisá https://bpphones.cl/api/webpay/health.php"
       );
     }
-    if (/<!DOCTYPE|<html/i.test(msg)) {
-      return "La URL " + createUrl + " no devolvió JSON del API de pago.";
+    if (/<!DOCTYPE|<html|<br\s*\/?>/i.test(msg)) {
+      return (
+        "El servidor de pago respondió con un error HTML en lugar de JSON. " +
+        "Probablemente falta api/webpay/config.php con SUPABASE_SERVICE_ROLE_KEY. " +
+        "Verificá https://bpphones.cl/api/webpay/health.php"
+      );
     }
     return msg;
+  }
+
+  function errorFromResponse(data, rawBody, status, base, createUrl) {
+    if (data && data.message) {
+      return String(data.message);
+    }
+    if (data && data.error) {
+      return formatFetchError(String(data.error), base, createUrl);
+    }
+    if (rawBody && /missing_supabase_service_role_key/.test(rawBody)) {
+      return formatFetchError("missing_supabase_service_role_key", base, createUrl);
+    }
+    if (rawBody && /<!DOCTYPE|<html|<br\s*\/?>/i.test(rawBody)) {
+      return formatFetchError(rawBody, base, createUrl);
+    }
+    if (rawBody && rawBody.length < 500) {
+      var cleaned = rawBody.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+      if (cleaned) return cleaned;
+    }
+    return "Error del servidor de pago (HTTP " + status + "). Revisá /api/webpay/health.php";
   }
 
   /**
@@ -81,48 +128,36 @@
 
     return fetch(createUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(body),
-    })
-      .then(function (res) {
-        return res.text().then(function (rawBody) {
-          var data = {};
-          try {
-            data = rawBody ? JSON.parse(rawBody) : {};
-          } catch (_) {
-            data = {};
-          }
-          if (!res.ok) {
-            var errDetail = data && data.error ? String(data.error) : "";
-            if (!errDetail) {
-              if (/<!DOCTYPE|<html/i.test(rawBody)) {
-                errDetail = formatFetchError(rawBody, base, createUrl);
-              } else if (rawBody && rawBody.length < 500) {
-                errDetail = rawBody.replace(/<[^>]+>/g, " ").trim();
-              } else {
-                errDetail = "HTTP " + res.status;
-              }
-            }
-            throw new Error(formatFetchError(errDetail, base, createUrl));
-          }
-          if (!data.url || !data.token) {
-            throw new Error("Respuesta del servidor sin url/token de Webpay.");
-          }
-          try {
-            sessionStorage.setItem("bp_checkout_email", email);
-          } catch (_) {}
-          var form = document.createElement("form");
-          form.method = "POST";
-          form.action = data.url;
-          var input = document.createElement("input");
-          input.type = "hidden";
-          input.name = "token_ws";
-          input.value = data.token;
-          form.appendChild(input);
-          document.body.appendChild(form);
-          form.submit();
-        });
+    }).then(function (res) {
+      return res.text().then(function (rawBody) {
+        var data = parseApiBody(rawBody);
+
+        if (!res.ok) {
+          throw new Error(errorFromResponse(data, rawBody, res.status, base, createUrl));
+        }
+
+        if (!data.url || !data.token) {
+          throw new Error("Respuesta del servidor sin url/token de Webpay.");
+        }
+
+        try {
+          sessionStorage.setItem("bp_checkout_email", email);
+        } catch (_) {}
+
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = data.url;
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "token_ws";
+        input.value = data.token;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
       });
+    });
   }
 
   window.BlackpinkWebpayCheckout = {

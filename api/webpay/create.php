@@ -5,6 +5,7 @@ require __DIR__ . '/common.php';
 
 bpw_handle_options_preflight();
 bpw_allow_cors();
+bpw_require_supabase_config();
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     bpw_json_response(405, ['ok' => false, 'error' => 'method_not_allowed']);
