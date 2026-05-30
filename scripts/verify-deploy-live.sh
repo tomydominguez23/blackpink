@@ -14,6 +14,17 @@ fi
 
 echo "Verificando deploy en ${SITE} (commit ${EXPECTED_SHA:0:7})…"
 
+check_homepage() {
+  local home=""
+  home="$(curl -fsSL "https://bpphones.cl/" 2>/dev/null || true)"
+  if printf '%s' "$home" | grep -qi "Index of /"; then
+    echo "::error::La home muestra listado de carpetas (falta .htaccess). No subas FTP manual; redeploy desde GitHub."
+    FAIL=1
+  elif printf '%s' "$home" | grep -qi "BLACKPINK\|Blackpink\|bp-cart\|Tu carro"; then
+    echo "OK: la home carga la tienda (no listado de directorios)."
+  fi
+}
+
 check_webpay() {
   local ping_ok=0
   local health_ok=0
@@ -50,6 +61,7 @@ for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
     THEME="$(printf '%s' "$BODY" | python3 -c "import json,sys; print(json.load(sys.stdin).get('theme',''))" 2>/dev/null || true)"
     if [ "$LIVE_SHA" = "$EXPECTED_SHA" ]; then
       echo "OK: deploy-version.json = commit ${EXPECTED_SHA:0:7} (theme=${THEME})."
+      check_homepage
       check_webpay
       if [ "$FAIL" -eq 0 ]; then
         exit 0
