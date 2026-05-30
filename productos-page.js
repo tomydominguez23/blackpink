@@ -91,6 +91,22 @@
     };
   }
 
+  function productColorsInlineHtml(p) {
+    const colors =
+      p.category === "iphone" && Array.isArray(p.colors) && p.colors.length ? p.colors.slice(0, 8) : [];
+    const swatches = colors
+      .map(
+        (c) =>
+          `<span class="pd-color-btn" style="background:${escapeHtml(c.hex || "#ccc")}" title="${escapeHtml(
+            c.name || "Color"
+          )}" aria-label="${escapeHtml(c.name || "Color")}"></span>`
+      )
+      .join("");
+    const emptyClass = swatches ? "" : " product-colors-inline--empty";
+    const aria = swatches ? ' aria-label="Colores disponibles"' : ' aria-hidden="true"';
+    return `<div class="product-colors-inline${emptyClass}"${aria}>${swatches}</div>`;
+  }
+
   function renderCard(p) {
     const old = p.oldPrice
       ? `<span class="product-old">${formatClp(p.oldPrice)}</span>`
@@ -136,19 +152,7 @@
           ${priceRowHtml}
           <p class="product-installments">Hasta 12 cuotas de ${monthly}</p>
           <p class="product-shipping-note">Envío a todo Chile: ${formatClp(15000)}</p>
-          ${p.category === "iphone" && Array.isArray(p.colors) && p.colors.length
-            ? `<div class="product-colors-inline" aria-label="Colores disponibles">
-                ${p.colors
-                  .slice(0, 8)
-                  .map(
-                    (c) =>
-                      `<span class="pd-color-btn" style="background:${escapeHtml(c.hex || "#ccc")}" title="${escapeHtml(
-                        c.name || "Color"
-                      )}" aria-label="${escapeHtml(c.name || "Color")}"></span>`
-                  )
-                  .join("")}
-              </div>`
-            : ""}
+          ${productColorsInlineHtml(p)}
           <div class="product-card-actions">
             <a class="btn btn-primary btn-sm product-card-btn" href="producto.html?id=${encodeURIComponent(p.id)}">Ver producto</a>
           </div>

@@ -2,6 +2,19 @@
   const MEGA_MS = 240;
   let megaTimer = null;
   let megaTopRaf = null;
+  let navScrollY = 0;
+  const mobileNavMq = window.matchMedia("(max-width: 700px)");
+
+  function isMobileNav() {
+    return mobileNavMq.matches;
+  }
+
+  function updateNavDrawerTop() {
+    const head = document.getElementById("siteHead");
+    if (!head) return;
+    const y = Math.round(head.getBoundingClientRect().bottom);
+    document.documentElement.style.setProperty("--nav-drawer-top", `${y}px`);
+  }
 
   function updateMegamenuTop() {
     const head = document.getElementById("siteHead");
@@ -61,14 +74,25 @@
       if (!btn || !panel) return;
 
       li.addEventListener("mouseenter", () => {
+        if (isMobileNav()) return;
         clearMegaTimer();
         openMega(panel, btn);
       });
-      li.addEventListener("mouseleave", scheduleClose);
-      panel.addEventListener("mouseenter", clearMegaTimer);
-      panel.addEventListener("mouseleave", scheduleClose);
+      li.addEventListener("mouseleave", () => {
+        if (isMobileNav()) return;
+        scheduleClose();
+      });
+      panel.addEventListener("mouseenter", () => {
+        if (isMobileNav()) return;
+        clearMegaTimer();
+      });
+      panel.addEventListener("mouseleave", () => {
+        if (isMobileNav()) return;
+        scheduleClose();
+      });
 
       btn.addEventListener("focus", () => {
+        if (isMobileNav()) return;
         clearMegaTimer();
         openMega(panel, btn);
       });
@@ -82,17 +106,56 @@
     });
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeAllMegas();
+      if (e.key !== "Escape") return;
+      closeAllMegas();
+      setNavOpen(false);
     });
+  }
+
+  function setNavOpen(open) {
+    const toggle = document.getElementById("navToggle");
+    const nav = document.getElementById("siteNav");
+    if (!toggle || !nav) return;
+
+    nav.classList.toggle("is-open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+    document.body.classList.toggle("nav-drawer-open", open);
+
+    if (open) {
+      updateNavDrawerTop();
+      if (isMobileNav()) {
+        navScrollY = window.scrollY;
+        document.body.style.top = `-${navScrollY}px`;
+      }
+      return;
+    }
+
+    closeAllMegas();
+    if (document.body.style.top) {
+      document.body.style.top = "";
+      window.scrollTo(0, navScrollY);
+    }
   }
 
   function initNavToggle() {
     const toggle = document.getElementById("navToggle");
     const nav = document.getElementById("siteNav");
     if (!toggle || !nav) return;
+
     toggle.addEventListener("click", () => {
-      const open = nav.classList.toggle("is-open");
-      toggle.setAttribute("aria-expanded", open);
+      setNavOpen(!nav.classList.contains("is-open"));
+    });
+
+    nav.addEventListener("click", (e) => {
+      const link = e.target.closest("a[href]");
+      if (link && isMobileNav()) setNavOpen(false);
+    });
+
+    window.addEventListener("resize", () => {
+      if (nav.classList.contains("is-open")) updateNavDrawerTop();
+      if (!isMobileNav() && document.body.classList.contains("nav-drawer-open")) {
+        setNavOpen(false);
+      }
     });
   }
 
@@ -406,6 +469,22 @@
     }
   }
 
+  function productColorsInlineHtml(p) {
+    const colors =
+      p.category === "iphone" && Array.isArray(p.colors) && p.colors.length ? p.colors.slice(0, 8) : [];
+    const swatches = colors
+      .map(
+        (c) =>
+          `<span class="pd-color-btn" style="background:${escapeHtml(c.hex || "#ccc")}" title="${escapeHtml(
+            c.name || "Color"
+          )}" aria-label="${escapeHtml(c.name || "Color")}"></span>`
+      )
+      .join("");
+    const emptyClass = swatches ? "" : " product-colors-inline--empty";
+    const aria = swatches ? ' aria-label="Colores disponibles"' : ' aria-hidden="true"';
+    return `<div class="product-colors-inline${emptyClass}"${aria}>${swatches}</div>`;
+  }
+
   function homeCard(p) {
     const old = p.oldPrice
       ? `<span class="product-old">${formatClp(p.oldPrice)}</span>`
@@ -451,19 +530,7 @@
           ${priceRowHtml}
           <p class="product-installments">Hasta 12 cuotas de ${monthly}</p>
           <p class="product-shipping-note">Envío a todo Chile: ${formatClp(15000)}</p>
-          ${p.category === "iphone" && Array.isArray(p.colors) && p.colors.length
-            ? `<div class="product-colors-inline" aria-label="Colores disponibles">
-                ${p.colors
-                  .slice(0, 8)
-                  .map(
-                    (c) =>
-                      `<span class="pd-color-btn" style="background:${escapeHtml(c.hex || "#ccc")}" title="${escapeHtml(
-                        c.name || "Color"
-                      )}" aria-label="${escapeHtml(c.name || "Color")}"></span>`
-                  )
-                  .join("")}
-              </div>`
-            : ""}
+          ${productColorsInlineHtml(p)}
           <div class="product-card-actions">
             <a class="btn btn-primary btn-sm product-card-btn" href="producto.html?id=${encodeURIComponent(p.id)}">Ver producto</a>
           </div>
