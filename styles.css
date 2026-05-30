@@ -5,7 +5,7 @@
   --brand-pink-glow: rgba(255, 45, 154, 0.55);
   --brand-pink-dim: rgba(255, 45, 154, 0.12);
   --text: #f4f4f5;
-  --muted: #a1a1aa;
+  --muted: #b8b8c4;
   --bg: #050508;
   --bg-elevated: #0c0c12;
   --bg-card: #111118;
@@ -27,7 +27,6 @@
 
 html {
   background: var(--bg);
-  zoom: 0.9;
 }
 
 body {
@@ -3702,10 +3701,6 @@ a:hover {
    Mobile UX tuning (sitio público)
    ============================================================ */
 @media (max-width: 900px) {
-  html {
-    zoom: 1;
-  }
-
   .header-inner {
     flex-wrap: wrap;
     gap: 0.55rem;
