@@ -14,7 +14,7 @@ for var in CPANEL_FTP_SERVER CPANEL_FTP_USERNAME CPANEL_FTP_PASSWORD; do
   fi
 done
 PORT="${CPANEL_FTP_PORT:-21}"
-REMOTE_DIR="${CPANEL_FTP_SERVER_DIR:-./public_html/}"
+REMOTE_DIR="${CPANEL_FTP_SERVER_DIR:-./public_html/bpphones.cl/}"
 REMOTE_DIR="${REMOTE_DIR%/}"
 REMOTE_PATH="${REMOTE_DIR}/api/webpay/config.php"
 if ! command -v lftp >/dev/null 2>&1; then
