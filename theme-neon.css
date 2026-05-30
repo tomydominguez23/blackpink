@@ -1,0 +1,558 @@
+/* Blackpink Store — tema oscuro neón rosado (referencia iphoneup.cl) */
+
+/* Luces ambientales de fondo */
+body {
+  position: relative;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 15% -10%, rgba(255, 45, 154, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 85% 5%, rgba(255, 107, 181, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 35% at 50% 100%, rgba(255, 45, 154, 0.08) 0%, transparent 45%);
+  background-attachment: fixed;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle 420px at 10% 30%, rgba(255, 45, 154, 0.06) 0%, transparent 70%),
+    radial-gradient(circle 380px at 90% 70%, rgba(255, 107, 181, 0.05) 0%, transparent 70%);
+}
+
+/* ——— Top bar ——— */
+.header-top {
+  background: rgba(12, 12, 18, 0.95);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-top-loc {
+  color: var(--text);
+}
+
+/* ——— Header search ——— */
+.header-search {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 0 12px rgba(255, 45, 154, 0.04);
+}
+
+.header-search input {
+  background: transparent;
+  color: var(--text);
+}
+
+.header-search input::placeholder {
+  color: var(--muted);
+}
+
+.header-search-submit {
+  color: var(--muted);
+}
+
+.header-cart:hover,
+.header-wa:hover {
+  background: var(--brand-pink-dim);
+  box-shadow: 0 0 16px rgba(255, 45, 154, 0.2);
+}
+
+.header-cart-badge {
+  background: var(--brand-pink);
+  box-shadow: 0 0 10px var(--brand-pink-glow);
+}
+
+.site-header {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 var(--border), 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* ——— Mega menú ——— */
+.megamenu-panel {
+  background: var(--bg-elevated);
+  color: var(--text);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(255, 45, 154, 0.08);
+}
+
+.megamenu-kicker {
+  color: var(--brand-pink-soft);
+}
+
+.megamenu-tagline {
+  color: var(--muted);
+}
+
+.megamenu-links a {
+  color: var(--text);
+}
+
+.megamenu-promo-cap {
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+/* ——— Hero ——— */
+.hero-bg {
+  background: transparent;
+}
+
+.hero-heading,
+.section-title {
+  text-shadow: 0 0 40px rgba(255, 45, 154, 0.15);
+}
+
+.hero-info-bar {
+  background: linear-gradient(135deg, #c9006e 0%, var(--brand-pink) 45%, #ff6bb5 100%);
+  box-shadow: 0 0 30px rgba(255, 45, 154, 0.35);
+}
+
+/* ——— Cards y secciones ——— */
+.feature-card,
+.product-card--listing {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.product-card--listing:hover {
+  border-color: rgba(255, 45, 154, 0.35);
+  box-shadow: var(--shadow), var(--neon-shadow);
+}
+
+.product-media-shell {
+  background: linear-gradient(180deg, rgba(17, 17, 24, 0.9) 0%, rgba(12, 12, 18, 0.95) 100%);
+  border-color: var(--border);
+}
+
+.product-fav {
+  background: var(--bg-elevated);
+  border-color: var(--border-subtle);
+  color: var(--muted);
+}
+
+.product-fav:hover {
+  border-color: var(--brand-pink);
+  color: var(--brand-pink);
+  box-shadow: 0 0 12px rgba(255, 45, 154, 0.25);
+}
+
+.product-installments,
+.product-shipping-note {
+  color: var(--muted);
+}
+
+/* ——— Reseñas ——— */
+.reviews-arrow {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.reviews-arrow:hover {
+  border-color: var(--brand-pink);
+  color: var(--brand-pink);
+}
+
+.review-google-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+.review-google-head h3 {
+  color: var(--text);
+}
+
+.review-google-text {
+  color: var(--muted);
+}
+
+.review-google-time {
+  color: var(--muted);
+}
+
+/* ——— Catálogo ——— */
+.filters-toggle,
+.filters-sidebar,
+.map-note {
+  background: var(--bg-elevated);
+}
+
+.catalog-search-input,
+.sort-select,
+.filter-prices input {
+  background: var(--bg-card);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.catalog-estado-btn {
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.catalog-estado-btn:hover {
+  background: var(--brand-pink-dim);
+}
+
+/* ——— Detalle producto ——— */
+.pd-thumb,
+.pd-gallery-main {
+  background: var(--bg-card);
+}
+
+.pd-cap-btn,
+.pd-charger-btn {
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.pd-cap-btn.active,
+.pd-charger-btn.active {
+  background: var(--brand-pink-dim);
+}
+
+.pd-color-btn.active {
+  box-shadow: 0 0 0 2px var(--bg-card), 0 0 0 4px var(--brand-pink), 0 0 12px var(--brand-pink-glow);
+}
+
+.pd-stock-line {
+  color: var(--muted);
+}
+
+.pd-shipping-info {
+  background: var(--bg-card);
+}
+
+.pd-tab-pane p,
+.pd-spec-val,
+.pd-review-text,
+.pd-guarantee-text p {
+  color: var(--muted);
+}
+
+.pd-reviews-all-btn,
+.pd-carousel-btn {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+.pd-review-avatar {
+  background: var(--bg-elevated);
+  color: var(--muted);
+}
+
+/* ——— Vende / trade-in ——— */
+.trade-page {
+  background: transparent;
+}
+
+.trade-stepper,
+.trade-cat-card,
+.trade-model-card,
+.trade-capacity-btn,
+.trade-panel--result .trade-result {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.trade-step--tab {
+  background: var(--bg-elevated);
+  color: var(--muted);
+}
+
+.trade-step--tab.is-active {
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.trade-step--tab.is-active .trade-step-badge {
+  background: var(--brand-pink);
+  box-shadow: 0 0 14px var(--brand-pink-glow);
+}
+
+.trade-cat-thumb,
+.trade-model-thumb {
+  background: var(--bg-elevated);
+}
+
+.trade-capacity-btn.is-active {
+  background: var(--brand-pink-dim);
+  border-color: var(--brand-pink);
+}
+
+/* ——— Botones ——— */
+.btn-outline {
+  border-color: rgba(255, 45, 154, 0.35);
+  color: var(--text);
+}
+
+.btn-outline:hover {
+  background: var(--brand-pink-dim);
+  border-color: var(--brand-pink);
+  box-shadow: 0 0 20px rgba(255, 45, 154, 0.2);
+}
+
+.btn-primary {
+  box-shadow: 0 0 20px rgba(255, 45, 154, 0.35);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 28px rgba(255, 45, 154, 0.5);
+}
+
+/* ——— Footer ——— */
+.site-footer {
+  background: #030305;
+  border-top: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 rgba(255, 45, 154, 0.06);
+}
+
+.footer-shipping-bar {
+  box-shadow: 0 0 30px rgba(255, 45, 154, 0.4);
+}
+
+/* ——— Modal carrito ——— */
+.bp-cart-modal-card {
+  background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-card) 100%);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow), 0 0 48px rgba(255, 45, 154, 0.12);
+}
+
+.bp-cart-modal-x {
+  background: var(--bg-card);
+  color: var(--muted);
+}
+
+.bp-cart-modal-x:hover {
+  background: var(--brand-pink-dim);
+  color: var(--brand-pink);
+}
+
+.bp-cart-modal-head h2,
+.bp-cart-modal-upsell h4 {
+  color: var(--text);
+}
+
+.bp-cart-modal-sub,
+.bp-cart-modal-brand,
+.bp-cart-modal-opts,
+.bp-cart-modal-stock-note {
+  color: var(--muted);
+}
+
+.bp-cart-modal-line {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+.bp-cart-modal-thumb {
+  background: var(--bg-elevated);
+  border-color: var(--border);
+}
+
+.bp-cart-modal-line-txt h3 {
+  color: var(--text);
+}
+
+.bp-modal-ups-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+.bp-modal-ups-img {
+  background: var(--bg-elevated);
+}
+
+.bp-modal-ups-title {
+  color: var(--text);
+}
+
+.bp-cart-modal-actions {
+  border-top-color: var(--border);
+}
+
+.bp-cart-modal-btn-secondary {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.bp-cart-modal-btn-secondary:hover {
+  background: var(--brand-pink-dim);
+  border-color: var(--brand-pink);
+}
+
+.bp-cart-modal-btn-primary {
+  background: linear-gradient(135deg, var(--brand-pink), #c9006e);
+  box-shadow: 0 4px 20px rgba(255, 45, 154, 0.4);
+}
+
+.bp-cart-modal-alert {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #fcd34d;
+}
+
+/* ——— Página carrito ——— */
+.bp-cart-page-head h1,
+.bp-cart-empty h2,
+.bp-cart-line-title,
+.bp-cart-line-line-total,
+.bp-cart-qty-val {
+  color: var(--text);
+}
+
+.bp-cart-empty {
+  background: linear-gradient(180deg, var(--bg-card), var(--bg-elevated));
+}
+
+.bp-cart-line-card {
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+}
+
+.bp-cart-line-card__media {
+  background: var(--bg-elevated);
+  border-color: var(--border);
+}
+
+.bp-cart-line-opts,
+.bp-cart-aside-title {
+  color: var(--muted);
+}
+
+.bp-cart-line-unit {
+  color: var(--text);
+}
+
+.bp-cart-qty {
+  background: var(--bg-elevated);
+  border-color: var(--border);
+}
+
+.bp-cart-qty-btn {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.bp-cart-qty-btn:hover:not(:disabled) {
+  background: var(--brand-pink-dim);
+  border-color: var(--brand-pink);
+  color: var(--brand-pink);
+}
+
+.bp-cart-summary {
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 45, 154, 0.06);
+}
+
+.bp-co,
+.bp-co-tabs,
+.bp-co-pickup {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+.bp-co-tabs {
+  background: var(--bg-elevated);
+}
+
+.bp-co-title {
+  color: var(--text);
+}
+
+.bp-co-hint,
+.bp-co-pickup-note {
+  color: var(--muted);
+}
+
+.bp-co-pickup strong,
+.bp-co-field label {
+  color: var(--text);
+}
+
+.bp-co-section-label,
+.bp-co-opt,
+.bp-co-save {
+  color: var(--muted);
+}
+
+.bp-co-field input,
+.bp-co-field select {
+  background: var(--bg-elevated);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.bp-co-tab {
+  color: var(--muted);
+}
+
+.bp-co-tab--active {
+  background: var(--bg-card);
+  color: var(--text);
+  box-shadow: 0 0 16px rgba(255, 45, 154, 0.15);
+}
+
+.bp-co-tab--active .bp-co-tab-price {
+  color: var(--brand-pink);
+}
+
+.bp-cart-ship-row {
+  background: var(--bg-elevated);
+  border-color: var(--border);
+}
+
+.bp-cart-ship-row label {
+  color: var(--text);
+}
+
+.bp-cart-ship-note,
+.bp-cart-sum-line,
+.bp-cart-pay-note {
+  color: var(--muted);
+}
+
+.bp-cart-sum-line--total {
+  color: var(--text);
+  border-top-color: var(--border);
+}
+
+.bp-cart-label {
+  color: var(--text);
+}
+
+.bp-cart-input {
+  background: var(--bg-elevated);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.bp-cart-input:focus {
+  border-color: var(--brand-pink);
+  box-shadow: 0 0 0 3px rgba(255, 45, 154, 0.2);
+}
+
+.bp-cart-pay {
+  background: linear-gradient(135deg, var(--brand-pink), #c9006e);
+  box-shadow: 0 4px 24px rgba(255, 45, 154, 0.4);
+}
+
+.bp-cart-pay:hover {
+  box-shadow: 0 6px 32px rgba(255, 45, 154, 0.55);
+}
+
+/* Inputs globales en páginas públicas */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  color-scheme: dark;
+}
