@@ -8,16 +8,19 @@ for var in CPANEL_FTP_SERVER CPANEL_FTP_USERNAME CPANEL_FTP_PASSWORD; do
   fi
 done
 PORT="${CPANEL_FTP_PORT:-21}"
-REMOTE_DIR="${CPANEL_FTP_SERVER_DIR:-./public_html/bpphones.cl/}"
-REMOTE_DIR="${REMOTE_DIR%/}"
-STATE_FILE="${REMOTE_DIR}/.ftp-deploy-sync-state.json"
+PRIMARY="${CPANEL_FTP_SERVER_DIR:-./public_html/bpphones.cl/}"
+PRIMARY="${PRIMARY%/}"
 if ! command -v lftp >/dev/null 2>&1; then
   sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 fi
-lftp -u "${CPANEL_FTP_USERNAME}","${CPANEL_FTP_PASSWORD}" -e "\
+for REMOTE_DIR in "${PRIMARY}" "./bpphones.cl" "./public_html/bpphones.cl"; do
+  for STATE in ".ftp-deploy-sync-state.json" ".ftp-deploy-sync-bpphones-v4a.json" ".ftp-deploy-sync-bpphones-v4b.json"; do
+    lftp -u "${CPANEL_FTP_USERNAME}","${CPANEL_FTP_PASSWORD}" -e "\
 set ftp:ssl-force true; \
 set ssl:verify-certificate no; \
 open -p ${PORT} ftps://${CPANEL_FTP_SERVER}; \
-rm -f ${STATE_FILE}; \
+rm -f ${REMOTE_DIR}/${STATE}; \
 bye" || true
-echo "Estado FTP limpiado (si existía): ${STATE_FILE}"
+  done
+done
+echo "Estado FTP limpiado en ${PRIMARY} y ./bpphones.cl/"

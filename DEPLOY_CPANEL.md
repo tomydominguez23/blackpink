@@ -23,7 +23,8 @@ Hosting **Ditecno** — sitio público en **https://bpphones.cl** (cuenta FTP as
 | Usuario FTP | `admin@bpphones.cl` |
 | Puerto FTPS explícito | `21` |
 | Protocolo en GitHub Actions | `ftps` (FTPS explícito; ya configurado en el workflow) |
-| Directorio remoto | `./bpphones.cl/` si el FTP abre en `public_html`; si abre en la cuenta, `./public_html/bpphones.cl/` |
+| Directorio remoto (servidor) | `/home/ditecnoc/public_html/bpphones.cl` |
+| Ruta FTP (relativa al home) | `./public_html/bpphones.cl/` |
 | Contraseña | La de la cuenta FTP en cPanel *(no va en el código)* |
 
 Si necesitas revisar o cambiar la contraseña: **cPanel → Cuentas FTP**.
@@ -38,7 +39,10 @@ En cPanel la carpeta del sitio es:
 
 **`/home/ditecnoc/public_html/bpphones.cl`**
 
-El workflow sube por defecto a **`./public_html/bpphones.cl/`** (equivalente FTP desde la raíz de la cuenta).
+El workflow sube a **dos rutas FTP** (una suele ser la correcta según cómo abra tu cliente FTP):
+
+1. `./public_html/bpphones.cl/` → `/home/ditecnoc/public_html/bpphones.cl`
+2. `./bpphones.cl/` → si el FTP ya entra dentro de `public_html`
 
 Opcional: secreto `CPANEL_FTP_SERVER_DIR` = `./public_html/bpphones.cl/`  
 (también acepta pegar `public_html/bpphones.cl` o la ruta absoluta; se normaliza sola).
@@ -61,7 +65,7 @@ Crea estos secretos (nombres **exactos**):
 | `CPANEL_FTP_USERNAME` | Sí | `admin@bpphones.cl` |
 | `CPANEL_FTP_PASSWORD` | Sí | Contraseña de la cuenta FTP |
 | `CPANEL_FTP_PORT` | No | `21` (opcional; el workflow usa 21 si no existe) |
-| `CPANEL_FTP_SERVER_DIR` | No | Por defecto `./bpphones.cl/`. Usa `./public_html/bpphones.cl/` solo si el FTP no entra en `public_html`. |
+| `CPANEL_FTP_SERVER_DIR` | No | Por defecto `./public_html/bpphones.cl/` → `/home/ditecnoc/public_html/bpphones.cl` |
 | `SUPABASE_URL` | Para Webpay | `https://kodehyjdonripddobqgs.supabase.co` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Para Webpay | Clave **service_role** de Supabase (Dashboard → API) |
 | `WEBPAY_MODE` | No | `integration` o `production` |
@@ -109,7 +113,7 @@ En unos minutos el sitio en tu dominio debería reflejar los cambios.
 | Timeout / conexión | Prueba `protocol: ftp` o confirma que el firewall del hosting permite tu IP (algunos hosts restringen FTP) |
 | Webpay error 500 / HTML en lugar de JSON | Raíz del dominio = carpeta FTP; probá `https://bpphones.cl/api/webpay/ping.php` y `health.php` |
 | Webpay “missing_supabase” | Secretos `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` en GitHub o `config.php` en servidor |
-| Listado “Index of /” en bpphones.cl | `CPANEL_FTP_SERVER_DIR` debe ser `./public_html/bpphones.cl/` |
+| Listado “Index of /” en bpphones.cl | Verificar dominio y FTP en `/home/ditecnoc/public_html/bpphones.cl` |
 
 ## Alternativa más robusta (opcional)
 

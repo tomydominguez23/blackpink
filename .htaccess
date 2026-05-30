@@ -1,8 +1,7 @@
-# cPanel / Apache: tienda en la raíz
+# /home/ditecnoc/public_html/bpphones.cl
 DirectoryIndex index.html index.php
 Options -Indexes -MultiViews
 
-# URL canónica: bpphones.cl (sin www) y redirección desde dominio anterior
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteCond %{HTTP_HOST} ^(www\.)?blackpinkphones\.cl$ [NC]
@@ -11,14 +10,6 @@ Options -Indexes -MultiViews
   RewriteRule ^ https://bpphones.cl%{REQUEST_URI} [R=301,L]
 </IfModule>
 
-# Cache: solo si mod_headers está disponible (evita error 500 en algunos hostings)
-<IfModule mod_headers.c>
-  <FilesMatch "\.(html|js|css)$">
-    Header set Cache-Control "no-cache, must-revalidate"
-  </FilesMatch>
-</IfModule>
-
-# Archivos de desarrollo que no deben verse en el navegador
 <IfModule mod_authz_core.c>
   <FilesMatch "^(package\.json|config\.toml|\.ftp-deploy-sync-state\.json)$">
     Require all denied
