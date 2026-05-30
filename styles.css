@@ -1,15 +1,22 @@
 /* Blackpink Store — estilos globales (referencia estructural tipo tuiphone.cl, marca propia) */
 :root {
-  --brand-pink: #e1306c;
-  --text: #111;
-  --muted: #5c5c5c;
-  --bg: #fff;
-  --border: #e8e8e8;
-  --header-bg: #ffffff;
-  --header-text: #1a1a1a;
+  --brand-pink: #ff2d9a;
+  --brand-pink-soft: #ff6bb5;
+  --brand-pink-glow: rgba(255, 45, 154, 0.55);
+  --brand-pink-dim: rgba(255, 45, 154, 0.12);
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --bg: #050508;
+  --bg-elevated: #0c0c12;
+  --bg-card: #111118;
+  --border: rgba(255, 45, 154, 0.14);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --header-bg: rgba(5, 5, 8, 0.88);
+  --header-text: #fafafa;
   --radius: 12px;
   --page-pad: min(1.25rem, 4vw);
-  --shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --neon-shadow: 0 0 24px rgba(255, 45, 154, 0.35);
 }
 
 *,
@@ -19,19 +26,15 @@
 }
 
 html {
-  background: #fff;
-  zoom: 0.9; /* vista global ~90% */
-}
-
-body {
-  background: #fff;
+  background: var(--bg);
+  zoom: 0.9;
 }
 
 body {
   margin: 0;
   font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   color: var(--text);
-  background: #fff;
+  background: var(--bg);
   line-height: 1.5;
   overflow-x: hidden;
 }
@@ -84,7 +87,7 @@ a:hover {
 
 /* ——— Top bar ——— */
 .header-top {
-  background: #fff;
+  background: rgba(12, 12, 18, 0.95);
   border-bottom: 1px solid var(--border);
   font-size: 0.875rem;
 }
@@ -99,7 +102,7 @@ a:hover {
 
 .header-top-loc {
   font-weight: 700;
-  color: #000;
+  color: var(--text);
   text-align: center;
 }
 
