@@ -90,7 +90,7 @@ jobs:
           CPANEL_FTP_PORT: ${{ secrets.CPANEL_FTP_PORT }}
           CPANEL_FTP_SERVER_DIR: ${{ steps.ftpdir.outputs.dir }}
 
-      - name: Sincronizar con bpphones.cl (cPanel)
+      - name: Sincronizar (ruta cuenta → public_html/bpphones.cl)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.CPANEL_FTP_SERVER }}
@@ -100,7 +100,49 @@ jobs:
           port: ${{ secrets.CPANEL_FTP_PORT != '' && secrets.CPANEL_FTP_PORT || '21' }}
           local-dir: ./
           server-dir: ${{ steps.ftpdir.outputs.dir }}
-          state-name: .ftp-deploy-sync-bpphones-v3.json
+          state-name: .ftp-deploy-sync-bpphones-v4a.json
+          log-level: standard
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/.ftp-deploy-sync-state.json
+            **/api/webpay/config.php
+            **/config.js
+            **/*.sql
+            supabase-migration-*.sql
+            supabase-schema.sql
+            SUPABASE_EJECUTAR*.sql
+            **/tests/**
+            **/*.test.mjs
+            **/smoke.test.mjs
+            **/package.json
+            **/package-lock.json
+            **/config.toml
+            **/index.ts
+            **/cli-latest
+            **/gotrue-version
+            **/pooler-url
+            **/postgres-version
+            **/project-ref
+            **/rest-version
+            **/storage-migration
+            **/storage-version
+            **/WEBPAY_PHP_SETUP.md
+            **/DEPLOY_CPANEL.md
+
+      - name: Sincronizar (ruta si FTP abre en public_html → bpphones.cl)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.CPANEL_FTP_SERVER }}
+          username: ${{ secrets.CPANEL_FTP_USERNAME }}
+          password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          protocol: ftps
+          port: ${{ secrets.CPANEL_FTP_PORT != '' && secrets.CPANEL_FTP_PORT || '21' }}
+          local-dir: ./
+          server-dir: ./bpphones.cl/
+          state-name: .ftp-deploy-sync-bpphones-v4b.json
           log-level: standard
           exclude: |
             **/.git*
