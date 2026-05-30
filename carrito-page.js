@@ -80,6 +80,24 @@
     }
   }
 
+  function checkPayServerFresh() {
+    var Wp = window.BlackpinkWebpayCheckout;
+    if (!Wp || typeof Wp.apiHealthUrl !== "function") {
+      return Promise.resolve(true);
+    }
+    return fetch(Wp.apiHealthUrl(), { cache: "no-store" })
+      .then(function (res) {
+        return res.json();
+      })
+      .then(function (data) {
+        payServerOk = Boolean(data && data.supabase_configured);
+        return payServerOk;
+      })
+      .catch(function () {
+        return payServerOk !== false;
+      });
+  }
+
   function handlePayClick() {
     var root = document.getElementById("bpCartRoot");
     var pay = document.getElementById("bpCartPay");
@@ -99,15 +117,7 @@
       if (!WpLive) missing.push("webpay-checkout.js");
       showPayError(
         payErr,
-        "No se cargaron los scripts de pago (" + missing.join(", ") + "). Recargá con Ctrl+Shift+R."
-      );
-      return;
-    }
-
-    if (payServerOk === false) {
-      showPayError(
-        payErr,
-        "El servidor aún no tiene configurado el pago (falta api/webpay/config.php con SUPABASE_SERVICE_ROLE_KEY). Contactá al administrador."
+        "No se cargaron los scripts de pago (" + missing.join(", ") + "). Recargá con Cmd+Shift+R."
       );
       return;
     }
@@ -124,15 +134,17 @@
     else CoLive.save({ saveInfo: false });
 
     var stPay = window.BlackpinkCart.load();
-    var UUID_RE = WpLive.UUID_RE;
-    for (var i = 0; i < stPay.items.length; i++) {
-      if (!UUID_RE.test(String(stPay.items[i].productId || ""))) {
-        showPayError(
-          payErr,
-          "Hay productos sin ID válido de catálogo. Volvé a agregarlos desde la tienda."
-        );
-        return;
-      }
+    if (!stPay.items.length) {
+      showPayError(payErr, "Tu carrito está vacío.");
+      return;
+    }
+
+    if (window.BlackpinkCart.hasInvalidProductIds && window.BlackpinkCart.hasInvalidProductIds()) {
+      showPayError(
+        payErr,
+        "Hay productos guardados con un formato viejo. Usá «Vaciar carrito y reintentar» abajo, volvé al catálogo y agregá los productos de nuevo."
+      );
+      return;
     }
 
     var items = stPay.items.map(function (it) {
@@ -142,15 +154,27 @@
     pay.disabled = true;
     pay.textContent = "Conectando con Webpay…";
 
-    WpLive.start({
-      email: customerData.email,
-      includeShipping: Boolean(stPay.includeShipping),
-      items: items,
-      customer: customerPayload(customerData),
-    }).catch(function (err) {
-      pay.disabled = false;
-      pay.textContent = "Pagar con Webpay";
-      showPayError(payErr, String(err && err.message ? err.message : err));
+    checkPayServerFresh().then(function (ready) {
+      if (!ready) {
+        pay.disabled = false;
+        pay.textContent = "Pagar con Webpay";
+        showPayError(
+          payErr,
+          "El servidor aún no tiene configurado Supabase para pagos. Revisá https://bpphones.cl/api/webpay/health.php"
+        );
+        return;
+      }
+
+      return WpLive.start({
+        email: customerData.email,
+        includeShipping: Boolean(stPay.includeShipping),
+        items: items,
+        customer: customerPayload(customerData),
+      }).catch(function (err) {
+        pay.disabled = false;
+        pay.textContent = "Pagar con Webpay";
+        showPayError(payErr, String(err && err.message ? err.message : err));
+      });
     });
   }
 
@@ -257,8 +281,17 @@
       .join("");
 
     var shipLabel = st.includeShipping ? formatClp(ship) : "Gratis (retiro)";
+    var invalidCart =
+      window.BlackpinkCart.hasInvalidProductIds && window.BlackpinkCart.hasInvalidProductIds();
+    var invalidWarn = invalidCart
+      ? '<div class="bp-cart-empty bp-cart-server-warn" style="margin-bottom:1rem">' +
+        "<h2>Carrito desactualizado</h2>" +
+        '<p class="bp-cart-lead">Los productos guardados son de una versión anterior del sitio. Vacialo y volvé a agregarlos desde el catálogo.</p>' +
+        '<button type="button" class="btn btn-primary" id="bpCartClearStale">Vaciar carrito y reintentar</button></div>'
+      : "";
 
     root.innerHTML =
+      invalidWarn +
       '<div class="bp-cart-layout">' +
       '<div class="bp-cart-main-col">' +
       '<header class="bp-cart-page-head"><h1>Tu carro</h1>' +
@@ -315,6 +348,14 @@
         render();
       });
     });
+
+    var clearBtn = document.getElementById("bpCartClearStale");
+    if (clearBtn) {
+      clearBtn.addEventListener("click", function () {
+        window.BlackpinkCart.clearAll();
+        render();
+      });
+    }
   }
 
   document.addEventListener("click", function (e) {
@@ -331,27 +372,18 @@
   });
 
   function checkPayServer() {
-    var Wp = window.BlackpinkWebpayCheckout;
-    if (!Wp || typeof Wp.apiHealthUrl !== "function") return;
-    fetch(Wp.apiHealthUrl())
-      .then(function (res) {
-        return res.json();
-      })
-      .then(function (data) {
-        payServerOk = Boolean(data && data.supabase_configured);
-        if (data && data.supabase_configured === false) {
-          var root = document.getElementById("bpCartRoot");
-          if (!root || root.querySelector(".bp-cart-server-warn")) return;
-          var warn = document.createElement("div");
-          warn.className = "bp-cart-empty bp-cart-server-warn";
-          warn.style.marginBottom = "1rem";
-          warn.innerHTML =
-            "<h2>Pago temporalmente no disponible en el servidor</h2>" +
-            '<p class="bp-cart-lead">Falta configurar Supabase en el hosting (<code>api/webpay/config.php</code>). ' +
-            "El administrador debe agregar el secreto <strong>SUPABASE_SERVICE_ROLE_KEY</strong> en GitHub y volver a desplegar.</p>";
-          root.insertBefore(warn, root.firstChild);
-        }
-      })
-      .catch(function () {});
+    checkPayServerFresh().then(function (ok) {
+      if (ok !== false) return;
+      var root = document.getElementById("bpCartRoot");
+      if (!root || root.querySelector(".bp-cart-server-warn")) return;
+      var warn = document.createElement("div");
+      warn.className = "bp-cart-empty bp-cart-server-warn";
+      warn.style.marginBottom = "1rem";
+      warn.innerHTML =
+        "<h2>Pago temporalmente no disponible en el servidor</h2>" +
+        '<p class="bp-cart-lead">Falta configurar Supabase en el hosting (<code>api/webpay/config.php</code>). ' +
+        "El administrador debe agregar el secreto <strong>SUPABASE_SERVICE_ROLE_KEY</strong> en GitHub y volver a desplegar.</p>";
+      root.insertBefore(warn, root.firstChild);
+    });
   }
 })();

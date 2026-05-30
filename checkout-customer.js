@@ -311,7 +311,7 @@
     var initialTab = root.querySelector(".bp-co-tab.bp-co-tab--active[data-delivery]");
     setMode(initialTab ? initialTab.getAttribute("data-delivery") || "pickup" : "pickup");
 
-    var rutEl = root.getElementById("bpCoRut");
+    var rutEl = document.getElementById("bpCoRut");
     if (rutEl) {
       rutEl.addEventListener("blur", function () {
         if (normalizeRut(rutEl.value).length >= 2) rutEl.value = formatRut(rutEl.value);

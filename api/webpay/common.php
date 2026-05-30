@@ -173,24 +173,61 @@ function bpw_normalize_items(array $items): array
         $pid = isset($row['product_id']) ? trim((string) $row['product_id']) : '';
         $qty = isset($row['quantity']) ? (int) $row['quantity'] : 0;
         $external = isset($row['product_external_id']) ? trim((string) $row['product_external_id']) : '';
-        if (!bpw_is_uuid($pid)) {
-            continue;
-        }
         if ($qty < 1 || $qty > 20) {
             continue;
         }
-        if ($external === '') {
-            $external = null;
-        } elseif (strlen($external) > 120) {
-            $external = function_exists('mb_substr') ? mb_substr($external, 0, 120) : substr($external, 0, 120);
+        if (bpw_is_uuid($pid)) {
+            if ($external === '') {
+                $external = null;
+            } elseif (strlen($external) > 120) {
+                $external = function_exists('mb_substr') ? mb_substr($external, 0, 120) : substr($external, 0, 120);
+            }
+            $out[] = [
+                'product_id' => $pid,
+                'quantity' => $qty,
+                'product_external_id' => $external,
+            ];
+            continue;
+        }
+        $lookup = $external !== '' ? $external : $pid;
+        if ($lookup === '') {
+            continue;
+        }
+        if (strlen($lookup) > 120) {
+            $lookup = function_exists('mb_substr') ? mb_substr($lookup, 0, 120) : substr($lookup, 0, 120);
         }
         $out[] = [
-            'product_id' => $pid,
+            'product_id' => '',
             'quantity' => $qty,
-            'product_external_id' => $external,
+            'product_external_id' => $lookup,
         ];
     }
     return $out;
+}
+
+/**
+ * @param array{product_id:string,quantity:int,product_external_id:?string} $line
+ * @param array<string,array<string,mixed>> $productMap
+ */
+function bpw_resolve_line_product_id(array $line, array $productMap): ?string
+{
+    $pid = trim((string) ($line['product_id'] ?? ''));
+    if ($pid !== '' && isset($productMap[$pid])) {
+        return $pid;
+    }
+    $external = trim((string) ($line['product_external_id'] ?? ''));
+    if ($external === '') {
+        return null;
+    }
+    foreach ($productMap as $id => $product) {
+        if (!is_array($product)) {
+            continue;
+        }
+        if ((string) ($product['external_id'] ?? '') === $external) {
+            return (string) $id;
+        }
+    }
+    return null;
 }
 
 function bpw_generate_buy_order(string $orderId): string

@@ -36,8 +36,19 @@ if ($items === []) {
     bpw_json_response(422, ['ok' => false, 'error' => 'items_required']);
 }
 
-$productIds = array_values(array_unique(array_map(static fn(array $i): string => $i['product_id'], $items)));
-$products = bpw_fetch_products_by_ids($productIds);
+$productIds = [];
+$externalIds = [];
+foreach ($items as $item) {
+    if ($item['product_id'] !== '') {
+        $productIds[] = $item['product_id'];
+    }
+    if (!empty($item['product_external_id'])) {
+        $externalIds[] = (string) $item['product_external_id'];
+    }
+}
+$productIds = array_values(array_unique($productIds));
+$externalIds = array_values(array_unique($externalIds));
+$products = bpw_fetch_products_by_ids($productIds, $externalIds);
 if ($products === []) {
     $probe = bpw_supabase_request('GET', '/rest/v1/products', [
         'select' => 'id',
@@ -75,30 +86,33 @@ foreach ($products as $p) {
     $productMap[(string) $p['id']] = $p;
 }
 
-$missingIds = [];
-foreach ($productIds as $pid) {
-    if (!array_key_exists($pid, $productMap)) {
-        $missingIds[] = $pid;
+$missingRefs = [];
+foreach ($items as $line) {
+    if (bpw_resolve_line_product_id($line, $productMap) === null) {
+        $missingRefs[] = $line['product_id'] !== ''
+            ? $line['product_id']
+            : (string) ($line['product_external_id'] ?? '');
     }
 }
-if ($missingIds !== []) {
+if ($missingRefs !== []) {
     bpw_json_response(422, [
         'ok' => false,
         'error' => 'products_not_found',
         'requested_product_ids' => $productIds,
+        'requested_external_ids' => $externalIds,
         'found_product_ids' => array_values(array_keys($productMap)),
-        'missing_product_ids' => $missingIds,
+        'missing_refs' => array_values(array_unique($missingRefs)),
     ]);
 }
 
 $subtotal = 0;
 $orderItems = [];
 foreach ($items as $line) {
-    $pid = $line['product_id'];
-    $qty = (int) $line['quantity'];
-    if (!isset($productMap[$pid])) {
-        bpw_json_response(422, ['ok' => false, 'error' => 'product_not_found', 'product_id' => $pid]);
+    $pid = bpw_resolve_line_product_id($line, $productMap);
+    if ($pid === null) {
+        bpw_json_response(422, ['ok' => false, 'error' => 'product_not_found', 'product_id' => $line['product_id']]);
     }
+    $qty = (int) $line['quantity'];
     $product = $productMap[$pid];
     $stock = (int) ($product['stock'] ?? 0);
     $published = (bool) ($product['published'] ?? false);
