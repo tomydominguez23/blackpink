@@ -64,7 +64,11 @@ jobs:
             *) DIR="./${DIR}" ;;
           esac
           case "$DIR" in */) ;; *) DIR="${DIR}/" ;; esac
-          echo "dir=${DIR}" >> "$GITHUB_OUTPUT"
+          {
+            echo "dir<<FTPSERVERDIR"
+            echo "$DIR"
+            echo "FTPSERVERDIR"
+          } >> "$GITHUB_OUTPUT"
           echo "Usuario FTP: ${FTP_USER:-'(secreto)'}"
           echo "Carpeta remota FTP: ${DIR} → /home/ditecnoc/public_html/bpphones.cl"
 
