@@ -43,6 +43,7 @@ open -p ${PORT} ftps://${CPANEL_FTP_SERVER}
 cd ${dir}
 rm -f .ftp-deploy-sync-state.json
 rm -f .ftp-deploy-sync-bpphones-v5.json
+rm -f .ftp-deploy-sync-bpphones-v6.json
 bye
 LFTP_EOF
 }

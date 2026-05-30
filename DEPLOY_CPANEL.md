@@ -37,11 +37,18 @@ Si usas la cuenta principal del hosting (no `admin@bpphones.cl`), la ruta FTP su
 
 ### Comprobar en cPanel
 
-1. **Administrador de archivos** → `/home/ditecnoc/public_html/bpphones.cl`
-2. Tras el deploy debe haber `index.html`, `styles.css`, carpeta `api/`, etc.
+1. **Administrador de archivos** → **`/home/ditecnoc/public_html/bpphones.cl`** (no uses solo `public_html/` ni la raíz de `ditecnoc`).
+2. Tras el deploy debe haber `index.html`, `styles.css`, `theme-neon.css`, `deploy-version.json`, carpeta `api/`, etc.
 3. **Dominios** → `bpphones.cl` → raíz del documento = `/home/ditecnoc/public_html/bpphones.cl`
 
-Tras el deploy: **https://bpphones.cl/deploy-root.txt**
+Si en cPanel ves archivos viejos pero el dominio se ve bien (o al revés), casi seguro estás mirando **otra carpeta**. La cuenta FTP `admin@bpphones.cl` sube a `./` = esa carpeta.
+
+Tras el deploy, abrí en el navegador:
+
+- **https://bpphones.cl/deploy-root.txt** — confirma carpeta FTP correcta
+- **https://bpphones.cl/deploy-version.json** — commit y fecha del último deploy (debe coincidir con GitHub Actions)
+
+> **Secreto `CPANEL_FTP_SERVER_DIR`:** para `admin@bpphones.cl` debe ser **`./`** o **no existir**. Si pusiste `./public_html/bpphones.cl/` con esa cuenta, los archivos pueden ir a una subcarpeta incorrecta y cPanel parecer “congelado”.
 
 > **FTPS:** El workflow usa `protocol: ftps`. Si tu proveedor solo permite FTP plano, en `.github/workflows/deploy-cpanel-ftp.yml` cambia `protocol: ftps` por `protocol: ftp`.
 
@@ -59,7 +66,7 @@ Crea estos secretos (nombres **exactos**):
 | `CPANEL_FTP_USERNAME` | Sí | `admin@bpphones.cl` |
 | `CPANEL_FTP_PASSWORD` | Sí | Contraseña de la cuenta FTP |
 | `CPANEL_FTP_PORT` | No | `21` (opcional; el workflow usa 21 si no existe) |
-| `CPANEL_FTP_SERVER_DIR` | No | Por defecto `./public_html/bpphones.cl/` → `/home/ditecnoc/public_html/bpphones.cl` |
+| `CPANEL_FTP_SERVER_DIR` | No | Con `admin@bpphones.cl` usar **`./`** o dejar vacío. Solo `./public_html/bpphones.cl/` si la cuenta FTP NO es `admin@bpphones.cl` |
 | `SUPABASE_URL` | Para Webpay | `https://kodehyjdonripddobqgs.supabase.co` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Para Webpay | Clave **service_role** de Supabase (Dashboard → API) |
 | `WEBPAY_MODE` | No | `integration` o `production` |
@@ -109,7 +116,8 @@ En unos minutos el sitio en tu dominio debería reflejar los cambios.
 | “La URL create.php no devolvió JSON” | Falta `SUPABASE_SERVICE_ROLE_KEY` → GitHub Secrets → redeploy, o subir `api/webpay/config.php` manualmente |
 | Webpay “missing_supabase” | Secreto `SUPABASE_SERVICE_ROLE_KEY` en GitHub o `config.php` en servidor |
 | Deploy falla `Unknown command /api/webpay/config.php` | Corregido en scripts `upload-webpay-config-ftp.sh` (merge PR FTP). El fallo en config.php **no debe** bloquear el resto del deploy |
-| GitHub actualizado pero cPanel no | Revisá Actions: si falló un paso antes de “Subir sitio a bpphones.cl”, el FTP no corrió. Re-ejecutá el workflow manualmente |
+| GitHub actualizado pero cPanel no | Revisá Actions: si falló antes de “Subir sitio a bpphones.cl”, el FTP no corrió. En cPanel abrí **`public_html/bpphones.cl`**, no otra carpeta. Verificá **https://bpphones.cl/deploy-version.json** |
+| Veo sitio blanco / sin tema neón | Recarga forzada **Ctrl+Shift+R**. Los CSS ahora llevan `?v=2`; si sigue igual, compará `deploy-version.json` con el commit en GitHub |
 
 ## Alternativa más robusta (opcional)
 

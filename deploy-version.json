@@ -1,0 +1,10 @@
+{
+  "site": "https://bpphones.cl",
+  "server_path": "/home/ditecnoc/public_html/bpphones.cl",
+  "commit": "c2fd93a814ce3513543f6a83744146df9b55a991",
+  "commit_short": "c2fd93a",
+  "branch": "cursor/fix-cpanel-deploy-sync-e5e5",
+  "deployed_at": "2026-05-30T19:59:40Z",
+  "theme": "neon-dark-v2",
+  "verify_url": "https://bpphones.cl/deploy-version.json"
+}

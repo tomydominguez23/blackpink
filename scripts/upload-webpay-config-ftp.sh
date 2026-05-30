@@ -41,9 +41,10 @@ if ! command -v lftp >/dev/null 2>&1; then
   sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 fi
 
-echo "Subiendo config.php → ${REMOTE_DIR}/api/webpay/config.php (FTPS ${CPANEL_FTP_SERVER}:${PORT})"
+TMP_SCRIPT="$(mktemp)"
+trap 'rm -f "$TMP_SCRIPT"' EXIT
 
-lftp -u "${CPANEL_FTP_USERNAME}","${CPANEL_FTP_PASSWORD}" <<LFTP_EOF
+cat > "$TMP_SCRIPT" <<LFTP_SCRIPT
 set cmd:fail-exit yes
 set ftp:ssl-force true
 set ssl:verify-certificate no
@@ -53,6 +54,11 @@ mkdir -p api/webpay
 cd api/webpay
 put ${CONFIG} -o config.php
 bye
-LFTP_EOF
+LFTP_SCRIPT
+
+echo "Subiendo config.php → ${REMOTE_DIR}/api/webpay/config.php (FTPS ${CPANEL_FTP_SERVER}:${PORT})"
+
+export LFTP_PASSWORD="${CPANEL_FTP_PASSWORD}"
+lftp -u "${CPANEL_FTP_USERNAME}", -f "$TMP_SCRIPT"
 
 echo "config.php subido correctamente."

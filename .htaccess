@@ -8,6 +8,9 @@ Options -Indexes -MultiViews
     Header set Pragma "no-cache"
     Header set Expires "0"
   </FilesMatch>
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
 </IfModule>
 
 <IfModule mod_rewrite.c>
