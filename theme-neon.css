@@ -147,6 +147,22 @@ body::before {
   color: var(--muted);
 }
 
+.product-colors-inline .pd-color-btn {
+  border-color: var(--border-subtle);
+}
+
+@media (max-width: 700px) {
+  body.nav-drawer-open .hero-cat-bar-wrap {
+    background: var(--bg-elevated);
+    border-top-color: var(--border);
+  }
+
+  .megamenu-panel:not([hidden]) {
+    background: var(--bg-card);
+    border-top-color: var(--border);
+  }
+}
+
 /* ——— Reseñas ——— */
 .reviews-arrow {
   background: var(--bg-card);

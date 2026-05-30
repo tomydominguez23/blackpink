@@ -961,6 +961,7 @@ a:hover {
 /* Home — Productos más vendidos: 2 filas completas en escritorio (4+4) y en móvil/tablet (2 cols × 4 filas) */
 #productGrid.product-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
 }
 @media (min-width: 1100px) {
   #productGrid.product-grid {
@@ -1137,6 +1138,25 @@ a:hover {
   margin: 0.2rem 0 0;
   font-size: 0.72rem;
   color: #6f7784;
+}
+.product-colors-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+  min-height: 2rem;
+  margin-top: 0.35rem;
+}
+.product-colors-inline .pd-color-btn {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: default;
+  pointer-events: none;
+}
+.product-colors-inline--empty {
+  visibility: hidden;
 }
 .product-card-actions {
   margin-top: auto;
@@ -3548,6 +3568,27 @@ a:hover {
 }
 
 @media (max-width: 700px) {
+  body.nav-drawer-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    left: 0;
+    right: 0;
+  }
+
+  body.nav-drawer-open .hero-cat-bar-wrap {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: var(--nav-drawer-top, 7rem);
+    bottom: 0;
+    z-index: 90;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    background: #0a0a0a;
+  }
+
   .header-right {
     max-width: none;
   }
@@ -3557,7 +3598,7 @@ a:hover {
   .site-nav {
     display: none;
     flex-direction: column;
-    padding-bottom: 1rem;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
   }
   .site-nav.is-open {
     display: flex;
@@ -3577,6 +3618,12 @@ a:hover {
     border: 0;
     border-top: 1px solid var(--border);
   }
+  .megamenu-panel:not([hidden]) {
+    max-height: min(58vh, 420px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
   .megamenu-panel > .container {
     width: 100%;
     padding-left: var(--page-pad);
@@ -3587,15 +3634,14 @@ a:hover {
   }
   .megamenu-inner--iphone {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
   .megamenu-links--iphone {
     grid-template-columns: 1fr;
   }
+  .megamenu-promo,
   .megamenu-promo--iphone {
-    min-height: 220px;
-  }
-  .megamenu-promo--iphone img {
-    min-height: 220px;
+    display: none;
   }
   .nav-actions--drawer {
     display: flex;
