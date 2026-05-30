@@ -77,7 +77,7 @@
 
   function defaultData() {
     return {
-      delivery: "shipping",
+      delivery: "pickup",
       firstName: "",
       lastName: "",
       company: "",
@@ -185,17 +185,17 @@
       shipActive +
       '" role="tab" data-delivery="shipping" aria-selected="' +
       (isShip ? "true" : "false") +
-      '">Envío</button>' +
+      '"><span class="bp-co-tab-label">Envío</span><span class="bp-co-tab-price">+$15.000</span></button>' +
       '<button type="button" class="bp-co-tab' +
       pickActive +
       '" role="tab" data-delivery="pickup" aria-selected="' +
       (!isShip ? "true" : "false") +
-      '">Retiro</button>' +
+      '"><span class="bp-co-tab-label">Retiro</span><span class="bp-co-tab-price bp-co-tab-price--free">Gratis</span></button>' +
       "</div>" +
       '<div class="bp-co-panel' +
       shipPanel +
       '" data-panel="shipping">' +
-      '<p class="bp-co-hint">Envío a domicilio en todo Chile · se suma el costo de envío al total.</p>' +
+      '<p class="bp-co-hint">Envío a domicilio en todo Chile · se suman <strong>$15.000</strong> al total.</p>' +
       "</div>" +
       '<div class="bp-co-panel' +
       pickPanel +
@@ -214,6 +214,10 @@
       "</p></div></div>" +
       '<div class="bp-co-fields">' +
       '<p class="bp-co-section-label">Información de contacto</p>' +
+      '<div class="bp-co-field bp-co-field--ship' +
+      (isShip ? "" : " bp-co-field--hidden") +
+      '"><label for="bpCoCountry">País / Región</label>' +
+      '<select id="bpCoCountry" disabled><option selected>Chile</option></select></div>' +
       '<div class="bp-co-row bp-co-row--2">' +
       '<div class="bp-co-field"><label for="bpCoFirstName">Nombre</label>' +
       '<input type="text" id="bpCoFirstName" autocomplete="given-name" value="' +
@@ -302,6 +306,9 @@
         setMode(tab.getAttribute("data-delivery") || "shipping");
       });
     });
+
+    var initialTab = root.querySelector(".bp-co-tab.bp-co-tab--active[data-delivery]");
+    setMode(initialTab ? initialTab.getAttribute("data-delivery") || "pickup" : "pickup");
 
     var rutEl = root.getElementById("bpCoRut");
     if (rutEl) {
