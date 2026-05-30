@@ -13,42 +13,50 @@ flowchart LR
   E --> F[Tu dominio actualizado]
 ```
 
-## 1. Credenciales FTP en cPanel
+## 1. Credenciales FTP (Blackpink / Ditecno)
+
+Hosting **Ditecno** con cuenta FTP para **blackpinkphones.cl**:
+
+| Dato | Valor para este proyecto |
+|------|--------------------------|
+| Servidor FTP | `ftp.ditecno.cl` |
+| Usuario FTP | `admin@blackpinkphones.cl` |
+| Puerto FTPS explícito | `21` |
+| Protocolo en GitHub Actions | `ftps` (FTPS explícito; ya configurado en el workflow) |
+| Directorio remoto | `./public_html/` (salvo que el sitio esté en otra carpeta) |
+| Contraseña | La de la cuenta FTP en cPanel *(no va en el código)* |
+
+Si necesitas revisar o cambiar la contraseña: **cPanel → Cuentas FTP**.
+
+### Cómo obtener otros datos en cPanel
 
 1. Entra a **cPanel** de tu hosting.
 2. Abre **Cuentas FTP** (o **FTP Accounts**).
 3. Usa la cuenta principal o crea una solo para despliegue (recomendado).
-4. Anota:
-
-| Dato | Dónde encontrarlo | Ejemplo |
-|------|-------------------|---------|
-| Servidor | Host FTP en cPanel | `ftp.blackpinkphones.cl` o el hostname del servidor |
-| Usuario | Nombre de la cuenta FTP | `usuario@blackpinkphones.cl` |
-| Contraseña | La de esa cuenta FTP | *(la defines tú)* |
-| Directorio remoto | Raíz del sitio | `./public_html/` (dominio principal) |
-| Puerto | Suele ser 21 | `21` |
 
 Si el sitio vive en un subdominio o carpeta, el directorio puede ser `./public_html/subcarpeta/` (con barra final).
 
 > **FTPS:** El workflow usa `protocol: ftps`. Si tu proveedor solo permite FTP plano, en `.github/workflows/deploy-cpanel-ftp.yml` cambia `protocol: ftps` por `protocol: ftp`.
 
-## 2. Secretos en GitHub
+## 2. Vincular GitHub con el FTP (secretos)
 
-En el repositorio de GitHub:
+En el repositorio:
 
-**Settings → Secrets and variables → Actions → New repository secret**
+**[Settings → Secrets and variables → Actions](https://github.com/tomydominguez23/blackpink/settings/secrets/actions)** → **New repository secret**
 
-Crea estos secretos (nombres exactos):
+Crea estos secretos (nombres **exactos**):
 
-| Secreto | Obligatorio | Descripción |
-|---------|-------------|-------------|
-| `CPANEL_FTP_SERVER` | Sí | Host FTP (sin `ftp://`) |
-| `CPANEL_FTP_USERNAME` | Sí | Usuario FTP |
-| `CPANEL_FTP_PASSWORD` | Sí | Contraseña FTP |
-| `CPANEL_FTP_SERVER_DIR` | No | Carpeta remota; por defecto `./public_html/` |
-| `CPANEL_FTP_PORT` | No | Puerto; por defecto `21` |
+| Secreto | Obligatorio | Valor para Blackpink |
+|---------|-------------|----------------------|
+| `CPANEL_FTP_SERVER` | Sí | `ftp.ditecno.cl` |
+| `CPANEL_FTP_USERNAME` | Sí | `admin@blackpinkphones.cl` |
+| `CPANEL_FTP_PASSWORD` | Sí | Contraseña de la cuenta FTP |
+| `CPANEL_FTP_PORT` | No | `21` (opcional; el workflow usa 21 si no existe) |
+| `CPANEL_FTP_SERVER_DIR` | No | `./public_html/` si el dominio apunta a la raíz |
 
 No subas contraseñas al código: solo en secretos de GitHub.
+
+Cuando los tres secretos obligatorios estén guardados, cada **push a `main`** disparará el workflow **Deploy a cPanel (FTP)** y subirá el sitio por FTPS al puerto 21.
 
 ## 3. Archivos que no se sobrescriben
 
