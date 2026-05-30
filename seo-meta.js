@@ -4,7 +4,7 @@
  * permite actualizarlas en fichas de producto cargadas por JS.
  */
 (function (global) {
-  var SITE_URL = "https://blackpinkphones.cl";
+  var SITE_URL = "https://bpphones.cl";
   var SITE_NAME = "Blackpink Store";
   var DEFAULT_OG_IMAGE =
     SITE_URL + "/iPhone_15_Pro_Titanio_Natural_128GB16947847993.png";

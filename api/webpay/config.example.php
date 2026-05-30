@@ -15,7 +15,7 @@ return [
     'WEBPAY_RETURN_URL' => '',
 
     // CORS para checkout-carrito.html
-    'CORS_ORIGIN' => 'https://blackpinkphones.cl',
+    'CORS_ORIGIN' => 'https://bpphones.cl',
 
     // Supabase service role (obligatorio para crear/actualizar orders + rpc stock)
     'SUPABASE_URL' => 'https://TU_REFERENCIA.supabase.co',

@@ -63,11 +63,11 @@
 
     <form id="f">
       <label for="apiBase">URL base del API PHP (sin barra final)</label>
-      <input id="apiBase" type="url" required placeholder="https://blackpinkphones.cl o http://localhost:3333" />
-      <p class="help">Ej.: endpoints <code>/api/webpay/*.php</code> → base <code>https://blackpinkphones.cl</code></p>
+      <input id="apiBase" type="url" required placeholder="https://bpphones.cl o http://localhost:3333" />
+      <p class="help">Ej.: endpoints <code>/api/webpay/*.php</code> → base <code>https://bpphones.cl</code></p>
 
       <label for="email">Email (cliente de prueba)</label>
-      <input id="email" type="email" required value="prueba@blackpinkphones.cl" />
+      <input id="email" type="email" required value="prueba@bpphones.cl" />
 
       <label for="pid">ID del producto (UUID en Supabase)</label>
       <input id="pid" type="text" required placeholder="pegar uuid desde panel o CSV" />
@@ -86,7 +86,7 @@
         if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
           apiInput.value = "http://localhost:3333";
         } else {
-          apiInput.value = "https://blackpinkphones.cl";
+          apiInput.value = "https://bpphones.cl";
         }
 
         document.getElementById("f").addEventListener("submit", async function (e) {
