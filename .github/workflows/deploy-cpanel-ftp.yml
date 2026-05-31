@@ -30,11 +30,17 @@ jobs:
         env:
           FTP_USER: ${{ secrets.CPANEL_FTP_USERNAME }}
         run: |
-          # Sitio en servidor: /home/ditecnoc/public_html/bpphones.cl
-          # Cuenta admin@bpphones.cl → al conectar por FTP ya estás EN esa carpeta → usar ./
+          # Docroot del dominio en cPanel:
+          #   /home/ditecnoc/public_html/bpphones.cl
+          # Cuenta admin@bpphones.cl: al conectar por FTP la sesión YA está en esa carpeta → usar solo ./
+          ABS_DOCROOT="/home/ditecnoc/public_html/bpphones.cl"
           DIR="${{ secrets.CPANEL_FTP_SERVER_DIR }}"
+          IS_BPPHONES_ACCOUNT=0
+          if echo "$FTP_USER" | grep -qi 'bpphones\.cl'; then
+            IS_BPPHONES_ACCOUNT=1
+          fi
           if [ -z "$DIR" ]; then
-            if echo "$FTP_USER" | grep -qi 'bpphones\.cl'; then
+            if [ "$IS_BPPHONES_ACCOUNT" -eq 1 ]; then
               DIR="./"
             else
               DIR="./public_html/bpphones.cl/"
@@ -47,18 +53,29 @@ jobs:
               DIR="./"
               ;;
             public_html/bpphones.cl|public_html/bpphones.cl/*|./public_html/bpphones.cl|./public_html/bpphones.cl/*)
-              DIR="./public_html/bpphones.cl/"
+              if [ "$IS_BPPHONES_ACCOUNT" -eq 1 ]; then
+                echo "::warning::CPANEL_FTP_SERVER_DIR=${DIR} pero admin@bpphones.cl ya está en ${ABS_DOCROOT}. Se usa ./ (evita subcarpeta public_html/bpphones.cl duplicada)."
+                DIR="./"
+              else
+                DIR="./public_html/bpphones.cl/"
+              fi
               ;;
             bpphones.cl|bpphones.cl/*|./bpphones.cl|./bpphones.cl/*)
-              if echo "$FTP_USER" | grep -qi 'bpphones\.cl'; then
+              if [ "$IS_BPPHONES_ACCOUNT" -eq 1 ]; then
                 DIR="./"
               else
                 DIR="./public_html/bpphones.cl/"
               fi
               ;;
             ./public_html/|public_html/|./public_html|public_html)
-              echo "::error::No uses solo public_html/. Para admin@bpphones.cl usa ./ o deja el secreto vacío."
+              echo "::error::No uses solo public_html/. Para admin@bpphones.cl deja CPANEL_FTP_SERVER_DIR vacío o usa ./"
               exit 1
+              ;;
+            *)
+              if [ "$IS_BPPHONES_ACCOUNT" -eq 1 ]; then
+                echo "::warning::Ruta FTP no reconocida (${DIR}); con admin@bpphones.cl se fuerza ./ → ${ABS_DOCROOT}"
+                DIR="./"
+              fi
               ;;
           esac
           case "$DIR" in
@@ -70,9 +87,20 @@ jobs:
             echo "dir<<FTPSERVERDIR"
             echo "$DIR"
             echo "FTPSERVERDIR"
+            echo "abs_docroot<<ABS_DOCROOT"
+            echo "$ABS_DOCROOT"
+            echo "ABS_DOCROOT"
           } >> "$GITHUB_OUTPUT"
           echo "Usuario FTP: ${FTP_USER:-'(secreto)'}"
-          echo "Carpeta remota FTP: ${DIR} → /home/ditecnoc/public_html/bpphones.cl"
+          echo "Carpeta remota FTP (relativa a la sesión): ${DIR}"
+          echo "Docroot absoluto del dominio: ${ABS_DOCROOT}"
+          if [ "$DIR" = "./" ] && [ "$IS_BPPHONES_ACCOUNT" -eq 1 ]; then
+            echo "OK: admin@bpphones.cl + ./ = archivos en ${ABS_DOCROOT}"
+          elif [ "$DIR" = "./public_html/bpphones.cl/" ]; then
+            echo "OK: cuenta principal → ${ABS_DOCROOT}"
+          else
+            echo "::warning::Revisá CPANEL_FTP_SERVER_DIR en GitHub Secrets (recomendado: vacío o ./ para admin@bpphones.cl)"
+          fi
 
       - name: Reparar servidor FTP (api.zip, PHP sueltos, .htaccess)
         continue-on-error: true
@@ -100,6 +128,15 @@ jobs:
 
       - name: Generar deploy-version.json (marcador visible del deploy)
         run: bash scripts/write-deploy-version.sh
+        env:
+          DEPLOY_ABS_DOCROOT: ${{ steps.ftpdir.outputs.abs_docroot }}
+          DEPLOY_FTP_REMOTE_DIR: ${{ steps.ftpdir.outputs.dir }}
+
+      - name: Generar deploy-ftp-check.json (ruta FTP usada)
+        run: bash scripts/write-deploy-ftp-check.sh
+        env:
+          DEPLOY_ABS_DOCROOT: ${{ steps.ftpdir.outputs.abs_docroot }}
+          DEPLOY_FTP_REMOTE_DIR: ${{ steps.ftpdir.outputs.dir }}
 
       - name: Versionar CSS/JS en HTML (cache bust móvil)
         run: bash scripts/bump-asset-cache.sh
