@@ -113,12 +113,16 @@ jobs:
               exit 1
             fi
           done
-          if ! grep -q "app.js?v=${SHORT}" index.html; then
-            echo "::error::bump-asset-cache no actualizó app.js en index.html (esperado ?v=${SHORT})"
+          if ! grep -q "app.js?v=${SHORT}" index.html && ! grep -q "app.${SHORT}.js" index.html; then
+            echo "::error::bump-asset-cache no actualizó app en index.html (esperado app.${SHORT}.js)"
             exit 1
           fi
-          if ! grep -q "productos-page.js?v=${SHORT}" productos.html; then
-            echo "::error::bump-asset-cache no actualizó productos-page.js (esperado ?v=${SHORT})"
+          if ! grep -q "productos-page.js?v=${SHORT}" productos.html && ! grep -q "productos-page.${SHORT}.js" productos.html; then
+            echo "::error::bump-asset-cache no actualizó productos-page (esperado productos-page.${SHORT}.js)"
+            exit 1
+          fi
+          if ! grep -q "megamenu-iphone-gen" index.html; then
+            echo "::error::Megamenú iPhone no incrustado en index.html"
             exit 1
           fi
           echo "OK: HTML versionado con commit ${SHORT} antes del FTP."

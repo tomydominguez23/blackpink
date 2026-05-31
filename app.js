@@ -128,6 +128,9 @@
 
   function initIphoneMegamenu() {
     document.querySelectorAll("[data-iphone-megamenu-mount]").forEach((mount) => {
+      if (mount.dataset.iphoneMegamenuReady === "1" && mount.querySelector(".megamenu-iphone-gen")) {
+        return;
+      }
       if (mount.dataset.iphoneMegamenuReady === "1") return;
       mount.innerHTML = IPHONE_MEGA_GENERATIONS.map(renderIphoneGeneration).join("");
       mount.dataset.iphoneMegamenuReady = "1";
