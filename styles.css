@@ -3416,6 +3416,15 @@ a:hover {
   margin-top: 2rem;
   font-size: 0.92rem;
 }
+.bp-deploy-badge {
+  margin: 0.75rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: center;
+}
 .footer-social {
   display: flex;
   justify-content: flex-start;
