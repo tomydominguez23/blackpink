@@ -129,7 +129,9 @@
       : "";
     const totalStock = Math.max(0, Number(p.stock) || 0);
     const soldOut = totalStock < 1;
-    const priceRowHtml = `<div class="product-price-row">
+    const priceRowHtml = soldOut
+      ? `<div class="product-price-row"><span class="product-price product-price--agotado">Agotado</span></div>`
+      : `<div class="product-price-row">
             ${badge}
             <span class="product-price">${formatClp(p.price)}</span>
             ${old}
