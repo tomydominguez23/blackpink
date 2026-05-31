@@ -11,7 +11,7 @@ on:
 
 concurrency:
   group: deploy-cpanel-ftp-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -104,6 +104,25 @@ jobs:
       - name: Versionar CSS/JS en HTML (cache bust móvil)
         run: bash scripts/bump-asset-cache.sh
 
+      - name: Verificar bump en HTML antes del FTP
+        run: |
+          SHORT="${GITHUB_SHA:0:7}"
+          for f in index.html productos.html producto.html carrito.html; do
+            if [ ! -f "$f" ]; then
+              echo "::error::Falta $f"
+              exit 1
+            fi
+          done
+          if ! grep -q "app.js?v=${SHORT}" index.html; then
+            echo "::error::bump-asset-cache no actualizó app.js en index.html (esperado ?v=${SHORT})"
+            exit 1
+          fi
+          if ! grep -q "productos-page.js?v=${SHORT}" productos.html; then
+            echo "::error::bump-asset-cache no actualizó productos-page.js (esperado ?v=${SHORT})"
+            exit 1
+          fi
+          echo "OK: HTML versionado con commit ${SHORT} antes del FTP."
+
       - name: Subir config.php Webpay (si se generó)
         if: hashFiles('api/webpay/config.php') != ''
         continue-on-error: true
@@ -116,7 +135,6 @@ jobs:
           CPANEL_FTP_SERVER_DIR: ${{ steps.ftpdir.outputs.dir }}
 
       - name: Limpiar estado FTP (forzar subida completa)
-        continue-on-error: true
         run: bash scripts/clear-ftp-sync-state.sh
         env:
           CPANEL_FTP_SERVER: ${{ secrets.CPANEL_FTP_SERVER }}

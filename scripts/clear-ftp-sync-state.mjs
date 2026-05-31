@@ -65,6 +65,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.warn(`Aviso limpieza FTP: ${err.message}`);
-  process.exit(0);
+  console.error(`::error::No se pudo limpiar el estado FTP: ${err.message}`);
+  process.exit(1);
 });

@@ -2,6 +2,33 @@
 
 Este repositorio incluye un workflow de GitHub Actions que, en cada **push a `main`**, sube los archivos del sitio a tu hosting cPanel por **FTPS**, de modo que tu dominio (por ejemplo `https://bpphones.cl`) se actualice sin subir archivos a mano.
 
+## Flujo de deploy (simplificado)
+
+Cada push a `main` ejecuta, en orden:
+
+1. **`write-deploy-version.sh`** — genera `deploy-version.json` con el commit.
+2. **`bump-asset-cache.sh`** — reescribe `?v=` en todos los HTML con los primeros 7 caracteres del commit (solo en el runner de CI, no se commitea).
+3. **Verificación pre-FTP** — falla el job si `index.html` no referencia `app.js?v=COMMIT`.
+4. **`clear-ftp-sync-state.sh`** — borra el estado incremental del FTP; **si falla, el deploy falla** (no se sube a medias).
+5. **FTP-Deploy-Action** — sube todos los archivos al docroot de `bpphones.cl`.
+6. **`verify-deploy-live.sh`** — comprueba en vivo:
+   - `deploy-version.json` = commit del push
+   - `index.html` referencia `app.js?v=COMMIT` y `styles.css?v=COMMIT`
+   - `productos.html` referencia `productos-page.js?v=COMMIT`
+   - `app.js` en vivo contiene «Agotado» y megamenú iPhone
+
+Si el paso 6 falla, **no des por hecho que el sitio se actualizó** aunque cPanel muestre archivos nuevos.
+
+### Caché en el navegador (Safari iPhone)
+
+El servidor envía `Cache-Control: no-store` en HTML, CSS y JS. Tras un deploy correcto, cada URL de asset incluye `?v=COMMIT` nuevo. Si en el iPhone sigues viendo la UI vieja:
+
+1. Confirmá que **https://bpphones.cl/deploy-version.json** coincide con GitHub.
+2. En Safari: **Ajustes → Safari → Datos de sitios web** → borrar `bpphones.cl`.
+3. Usá solo **`https://bpphones.cl`**, no `blackpinkphones.cl`.
+
+El pie de página muestra **«Sitio actualizado · {commit}»** cuando cargó el JS nuevo.
+
 ## Flujo de trabajo
 
 ```mermaid
@@ -154,8 +181,9 @@ En unos minutos el sitio en tu dominio debería reflejar los cambios.
 | Error FTP `api: Not a directory` | En el servidor hay un **archivo** `api` (ZIP), no carpeta. El script `fix-ftp-server-layout.sh` lo borra antes del deploy |
 | Carrito / Webpay 404 o HTML | Misma causa: carpeta `api/webpay/` rota. Solo redeploy por GitHub Actions |
 | Deploy falla `Unknown command /api/webpay/config.php` | Corregido en scripts `upload-webpay-config-ftp.sh` (merge PR FTP). El fallo en config.php **no debe** bloquear el resto del deploy |
-| GitHub actualizado pero cPanel no | Revisá Actions: si falló antes de “Subir sitio a bpphones.cl”, el FTP no corrió. En cPanel abrí **`public_html/bpphones.cl`**, no otra carpeta. Verificá **https://bpphones.cl/deploy-version.json** |
-| Veo sitio blanco / sin tema neón | Recarga forzada **Ctrl+Shift+R**. Los CSS ahora llevan `?v=2`; si sigue igual, compará `deploy-version.json` con el commit en GitHub |
+| GitHub actualizado pero cPanel / móvil no | Revisá Actions: paso **Verificar sitio en vivo** debe estar en verde. Abrí `deploy-version.json` y buscá en el código fuente `app.js?v=` con el mismo commit. Borrá caché Safari si el servidor está OK |
+| Veo sitio blanco / sin tema neón / sin Agotado | Recarga forzada. En código fuente debe verse `styles.css?v=` y `app.js?v=` con el commit del deploy (no `?v=8` fijo). Pie de página: «Sitio actualizado · …» |
+| iPhone Safari sigue con menú/cards viejos | Servidor OK pero caché local: borrar datos de `bpphones.cl` en Safari. Verificar dominio (no `blackpinkphones.cl`) |
 
 ## Alternativa más robusta (opcional)
 

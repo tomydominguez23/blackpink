@@ -1,17 +1,26 @@
 # /home/ditecnoc/public_html/bpphones.cl
 DirectoryIndex index.html index.php
 Options -Indexes -MultiViews
+FileETag None
 
 <IfModule mod_headers.c>
   <FilesMatch "\.(html?)$">
     Header set Cache-Control "no-cache, no-store, must-revalidate"
     Header set Pragma "no-cache"
     Header set Expires "0"
+    Header unset ETag
   </FilesMatch>
   <FilesMatch "\.(css|js)$">
     Header set Cache-Control "no-cache, no-store, must-revalidate"
     Header set Pragma "no-cache"
     Header set Expires "0"
+    Header unset ETag
+  </FilesMatch>
+  <FilesMatch "\.(json)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+    Header unset ETag
   </FilesMatch>
 </IfModule>
 
@@ -24,7 +33,7 @@ Options -Indexes -MultiViews
 </IfModule>
 
 <IfModule mod_authz_core.c>
-  <FilesMatch "^(package\.json|config\.toml|\.ftp-deploy-sync-state\.json)$">
+  <FilesMatch "^(package\.json|config\.toml|\.ftp-deploy-sync-state\.json|\.ftp-deploy-sync-bpphones-v[0-9]+\.json)$">
     Require all denied
   </FilesMatch>
 </IfModule>

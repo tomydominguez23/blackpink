@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Antes del FTP: versiona CSS/JS en HTML con el commit del deploy (caché móvil).
+# Antes del FTP: versiona CSS/JS en HTML con el commit del deploy.
+# Los HTML en git usan ?v=8 como marcador; en CI se reemplaza por GITHUB_SHA[0:7].
+# El sitio en vivo debe servir esas URLs; verify-deploy-live.sh lo comprueba.
 set -eu
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
