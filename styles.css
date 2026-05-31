@@ -490,6 +490,75 @@ a:hover {
   gap: 0.35rem 1.5rem;
 }
 
+.megamenu-iphone-gens {
+  gap: 0.55rem 1rem;
+  align-items: start;
+}
+
+.megamenu-iphone-gen {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+}
+
+.megamenu-iphone-gen-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--text);
+  list-style: none;
+}
+
+.megamenu-iphone-gen-summary::-webkit-details-marker {
+  display: none;
+}
+
+.megamenu-iphone-gen-summary::marker {
+  content: "";
+}
+
+.megamenu-iphone-gen-hint {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.megamenu-iphone-gen[open] > .megamenu-iphone-gen-summary {
+  color: var(--brand-pink-soft);
+}
+
+.megamenu-iphone-gen[open] .megamenu-iphone-gen-hint {
+  color: var(--brand-pink);
+}
+
+.megamenu-iphone-variants {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  padding: 0.45rem 0.75rem 0.65rem;
+  border-top: 1px solid var(--border);
+}
+
+.megamenu-iphone-variants a {
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.megamenu-iphone-gen-all {
+  font-weight: 700;
+  color: var(--brand-pink-soft);
+  margin-bottom: 0.15rem;
+}
+
 .megamenu-col {
   display: flex;
   flex-direction: column;
@@ -511,7 +580,9 @@ a:hover {
   line-height: 1.35;
 }
 .megamenu-links a:hover,
-.megamenu-links a:focus-visible {
+.megamenu-links a:focus-visible,
+.megamenu-iphone-gen-all:hover,
+.megamenu-iphone-gen-all:focus-visible {
   color: var(--brand-pink);
   text-decoration: none;
 }
@@ -3528,7 +3599,8 @@ a:hover {
 }
 
 @media (max-width: 1024px) and (min-width: 701px) {
-  .megamenu-links--iphone {
+  .megamenu-links--iphone,
+  .megamenu-iphone-gens {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -3647,7 +3719,8 @@ a:hover {
     grid-template-columns: 1fr;
     gap: 0.75rem;
   }
-  .megamenu-links--iphone {
+  .megamenu-links--iphone,
+  .megamenu-iphone-gens {
     grid-template-columns: 1fr;
   }
   .megamenu-promo,
