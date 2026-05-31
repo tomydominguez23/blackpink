@@ -818,12 +818,22 @@ body::before {
 }
 
 .bp-cart-modal-price {
-  color: var(--brand-pink-soft);
+  color: #fafafa;
+  text-shadow: 0 0 20px rgba(255, 45, 154, 0.12);
 }
 
 .bp-cart-modal-alert {
   background: rgba(245, 158, 11, 0.12);
   border-color: rgba(245, 158, 11, 0.35);
+  color: #fde68a;
+}
+
+.bp-cart-modal-alert-body,
+.bp-cart-modal-alert-body strong {
+  color: #fde68a;
+}
+
+.bp-cart-modal-alert-body strong {
   color: #fcd34d;
 }
 
