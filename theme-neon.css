@@ -631,6 +631,13 @@ body::before {
 .filters-head span,
 .product-meta-line,
 .product-card--listing .product-brand,
+.product-card-body h3 a,
+.product-cat-label,
+.product-price,
+.product-price-row,
+.product-old,
+.pd-main-price,
+.pd-old-price,
 .pd-cap-label,
 .pd-charger-btn,
 .address-block p,
@@ -672,9 +679,43 @@ body::before {
 .map-note,
 .product-installments,
 .product-shipping-note,
+.feature-card p,
+.filter-option,
+.catalog-title,
 .pd-review-avatar,
 .header-search-submit {
   color: var(--muted);
+}
+
+/* Precios en tarjetas — alto contraste sobre fondo oscuro */
+.product-price,
+.pd-main-price {
+  color: #fafafa;
+  text-shadow: 0 0 20px rgba(255, 45, 154, 0.12);
+}
+
+.product-card-body h3 a {
+  color: var(--text);
+}
+
+.product-card-body h3 a:hover {
+  color: var(--brand-pink-soft);
+}
+
+.feature-card h3 {
+  color: var(--text);
+}
+
+.review-google-head h3 {
+  color: var(--text);
+}
+
+.review-google-text {
+  color: var(--muted);
+}
+
+.filter-option:has(input:checked) {
+  color: var(--brand-pink-soft);
 }
 
 .pd-stock-line strong {
