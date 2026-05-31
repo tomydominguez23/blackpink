@@ -101,6 +101,9 @@ jobs:
       - name: Generar deploy-version.json (marcador visible del deploy)
         run: bash scripts/write-deploy-version.sh
 
+      - name: Versionar CSS/JS en HTML (cache bust móvil)
+        run: bash scripts/bump-asset-cache.sh
+
       - name: Subir config.php Webpay (si se generó)
         if: hashFiles('api/webpay/config.php') != ''
         continue-on-error: true
