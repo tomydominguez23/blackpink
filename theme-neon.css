@@ -694,6 +694,11 @@ body::before {
   text-shadow: 0 0 20px rgba(255, 45, 154, 0.12);
 }
 
+.product-price.product-price--agotado {
+  color: #fca5a5;
+  text-shadow: none;
+}
+
 .product-card-body h3 a {
   color: var(--text);
 }
