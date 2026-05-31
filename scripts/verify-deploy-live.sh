@@ -33,40 +33,47 @@ check_live_asset_versions() {
 
   home="$(curl -fsSL "https://bpphones.cl/" 2>/dev/null || true)"
   productos="$(curl -fsSL "https://bpphones.cl/productos.html" 2>/dev/null || true)"
-  app_js="$(curl -fsSL "https://bpphones.cl/app.js?v=${SHORT}" 2>/dev/null || true)"
+  app_js="$(curl -fsSL "https://bpphones.cl/app.${SHORT}.js" 2>/dev/null || curl -fsSL "https://bpphones.cl/app.js?v=${SHORT}" 2>/dev/null || true)"
 
-  if printf '%s' "$home" | grep -q "app.js?v=${SHORT}"; then
-    echo "OK: index.html en vivo referencia app.js?v=${SHORT}."
+  if printf '%s' "$home" | grep -qE "app\.(${SHORT}\.js|js\?v=${SHORT})"; then
+    echo "OK: index.html en vivo referencia app.${SHORT}.js."
   else
-    echo "::error::index.html en vivo NO referencia app.js?v=${SHORT} (HTML no se subió o quedó cacheado en CDN)."
+    echo "::error::index.html en vivo NO referencia app.${SHORT}.js."
     FAIL=1
   fi
 
-  if printf '%s' "$home" | grep -q "styles.css?v=${SHORT}"; then
-    echo "OK: index.html referencia styles.css?v=${SHORT}."
+  if printf '%s' "$home" | grep -qE "styles\.(${SHORT}\.css|css\?v=${SHORT})"; then
+    echo "OK: index.html referencia styles.${SHORT}.css."
   else
-    echo "::error::index.html sin styles.css?v=${SHORT}."
+    echo "::error::index.html sin styles.${SHORT}.css."
     FAIL=1
   fi
 
-  if printf '%s' "$productos" | grep -q "productos-page.js?v=${SHORT}"; then
-    echo "OK: productos.html referencia productos-page.js?v=${SHORT}."
+  if printf '%s' "$productos" | grep -qE "productos-page\.(${SHORT}\.js|js\?v=${SHORT})"; then
+    echo "OK: productos.html referencia productos-page.${SHORT}.js."
   else
-    echo "::error::productos.html sin productos-page.js?v=${SHORT}."
+    echo "::error::productos.html sin productos-page.${SHORT}.js."
+    FAIL=1
+  fi
+
+  if printf '%s' "$home" | grep -q "megamenu-iphone-gen"; then
+    echo "OK: megamenú iPhone incrustado en HTML (acordeón iPhone 12–17)."
+  else
+    echo "::error::index.html sin megamenú por generación en el HTML."
     FAIL=1
   fi
 
   if printf '%s' "$app_js" | grep -q "product-price--agotado"; then
     echo "OK: app.js en vivo incluye lógica Agotado."
   else
-    echo "::error::app.js?v=${SHORT} no contiene lógica Agotado."
+    echo "::error::app.${SHORT}.js no contiene lógica Agotado."
     FAIL=1
   fi
 
   if printf '%s' "$app_js" | grep -q "IPHONE_MEGA_GENERATIONS"; then
     echo "OK: app.js en vivo incluye megamenú iPhone por generación."
   else
-    echo "::error::app.js?v=${SHORT} sin megamenú iPhone por generación."
+    echo "::error::app.${SHORT}.js sin megamenú iPhone por generación."
     FAIL=1
   fi
 }

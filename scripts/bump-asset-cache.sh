@@ -1,60 +1,51 @@
 #!/usr/bin/env bash
-# Antes del FTP: versiona CSS/JS en HTML con el commit del deploy.
-# Los HTML en git usan ?v=8 como marcador; en CI se reemplaza por GITHUB_SHA[0:7].
-# El sitio en vivo debe servir esas URLs; verify-deploy-live.sh lo comprueba.
+# Antes del FTP: publica app.{commit}.js, styles.{commit}.css y actualiza referencias en HTML.
 set -eu
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SHA="${GITHUB_SHA:-$(git -C "$ROOT" rev-parse HEAD 2>/dev/null || echo "dev")}"
 SHORT="${SHA:0:7}"
 
-echo "Versionando assets en HTML → ?v=${SHORT}"
+echo "Publicando assets con sufijo .${SHORT}…"
+bash "$ROOT/scripts/publish-versioned-assets.sh"
+
+echo "Incrustando megamenú iPhone en HTML…"
+node "$ROOT/scripts/embed-iphone-megamenu.mjs"
+
+echo "Actualizando referencias en HTML…"
 
 shopt -s nullglob
 for f in "$ROOT"/*.html; do
   [ -f "$f" ] || continue
   sed -i \
-    -e "s|styles\\.css?v=[^\"'&]*|styles.css?v=${SHORT}|g" \
-    -e "s|\\.\\./styles\\.css?v=[^\"'&]*|./styles.css?v=${SHORT}|g" \
-    -e "s|theme-neon\\.css?v=[^\"'&]*|theme-neon.css?v=${SHORT}|g" \
-    -e "s|\\.\\./theme-neon\\.css?v=[^\"'&]*|./theme-neon.css?v=${SHORT}|g" \
-    -e "s|cart\\.js?v=[^\"'&]*|cart.js?v=${SHORT}|g" \
-    -e "s|\\.\\./cart\\.js?v=[^\"'&]*|./cart.js?v=${SHORT}|g" \
-    -e "s|app\\.js?v=[^\"'&]*|app.js?v=${SHORT}|g" \
-    -e "s|bp-catalog-client\\.js?v=[^\"'&]*|bp-catalog-client.js?v=${SHORT}|g" \
-    -e "s|productos-page\\.js?v=[^\"'&]*|productos-page.js?v=${SHORT}|g" \
-    -e "s|producto-page\\.js?v=[^\"'&]*|producto-page.js?v=${SHORT}|g" \
-    -e "s|carrito-page\\.js?v=[^\"'&]*|carrito-page.js?v=${SHORT}|g" \
-    -e "s|vende-page\\.js?v=[^\"'&]*|vende-page.js?v=${SHORT}|g" \
-    -e "s|seo-meta\\.js?v=[^\"'&]*|seo-meta.js?v=${SHORT}|g" \
-    -e "s|checkout-customer\\.js?v=[^\"'&]*|checkout-customer.js?v=${SHORT}|g" \
-    -e "s|webpay-checkout\\.js?v=[^\"'&]*|webpay-checkout.js?v=${SHORT}|g" \
-    -e "s|trade-in-data\\.js?v=[^\"'&]*|trade-in-data.js?v=${SHORT}|g" \
-    -e "s|admin\\.js?v=[^\"'&]*|admin.js?v=${SHORT}|g" \
-    -e "s|admin-login\\.js?v=[^\"'&]*|admin-login.js?v=${SHORT}|g" \
-    -e "s|products-data\\.js?v=[^\"'&]*|products-data.js?v=${SHORT}|g" \
-    -e "s|\"styles\\.css\"|\"styles.css?v=${SHORT}\"|g" \
-    -e "s|'styles\\.css'|'styles.css?v=${SHORT}'|g" \
-    -e "s|href=\"styles\\.css\"|href=\"styles.css?v=${SHORT}\"|g" \
-    -e "s|href=\"\\.\\./styles\\.css\"|href=\"./styles.css?v=${SHORT}\"|g" \
-    -e "s|href=\"theme-neon\\.css\"|href=\"theme-neon.css?v=${SHORT}\"|g" \
-    -e "s|href=\"\\.\\./theme-neon\\.css\"|href=\"./theme-neon.css?v=${SHORT}\"|g" \
-    -e "s|\"app\\.js\"|\"app.js?v=${SHORT}\"|g" \
-    -e "s|'app\\.js'|'app.js?v=${SHORT}'|g" \
-    -e "s|\"bp-catalog-client\\.js\"|\"bp-catalog-client.js?v=${SHORT}\"|g" \
-    -e "s|\"productos-page\\.js\"|\"productos-page.js?v=${SHORT}\"|g" \
-    -e "s|\"producto-page\\.js\"|\"producto-page.js?v=${SHORT}\"|g" \
-    -e "s|\"carrito-page\\.js\"|\"carrito-page.js?v=${SHORT}\"|g" \
-    -e "s|\"vende-page\\.js\"|\"vende-page.js?v=${SHORT}\"|g" \
-    -e "s|\"seo-meta\\.js\"|\"seo-meta.js?v=${SHORT}\"|g" \
-    -e "s|\"checkout-customer\\.js\"|\"checkout-customer.js?v=${SHORT}\"|g" \
-    -e "s|\"webpay-checkout\\.js\"|\"webpay-checkout.js?v=${SHORT}\"|g" \
-    -e "s|\"trade-in-data\\.js\"|\"trade-in-data.js?v=${SHORT}\"|g" \
-    -e "s|\"admin\\.js\"|\"admin.js?v=${SHORT}\"|g" \
-    -e "s|\"admin-login\\.js\"|\"admin-login.js?v=${SHORT}\"|g" \
-    -e "s|\"products-data\\.js\"|\"products-data.js?v=${SHORT}\"|g" \
-    -e "s|\"cart\\.js\"|\"cart.js?v=${SHORT}\"|g" \
-    "$f"
+    -e "s|href=\"styles\\.css\\?v=[^\"]*\"|href=\"styles.${SHORT}.css\"|g" \
+    -e "s|href=\"\\.\\./styles\\.css\\?v=[^\"]*\"|href=\"./styles.${SHORT}.css\"|g" \
+    -e "s|href=\"styles\\.css\"|href=\"styles.${SHORT}.css\"|g" \
+    -e "s|href=\"\\.\\./styles\\.css\"|href=\"./styles.${SHORT}.css\"|g" \
+    -e "s|href=\"theme-neon\\.css\\?v=[^\"]*\"|href=\"theme-neon.${SHORT}.css\"|g" \
+    -e "s|href=\"theme-neon\\.css\"|href=\"theme-neon.${SHORT}.css\"|g" \
+    -e "s|src=\"cart\\.js\\?v=[^\"]*\"|src=\"cart.${SHORT}.js\"|g" \
+    -e "s|src=\"cart\\.js\"|src=\"cart.${SHORT}.js\"|g" \
+    -e "s|src=\"app\\.js\\?v=[^\"]*\"|src=\"app.${SHORT}.js\"|g" \
+    -e "s|src=\"app\\.js\"|src=\"app.${SHORT}.js\"|g" \
+    -e "s|src=\"bp-catalog-client\\.js\\?v=[^\"]*\"|src=\"bp-catalog-client.${SHORT}.js\"|g" \
+    -e "s|src=\"bp-catalog-client\\.js\"|src=\"bp-catalog-client.${SHORT}.js\"|g" \
+    -e "s|src=\"productos-page\\.js\\?v=[^\"]*\"|src=\"productos-page.${SHORT}.js\"|g" \
+    -e "s|src=\"productos-page\\.js\"|src=\"productos-page.${SHORT}.js\"|g" \
+    -e "s|src=\"producto-page\\.js\\?v=[^\"]*\"|src=\"producto-page.${SHORT}.js\"|g" \
+    -e "s|src=\"producto-page\\.js\"|src=\"producto-page.${SHORT}.js\"|g" \
+    -e "s|src=\"carrito-page\\.js\\?v=[^\"]*\"|src=\"carrito-page.${SHORT}.js\"|g" \
+    -e "s|src=\"carrito-page\\.js\"|src=\"carrito-page.${SHORT}.js\"|g" \
+    -e "s|src=\"vende-page\\.js\\?v=[^\"]*\"|src=\"vende-page.${SHORT}.js\"|g" \
+    -e "s|src=\"vende-page\\.js\"|src=\"vende-page.${SHORT}.js\"|g" \
+    -e "s|src=\"seo-meta\\.js\\?v=[^\"]*\"|src=\"seo-meta.${SHORT}.js\"|g" \
+    -e "s|src=\"seo-meta\\.js\"|src=\"seo-meta.${SHORT}.js\"|g" \
+    -e "s|src=\"checkout-customer\\.js\\?v=[^\"]*\"|src=\"checkout-customer.${SHORT}.js\"|g" \
+    -e "s|src=\"checkout-customer\\.js\"|src=\"checkout-customer.${SHORT}.js\"|g" \
+    -e "s|src=\"webpay-checkout\\.js\\?v=[^\"]*\"|src=\"webpay-checkout.${SHORT}.js\"|g" \
+    -e "s|src=\"webpay-checkout\\.js\"|src=\"webpay-checkout.${SHORT}.js\"|g" \
+    -e "s|src=\"trade-in-data\\.js\\?v=[^\"]*\"|src=\"trade-in-data.${SHORT}.js\"|g" \
+  "$f"
 done
 
-echo "Listo: cada deploy fuerza descarga nueva de CSS/JS en el teléfono."
+echo "Listo: HTML apunta a *.${SHORT}.js / *.${SHORT}.css"
