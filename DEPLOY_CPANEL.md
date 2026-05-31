@@ -52,6 +52,7 @@ Copia esto en **GitHub Secrets** y en tu cliente FTP (FileZilla, etc.). **Nunca*
 | **Puerto** | `21` |
 | **Protocolo** | **FTPS explícito** (FTP sobre TLS / “Explicit FTP over TLS”) |
 | **Carpeta en el servidor** | `/home/ditecnoc/public_html/bpphones.cl` |
+| **Secreto `CPANEL_FTP_SERVER_DIR`** | **Vacío** o **`./`** (no `./public_html/bpphones.cl/` si usas `admin@bpphones.cl`) |
 
 ### Ruta al conectar por FTP
 
