@@ -43,6 +43,23 @@ Si usas la cuenta principal del hosting (no `admin@bpphones.cl`), la ruta FTP su
 
 Si en cPanel ves archivos viejos pero el dominio se ve bien (o al revés), casi seguro estás mirando **otra carpeta**. La cuenta FTP `admin@bpphones.cl` sube a `./` = esa carpeta.
 
+### Dominio `blackpinkphones.cl` (importante)
+
+**No es lo mismo que `bpphones.cl`.** Hoy `blackpinkphones.cl` apunta a otra carpeta del hosting y muestra la página por defecto de cPanel (vieja). El `.htaccess` del repo solo aplica dentro de `bpphones.cl`.
+
+Para que Google y los clientes no caigan en el sitio equivocado:
+
+1. cPanel → **Dominios** → **Redirigir** (o *Redirects*)
+2. Redirigir **`blackpinkphones.cl`** y **`www.blackpinkphones.cl`** → **`https://bpphones.cl/`** (301 permanente)
+3. Opcional: en **Dominios**, asignar `blackpinkphones.cl` a la misma raíz de documento que `bpphones.cl` (`/home/ditecnoc/public_html/bpphones.cl`)
+
+Comprobación rápida:
+
+- ✅ Correcto: https://bpphones.cl/deploy-version.json muestra el commit reciente
+- ❌ Incorrecto: https://blackpinkphones.cl/ muestra página genérica de cPanel
+
+Si en el navegador ves algo distinto, mirá la **barra de direcciones**: debe decir exactamente `bpphones.cl`.
+
 Tras el deploy, abrí en el navegador:
 
 - **https://bpphones.cl/deploy-root.txt** — confirma carpeta FTP correcta

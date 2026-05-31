@@ -1,4 +1,32 @@
 (function () {
+  var CANONICAL_HOST = "bpphones.cl";
+  var host = (window.location.hostname || "").toLowerCase().replace(/^www\./, "");
+  if (host && host !== CANONICAL_HOST && /blackpink|bpphones|bp-?phones/i.test(host)) {
+    window.location.replace(
+      "https://" + CANONICAL_HOST + window.location.pathname + window.location.search + window.location.hash
+    );
+    return;
+  }
+
+  function initDeployBadge() {
+    fetch("/deploy-version.json", { cache: "no-store" })
+      .then(function (res) {
+        return res.ok ? res.json() : null;
+      })
+      .then(function (data) {
+        if (!data || !data.commit_short) return;
+        var badge = document.createElement("p");
+        badge.className = "bp-deploy-badge";
+        badge.setAttribute("aria-label", "Versión del sitio desplegada");
+        badge.textContent = "Sitio actualizado · " + data.commit_short;
+        if (data.deployed_at) badge.title = data.deployed_at;
+        var footer = document.querySelector(".site-footer .footer-inner, .site-footer");
+        if (footer) footer.appendChild(badge);
+        else document.body.appendChild(badge);
+      })
+      .catch(function () {});
+  }
+
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] || c;
@@ -367,6 +395,7 @@
 
   window.addEventListener("bp:cart-changed", render);
   document.addEventListener("DOMContentLoaded", function () {
+    initDeployBadge();
     render();
     checkPayServer();
   });
