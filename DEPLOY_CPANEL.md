@@ -111,7 +111,7 @@ Crea estos secretos (nombres **exactos**):
 | `CPANEL_FTP_PASSWORD` | Sí | Contraseña de la cuenta FTP |
 | `CPANEL_FTP_PORT` | No | `21` (opcional; el workflow usa 21 si no existe) |
 | `CPANEL_FTP_SERVER_DIR` | No | Con `admin@bpphones.cl` usar **`./`** o dejar vacío. Solo `./public_html/bpphones.cl/` si la cuenta FTP NO es `admin@bpphones.cl` |
-| `SUPABASE_URL` | Para Webpay | `https://kodehyjdonripddobqgs.supabase.co` |
+| `SUPABASE_URL` | Para Webpay | `https://fnwimtjrfmygbyeqvevs.supabase.co` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Para Webpay | Clave **service_role** de Supabase (Dashboard → API) |
 | `WEBPAY_MODE` | Pagos reales | **`production`** (sin esto queda modo prueba) |
 | `WEBPAY_COMMERCE_CODE` | Pagos reales | Código comercio Transbank (12 dígitos, ej. `5970…`) |

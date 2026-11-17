@@ -18,7 +18,7 @@ return [
     'CORS_ORIGIN' => 'https://bpphones.cl',
 
     // Supabase service role (obligatorio para crear/actualizar orders + rpc stock)
-    'SUPABASE_URL' => 'https://kodehyjdonripddobqgs.supabase.co',
+    'SUPABASE_URL' => 'https://fnwimtjrfmygbyeqvevs.supabase.co',
     'SUPABASE_SERVICE_ROLE_KEY' => 'TU_SERVICE_ROLE_KEY',
 
     // Envío (si include_shipping=true desde checkout)

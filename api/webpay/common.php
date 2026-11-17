@@ -8,7 +8,7 @@ declare(strict_types=1);
 const BPW_INTEGRATION_COMMERCE_CODE = '597055555532';
 const BPW_INTEGRATION_API_KEY_SECRET = '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C';
 const BPW_PROVIDER = 'webpay_plus';
-const BPW_DEFAULT_SUPABASE_URL = 'https://kodehyjdonripddobqgs.supabase.co';
+const BPW_DEFAULT_SUPABASE_URL = 'https://fnwimtjrfmygbyeqvevs.supabase.co';
 
 @ini_set('display_errors', '0');
 @ini_set('log_errors', '1');
