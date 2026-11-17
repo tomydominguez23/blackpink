@@ -365,21 +365,13 @@
     grid.innerHTML = items.map(homeCard).join("");
   }
 
-  function applyLogo(logoUrl) {
-    if (!logoUrl) return;
-    const target = String(logoUrl).trim();
-    const existing = document.querySelector(".site-logo-image");
-    if (existing) {
-      const cur = normalizeAssetUrl(existing.currentSrc || existing.src);
-      if (cur === normalizeAssetUrl(target)) return;
-    }
+  function applyLogo() {
+    if (document.querySelector(".site-logo-image")) return;
     document.querySelectorAll(".logo").forEach((logo) => {
       const text = logo.querySelector(".logo-text");
       logo.classList.add("has-custom-logo");
       if (text) {
-        text.innerHTML = `<img src="${escapeHtml(
-          target
-        )}" alt="Logo" class="site-logo-image" width="200" height="66" decoding="async" fetchpriority="high" />`;
+        text.innerHTML = `<img src="logo.png" alt="Blackpink Store" class="site-logo-image" width="678" height="275" decoding="async" fetchpriority="high" />`;
       }
     });
   }
