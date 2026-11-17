@@ -30,10 +30,19 @@ check_live_asset_versions() {
   local home=""
   local productos=""
   local app_js=""
+  local ftp_check=""
 
   home="$(curl -fsSL "https://bpphones.cl/" 2>/dev/null || true)"
   productos="$(curl -fsSL "https://bpphones.cl/productos.html" 2>/dev/null || true)"
   app_js="$(curl -fsSL "https://bpphones.cl/app.js?v=${SHORT}" 2>/dev/null || true)"
+  ftp_check="$(curl -fsSL "https://bpphones.cl/deploy-ftp-check.json" 2>/dev/null || true)"
+
+  if printf '%s' "$ftp_check" | grep -q '/home/ditecnoc/public_html/bpphones.cl'; then
+    echo "OK: deploy-ftp-check.json confirma docroot /home/ditecnoc/public_html/bpphones.cl."
+  else
+    echo "::error::Falta deploy-ftp-check.json o no apunta a public_html/bpphones.cl (FTP en carpeta equivocada)."
+    FAIL=1
+  fi
 
   if printf '%s' "$home" | grep -q "app.js?v=${SHORT}"; then
     echo "OK: index.html en vivo referencia app.js?v=${SHORT}."
