@@ -1,10 +1,10 @@
 (function () {
   var C = typeof window !== "undefined" ? window.__SUPABASE_CONFIG__ : null;
   var SUPABASE_URL =
-    (C && typeof C.url === "string" && C.url) || "https://kodehyjdonripddobqgs.supabase.co";
+    (C && typeof C.url === "string" && C.url) || "https://fnwimtjrfmygbyeqvevs.supabase.co";
   var SUPABASE_ANON_KEY =
     (C && typeof C.anonKey === "string" && C.anonKey) ||
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvZGVoeWpkb25yaXBkZG9icWdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MTc0OTMsImV4cCI6MjA5MDE5MzQ5M30.eShvVaQZAKnKS5R6g2TASlsfHRqngStApnicumAve-Y";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZud2ltdGpyZm15Z2J5ZXF2ZXZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ5Mjg5NTksImV4cCI6MjExMDUwNDk1OX0.KdN4ttqjJFV4tiresU7gdc9hhNvnH_7spB8smrfZymo";
 
   if (!window.supabase || !window.supabase.createClient) {
     console.error("Supabase CDN no esta cargado.");
