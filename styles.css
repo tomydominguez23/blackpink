@@ -184,11 +184,12 @@ a:hover {
 }
 
 .logo.has-custom-logo .logo-text {
-  min-height: 66px;
-  min-width: 140px;
+  min-height: 0;
+  min-width: 0;
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
+  line-height: 0;
 }
 
 .logo.has-custom-logo .logo-mark {
@@ -198,19 +199,20 @@ a:hover {
 .site-logo-image {
   display: block;
   width: auto;
-  height: 60px;
-  max-width: 380px;
+  height: 72px;
+  max-width: min(52vw, 250px);
   object-fit: contain;
+  object-position: left center;
 }
 
 .site-header .logo.has-custom-logo .site-logo-image {
-  height: 66px;
-  max-width: min(56vw, 440px);
+  height: 78px;
+  max-width: min(48vw, 270px);
 }
 
 .footer-brand .logo.has-custom-logo .site-logo-image {
-  height: 34px;
-  max-width: 200px;
+  height: 46px;
+  max-width: 180px;
 }
 
 .header-right {
@@ -3804,8 +3806,8 @@ a:hover {
   }
 
   .site-header .logo.has-custom-logo .site-logo-image {
-    height: 54px;
-    max-width: 80vw;
+    height: 60px;
+    max-width: 62vw;
   }
 
   .header-right {
@@ -3920,8 +3922,8 @@ a:hover {
   }
 
   .site-header .logo.has-custom-logo .site-logo-image {
-    height: 52px;
-    max-width: min(62vw, 320px);
+    height: 64px;
+    max-width: min(58vw, 230px);
   }
 
   .header-right {
@@ -3978,8 +3980,8 @@ a:hover {
   }
 
   .site-header .logo.has-custom-logo .site-logo-image {
-    height: 46px;
-    max-width: 66vw;
+    height: 58px;
+    max-width: 64vw;
   }
 
   .footer-shipping-bar span {
@@ -4000,8 +4002,8 @@ a:hover {
   }
 
   .site-header .logo.has-custom-logo .site-logo-image {
-    height: 42px;
-    max-width: 68vw;
+    height: 56px;
+    max-width: 66vw;
   }
 
   .header-icons {
@@ -4039,8 +4041,8 @@ a:hover {
   }
 
   .site-header .logo.has-custom-logo .site-logo-image {
-    height: 39px;
-    max-width: 70vw;
+    height: 54px;
+    max-width: 68vw;
   }
 
   .header-search {
